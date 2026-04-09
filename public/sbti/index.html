@@ -559,6 +559,93 @@
       line-height: 1.7;
     }
 
+    .engine-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .engine-stat {
+      border-radius: 18px;
+      padding: 16px;
+      background: rgba(255, 255, 255, 0.82);
+      border: 1px solid rgba(54, 83, 59, 0.08);
+    }
+
+    .engine-stat strong {
+      display: block;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent-strong);
+    }
+
+    .engine-stat span {
+      display: block;
+      margin-top: 10px;
+      color: var(--text);
+      font-size: 15px;
+      line-height: 1.55;
+      word-break: break-word;
+    }
+
+    .engine-flow {
+      display: grid;
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .engine-step {
+      display: grid;
+      grid-template-columns: 34px 1fr;
+      gap: 12px;
+      padding: 14px;
+      border-radius: 18px;
+      border: 1px solid rgba(54, 83, 59, 0.08);
+      background: rgba(255, 255, 255, 0.76);
+    }
+
+    .engine-step span {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 34px;
+      height: 34px;
+      border-radius: 999px;
+      background: rgba(210, 255, 128, 0.22);
+      border: 1px solid rgba(54, 83, 59, 0.08);
+      color: var(--accent-strong);
+      font-size: 12px;
+      font-weight: 800;
+      font-family: "SFMono-Regular", "Menlo", "Monaco", monospace;
+    }
+
+    .engine-step strong {
+      display: block;
+      color: var(--text);
+      font-size: 14px;
+    }
+
+    .engine-step p {
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.75;
+    }
+
+    .engine-note {
+      margin-top: 16px;
+      padding: 14px 16px;
+      border-radius: 18px;
+      background: linear-gradient(180deg, rgba(28, 44, 35, 0.96), rgba(18, 27, 22, 0.98));
+      border: 1px solid rgba(200, 255, 113, 0.12);
+      color: rgba(244, 248, 240, 0.84);
+      font-size: 13px;
+      line-height: 1.8;
+    }
+
     button {
       border: 0;
       cursor: pointer;
@@ -1252,6 +1339,7 @@
       .intro-bottom-grid,
       .result-top { grid-template-columns: 1fr; }
       .artifact-grid { grid-template-columns: 1fr; }
+      .engine-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .intro-stats,
       .mint-perks { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     }
@@ -1267,6 +1355,7 @@
       .question-title { font-size: 15px; }
       .intro-stats,
       .artifact-grid-secondary,
+      .engine-grid,
       .mint-perks,
       .dim-grid,
       .score-grid { grid-template-columns: 1fr; }
@@ -1391,6 +1480,77 @@
                 </div>
               </div>
             </div>
+          </section>
+
+          <section class="intro-panel">
+            <div class="panel-kicker">Onchain Dividend Engine</div>
+            <h3>小时分红由链上结算合约驱动，不靠人工转账。</h3>
+            <p class="panel-sub">专用资金合约只接收 BNB。每到整点，Automation 或任何人都能触发链上结算；合约会把当前可分配余额的 20% 切进本轮分红批次，再按照合格持有人注册表批量记账到 claimable BNB。</p>
+            <div class="engine-grid">
+              <div class="engine-stat">
+                <strong>资金合约</strong>
+                <span id="dividendVaultAddress">待部署</span>
+              </div>
+              <div class="engine-stat">
+                <strong>注册表</strong>
+                <span id="dividendRegistryAddress">待部署</span>
+              </div>
+              <div class="engine-stat">
+                <strong>下次结算</strong>
+                <span id="dividendNextSettlement">待部署</span>
+              </div>
+              <div class="engine-stat">
+                <strong>预计释放</strong>
+                <span id="dividendPreviewRelease">待部署</span>
+              </div>
+              <div class="engine-stat">
+                <strong>可分配 BNB</strong>
+                <span id="dividendAvailableBalance">待部署</span>
+              </div>
+              <div class="engine-stat">
+                <strong>合格持有人</strong>
+                <span id="dividendHolderCount">待部署</span>
+              </div>
+              <div class="engine-stat">
+                <strong>当前批次</strong>
+                <span id="dividendBatchProgress">待部署</span>
+              </div>
+              <div class="engine-stat">
+                <strong>触发模式</strong>
+                <span id="dividendAutomationMode">Automation / 任何人可触发</span>
+              </div>
+            </div>
+            <div class="engine-flow">
+              <div class="engine-step">
+                <span>01</span>
+                <div>
+                  <strong>BNB 先进入专用资金合约</strong>
+                  <p>税收或手动补充资金都会先进入链上 vault，页面只展示合约余额和可分配部分，不展示人工中转钱包。</p>
+                </div>
+              </div>
+              <div class="engine-step">
+                <span>02</span>
+                <div>
+                  <strong>整点触发 upkeep</strong>
+                  <p>如果 Automation 正常在线，会在可执行时段自动触发；即便 keeper 离线，任何人也都能手动调用链上 upkeep。</p>
+                </div>
+              </div>
+              <div class="engine-step">
+                <span>03</span>
+                <div>
+                  <strong>合约自动释放本轮 20%</strong>
+                  <p id="dividendReleaseRule">每小时释放 20% 的可分配 BNB。</p>
+                </div>
+              </div>
+              <div class="engine-step">
+                <span>04</span>
+                <div>
+                  <strong>合格持有人批量记账并 claim</strong>
+                  <p>本轮分红不是手工转账，而是链上批量记账到持有人的可领取 BNB，后续可由持有人自行 claim。</p>
+                </div>
+              </div>
+            </div>
+            <div id="dividendStatusNote" class="engine-note">资金接收合约部署后，这里会直接显示链上的下一次结算时间、可分配 BNB、批次进度和合格持有人数量。</div>
           </section>
         </div>
       </div>
@@ -2475,6 +2635,8 @@
     document.getElementById('toTopBtn').addEventListener('click', () => showScreen('intro'));
   </script>
   <script src="https://cdn.jsdelivr.net/npm/ethers@6.13.4/dist/ethers.umd.min.js"></script>
+  <script src="./dividend-vault-config.js"></script>
+  <script src="./dividend-vault.js"></script>
   <script src="./nft-config.js"></script>
   <script src="./nft-data.js"></script>
   <script src="./nft-mint.js"></script>
