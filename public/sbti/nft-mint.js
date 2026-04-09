@@ -20,6 +20,7 @@
   const abi = [
     "function mint(uint256 tokenId) external",
     "function hasMinted(address account, uint256 tokenId) external view returns (bool)",
+    "function hasWalletMinted(address account) external view returns (bool)",
     "function balanceOf(address account, uint256 id) external view returns (uint256)",
     "function balanceOfBatch(address[] accounts, uint256[] ids) external view returns (uint256[])"
   ];
@@ -218,6 +219,22 @@
     }
   }
 
+  async function readWalletMinted(contract, account) {
+    if (typeof contract.hasWalletMinted === "function") {
+      try {
+        return await contract.hasWalletMinted(account);
+      } catch (error) {
+        // Fall back to legacy per-token getter below.
+      }
+    }
+
+    const mintedStates = await Promise.all(
+      results.map((item) => contract.hasMinted(account, item.tokenId))
+    );
+
+    return mintedStates.some(Boolean);
+  }
+
   async function updateHoldingsState() {
     if (!nftHoldingsMeta || !nftHoldingsList) {
       return;
@@ -407,18 +424,18 @@
       const walletProvider = getWalletProvider();
       const provider = new window.ethers.BrowserProvider(walletProvider);
       const contract = new window.ethers.Contract(config.contractAddress, abi, provider);
-      const minted = await contract.hasMinted(currentAccount, currentResult.tokenId);
+      const minted = await readWalletMinted(contract, currentAccount);
       const balance = await contract.balanceOf(currentAccount, currentResult.tokenId);
 
       if (minted || balance > 0n) {
         mintNftBtn.disabled = true;
-        setStatus("这个结果 NFT 你已经 mint 过了。", "success");
+        setStatus("这个钱包已经 mint 过 SBTI NFT 了。", "success");
         return;
       }
 
       mintNftBtn.disabled = mintInFlight ? true : false;
       if (!mintInFlight) {
-        setStatus("当前结果可以 mint，一次 mint 一枚。");
+        setStatus("当前钱包还没有 mint 过，可 mint 当前测试结果对应的 1 枚 NFT。");
       }
     } catch (error) {
       mintNftBtn.disabled = true;

@@ -11,7 +11,7 @@ contract SBTIResultNFT is ERC1155, Ownable, ERC2981 {
 
     error InvalidTokenId();
     error MintClosed();
-    error AlreadyMinted(address account, uint256 tokenId);
+    error AlreadyMinted(address account);
 
     uint256 public constant MAX_TOKEN_ID = 27;
 
@@ -21,7 +21,7 @@ contract SBTIResultNFT is ERC1155, Ownable, ERC2981 {
     string private _metadataBaseURI;
     bool public mintEnabled;
 
-    mapping(address => mapping(uint256 => bool)) public hasMinted;
+    mapping(address => bool) private _walletHasMinted;
     mapping(uint256 => string) public resultCode;
 
     event ResultMinted(address indexed account, uint256 indexed tokenId, string code);
@@ -54,9 +54,9 @@ contract SBTIResultNFT is ERC1155, Ownable, ERC2981 {
     function mint(uint256 tokenId) external {
         _assertValidTokenId(tokenId);
         if (!mintEnabled) revert MintClosed();
-        if (hasMinted[msg.sender][tokenId]) revert AlreadyMinted(msg.sender, tokenId);
+        if (_walletHasMinted[msg.sender]) revert AlreadyMinted(msg.sender);
 
-        hasMinted[msg.sender][tokenId] = true;
+        _walletHasMinted[msg.sender] = true;
         _mint(msg.sender, tokenId, 1, "");
 
         emit ResultMinted(msg.sender, tokenId, resultCode[tokenId]);
@@ -64,6 +64,9 @@ contract SBTIResultNFT is ERC1155, Ownable, ERC2981 {
 
     function ownerMint(address to, uint256 tokenId, uint256 amount) external onlyOwner {
         _assertValidTokenId(tokenId);
+        if (amount > 0) {
+            _walletHasMinted[to] = true;
+        }
         _mint(to, tokenId, amount, "");
     }
 
@@ -72,7 +75,22 @@ contract SBTIResultNFT is ERC1155, Ownable, ERC2981 {
             _assertValidTokenId(tokenIds[i]);
         }
 
+        for (uint256 i = 0; i < amounts.length; i += 1) {
+            if (amounts[i] > 0) {
+                _walletHasMinted[to] = true;
+                break;
+            }
+        }
+
         _mintBatch(to, tokenIds, amounts, "");
+    }
+
+    function hasMinted(address account, uint256 /* tokenId */) public view returns (bool) {
+        return _walletHasMinted[account];
+    }
+
+    function hasWalletMinted(address account) external view returns (bool) {
+        return _walletHasMinted[account];
     }
 
     function uri(uint256 tokenId) public view override returns (string memory) {
