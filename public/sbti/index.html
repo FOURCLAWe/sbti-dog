@@ -230,6 +230,50 @@
       transform: translateY(-1px);
     }
 
+    .intro-link-strong {
+      background: linear-gradient(180deg, var(--accent-bright), #b8ef66);
+      border-color: rgba(54, 83, 59, 0.12);
+      color: #132019;
+      font-weight: 800;
+      box-shadow: 0 16px 28px rgba(120, 171, 72, 0.16);
+    }
+
+    .token-link-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 12px;
+      align-items: center;
+      margin-top: 14px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    .token-link-meta code {
+      font-family: "SFMono-Regular", "Menlo", "Monaco", monospace;
+      font-size: 12px;
+      color: var(--accent-strong);
+      background: rgba(255, 255, 255, 0.76);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 7px 10px;
+    }
+
+    .token-link-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 11px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.76);
+      border: 1px solid var(--line);
+      color: var(--accent-strong);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
     .intro-stats {
       display: grid;
       grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -1110,6 +1154,19 @@
       line-height: 1.8;
     }
 
+    .mint-link-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .mint-link-note {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.7;
+    }
+
     .mint-status {
       min-height: 22px;
       font-size: 13px;
@@ -1166,16 +1223,22 @@
       <div class="hero card intro-hero">
         <div class="eyebrow">
           <span class="eyebrow-dot"></span>
-          SBTI x FLAP HOLDER DROP
+          SBTI x $SBTI x FLAP HOLDER DROP
         </div>
         <div class="intro-grid">
           <div class="intro-copy">
             <div class="intro-kicker">人格测试只是入口，NFT 才是你的链上座位</div>
             <h1>做完这份测试，<span class="headline-accent">把你的人格结果 mint 成一张可参与税收分润的 NFT。</span></h1>
-            <p class="sub">计划在 Flap 上发行代币。代币买卖都会收取 <strong>3%</strong> 交易税，税收统一进入指定合约；每到小时整，系统会先向 SBTI NFT 持有者池拨付当前可分配税池的 <strong>20%</strong>，剩余 <strong>80%</strong> 结转到下一个自然小时继续拨付，直到拨付完为止。先测出你是谁，再决定你要不要把这张人格卡铸造成自己的链上凭证。</p>
+            <p class="sub">计划在 Flap 上发行 <strong>$SBTI</strong>。$SBTI 买卖都会收取 <strong>3%</strong> 交易税，税收统一进入指定合约；每到小时整，系统会先向 SBTI NFT 持有者池拨付当前可分配税池的 <strong>20%</strong>，剩余 <strong>80%</strong> 结转到下一个自然小时继续拨付，直到拨付完为止。先测出你是谁，再决定你要不要把这张人格卡铸造成自己的链上凭证。</p>
             <div class="hero-actions">
               <button id="startBtn" class="btn-primary">开始测试</button>
               <a href="#introMechanics" class="intro-link">查看分润机制</a>
+              <a id="tokenBuyLink" href="https://flap.sh/bnb/xxx" target="_blank" rel="noreferrer" class="intro-link intro-link-strong">Flap 购买 $SBTI</a>
+            </div>
+            <div class="token-link-meta">
+              <span class="token-link-badge">CA 待补</span>
+              <span>$SBTI 发行后，把真实合约地址发我，我会把购买链接从占位版补成正式版。</span>
+              <code>https://flap.sh/bnb/xxx</code>
             </div>
             <div class="intro-stats">
               <div class="intro-stat">
@@ -1184,7 +1247,7 @@
               </div>
               <div class="intro-stat">
                 <strong>3%</strong>
-                <span>代币买卖都会向税收合约贡献统一交易税。</span>
+                <span>$SBTI 买卖都会向税收合约贡献统一交易税。</span>
               </div>
               <div class="intro-stat">
                 <strong>20%</strong>
@@ -1227,7 +1290,7 @@
                   <span>04</span>
                   <div>
                     <strong>小时整结算</strong>
-                    <p>代币税收进入专用合约后，每个整点先拨付当前可分配税池的 20%，剩余 80% 结转到下一个自然小时继续拨付，直到拨付完为止。</p>
+                    <p>$SBTI 税收进入专用合约后，每个整点先拨付当前可分配税池的 20%，剩余 80% 结转到下一个自然小时继续拨付，直到拨付完为止。</p>
                   </div>
                 </div>
               </div>
@@ -1236,12 +1299,12 @@
             <article class="launch-card launch-card-secondary">
               <div class="launch-kicker">计划机制</div>
               <ul class="launch-bullets">
-                <li>代币将在 Flap 上发行，买卖双方都触发 3% 交易税。</li>
+                <li>$SBTI 将在 Flap 上发行，买卖双方都触发 3% 交易税。</li>
                 <li>税收资金统一打入指定合约地址，不走人工中转钱包。</li>
                 <li>每到小时整，系统只拨付当前可分配税池的 20%，剩余 80% 自动递延到下一个自然小时继续拨付。</li>
                 <li>你的测试结果不是一张普通海报，而是一张可被铸造成分润凭证的人格卡。</li>
               </ul>
-              <p class="launch-disclaimer">页面展示的是你计划上线的代币税收分润结构。最终比例、结算口径和分发规则以正式上线的链上合约版本为准。</p>
+              <p class="launch-disclaimer">页面展示的是你计划上线的 $SBTI 税收分润结构。最终比例、结算口径和分发规则以正式上线的链上合约版本为准。</p>
             </article>
           </div>
         </div>
@@ -1250,7 +1313,7 @@
           <section class="intro-panel">
             <div class="panel-kicker">Hourly Tax Flow</div>
             <h3>这不是一张静态测试海报，而是一张挂钩代币税收节奏的链上卡片。</h3>
-            <p class="panel-sub">人格测试负责把用户映射进收藏品集合；Flap 代币负责产生链上税收；NFT 则作为记录你席位的分润凭证。税池不会一小时内一次性放完，而是每个整点先释放 20%，剩余部分逐小时递延，直到拨付完为止。</p>
+            <p class="panel-sub">人格测试负责把用户映射进收藏品集合；Flap 上的 <strong>$SBTI</strong> 负责产生链上税收；NFT 则作为记录你席位的分润凭证。税池不会一小时内一次性放完，而是每个整点先释放 20%，剩余部分逐小时递延，直到拨付完为止。</p>
             <div class="tokenomics-rows">
               <div class="tokenomics-row">
                 <div class="tokenomics-label">Buy / Sell Tax</div>
@@ -1270,7 +1333,7 @@
             </div>
             <div class="tokenomics-note">
               <p>用户完成测试后，会得到 27 种人格之一，并获得对应的 NFT mint 资格。</p>
-              <p>代币税收先进入指定合约，再按自然小时逐批释放；每次只拨付 20%，剩余部分继续滚入后续小时，让整套玩法更像一张“有现金流叙事”的人格凭证。</p>
+              <p>$SBTI 税收先进入指定合约，再按自然小时逐批释放；每次只拨付 20%，剩余部分继续滚入后续小时，让整套玩法更像一张“有现金流叙事”的人格凭证。</p>
             </div>
           </section>
 
@@ -1361,7 +1424,7 @@
             <div class="mint-perks">
               <div class="mint-perk">
                 <strong>3%</strong>
-                <span>代币买卖交易税统一流入专用合约。</span>
+                <span>$SBTI 买卖交易税统一流入专用合约。</span>
               </div>
               <div class="mint-perk">
                 <strong>20%</strong>
@@ -1374,6 +1437,10 @@
             </div>
             <p id="nftResultMeta">答完题后，这里会显示当前结果对应的 NFT。</p>
             <p id="nftContractMeta">Mint 尚未启用：还没有配置 BSC 合约地址。</p>
+            <div class="mint-link-row">
+              <a id="tokenBuyLinkResult" href="https://flap.sh/bnb/xxx" target="_blank" rel="noreferrer" class="intro-link">Flap 购买 $SBTI</a>
+              <span class="mint-link-note">当前是占位链接，真实 CA 上线后可直接替换 `xxx`。</span>
+            </div>
             <div class="result-actions" style="margin-top: 0;">
               <div style="display:flex; gap:12px; flex-wrap:wrap;">
                 <button id="connectWalletBtn" type="button" class="btn-secondary">连接钱包</button>
