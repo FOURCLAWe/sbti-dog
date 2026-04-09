@@ -6,32 +6,36 @@
   <title>SBTI 人格测试</title>
   <style>
     :root {
-      --bg: #f6faf6;
+      --bg: #f0f6ef;
       --panel: #ffffff;
-      --text: #1e2a22;
-      --muted: #6a786f;
-      --line: #dbe8dd;
-      --soft: #edf6ef;
-      --accent: #6c8d71;
-      --accent-strong: #4d6a53;
-      --shadow: 0 16px 40px rgba(47, 73, 55, 0.08);
-      --radius: 22px;
+      --text: #18211d;
+      --muted: #5f6d62;
+      --line: #d5e0d2;
+      --soft: #edf5e7;
+      --accent: #85ad6d;
+      --accent-strong: #36533b;
+      --accent-bright: #c8ff71;
+      --shadow: 0 24px 70px rgba(41, 69, 46, 0.10);
+      --radius: 26px;
     }
 
     * { box-sizing: border-box; }
     html, body { margin: 0; padding: 0; }
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      font-family: "Avenir Next", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
       background:
-        radial-gradient(circle at top left, #f8fff8 0, #f6faf6 36%, #f2f7f3 100%);
+        radial-gradient(circle at 8% 18%, rgba(200, 255, 113, 0.16), transparent 18%),
+        radial-gradient(circle at 92% 12%, rgba(54, 83, 59, 0.10), transparent 20%),
+        radial-gradient(circle at 50% 100%, rgba(225, 236, 223, 0.92), transparent 40%),
+        linear-gradient(180deg, #f1f6ef 0%, #f8fbf7 52%, #eef3ee 100%);
       color: var(--text);
       min-height: 100vh;
     }
 
     .shell {
-      max-width: 980px;
+      max-width: 1120px;
       margin: 0 auto;
-      padding: 24px 16px 56px;
+      padding: 30px 18px 64px;
     }
 
     .card {
@@ -42,7 +46,7 @@
     }
 
     .hero {
-      padding: 28px;
+      padding: 34px;
       margin-top: 20px;
       overflow: hidden;
       position: relative;
@@ -56,7 +60,7 @@
       width: 180px;
       height: 180px;
       border-radius: 50%;
-      background: linear-gradient(180deg, rgba(127, 165, 134, 0.18), rgba(127, 165, 134, 0.02));
+      background: linear-gradient(180deg, rgba(200, 255, 113, 0.22), rgba(200, 255, 113, 0.01));
       pointer-events: none;
     }
 
@@ -67,25 +71,29 @@
       font-size: 12px;
       color: var(--accent-strong);
       border: 1px solid var(--line);
-      background: var(--soft);
+      background: rgba(255, 255, 255, 0.72);
       border-radius: 999px;
       padding: 8px 12px;
       margin-bottom: 16px;
+      backdrop-filter: blur(12px);
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
     }
 
     h1, h2, h3, p { margin: 0; }
     .hero h1 {
-      font-size: clamp(28px, 5vw, 52px);
-      line-height: 1.08;
+      font-size: clamp(42px, 6vw, 78px);
+      line-height: 0.96;
       letter-spacing: -0.03em;
-      max-width: 680px;
+      max-width: 760px;
     }
     .hero .sub {
-      margin-top: 14px;
+      margin-top: 18px;
       color: var(--muted);
-      font-size: 15px;
-      line-height: 1.75;
-      max-width: 720px;
+      font-size: 16px;
+      line-height: 1.85;
+      max-width: 760px;
     }
 
     .hero-grid {
@@ -120,7 +128,7 @@
       display: flex;
       flex-wrap: wrap;
       gap: 12px;
-      margin-top: 22px;
+      margin-top: 26px;
     }
     .hero-minimal {
       min-height: 48vh;
@@ -139,6 +147,258 @@
     .hero-actions-single {
       justify-content: center;
       margin-top: 28px;
+    }
+
+    .intro-hero {
+      background:
+        radial-gradient(circle at top right, rgba(200, 255, 113, 0.18), rgba(200, 255, 113, 0) 28%),
+        linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(245, 249, 243, 0.95));
+    }
+
+    .intro-hero::before {
+      content: "";
+      position: absolute;
+      left: -130px;
+      bottom: -160px;
+      width: 320px;
+      height: 320px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(54, 83, 59, 0.16), rgba(54, 83, 59, 0));
+      pointer-events: none;
+    }
+
+    .eyebrow-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent-bright);
+      box-shadow: 0 0 0 4px rgba(200, 255, 113, 0.14);
+    }
+
+    .intro-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.08fr) minmax(320px, 0.92fr);
+      gap: 24px;
+      align-items: stretch;
+      position: relative;
+      z-index: 1;
+    }
+
+    .intro-copy {
+      padding: 8px 6px 8px 2px;
+    }
+
+    .intro-kicker {
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--accent-strong);
+    }
+
+    .headline-accent {
+      display: block;
+      margin-top: 10px;
+      color: var(--accent-strong);
+    }
+
+    .hero .sub strong {
+      color: var(--text);
+      font-weight: 800;
+    }
+
+    .intro-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 14px 18px;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.76);
+      color: var(--accent-strong);
+      font-weight: 700;
+      text-decoration: none;
+      backdrop-filter: blur(12px);
+      transition: transform .16s ease, box-shadow .16s ease, opacity .16s ease;
+    }
+
+    .intro-link:hover {
+      transform: translateY(-1px);
+    }
+
+    .intro-stats {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 28px;
+    }
+
+    .intro-stat {
+      min-height: 112px;
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: 16px;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(238, 245, 231, 0.88));
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+    }
+
+    .intro-stat strong {
+      display: block;
+      font-family: "SFMono-Regular", "Menlo", "Monaco", monospace;
+      font-size: clamp(28px, 4vw, 40px);
+      line-height: 1;
+      letter-spacing: -0.04em;
+      color: var(--accent-strong);
+    }
+
+    .intro-stat span {
+      display: block;
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.65;
+    }
+
+    .launch-stack {
+      display: grid;
+      gap: 14px;
+    }
+
+    .launch-card {
+      position: relative;
+      overflow: hidden;
+      border-radius: 24px;
+      padding: 22px;
+    }
+
+    .launch-card-primary {
+      background: linear-gradient(180deg, #203128 0%, #13201a 100%);
+      border: 1px solid rgba(200, 255, 113, 0.14);
+      box-shadow: 0 20px 50px rgba(21, 39, 29, 0.24);
+      color: #f3f7ef;
+    }
+
+    .launch-card-primary::after {
+      content: "";
+      position: absolute;
+      right: -40px;
+      top: -40px;
+      width: 170px;
+      height: 170px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(200, 255, 113, 0.25), rgba(200, 255, 113, 0));
+      pointer-events: none;
+    }
+
+    .launch-card-secondary {
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, #f7fbf4, #edf5e8);
+    }
+
+    .launch-kicker {
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    .launch-card-primary .launch-kicker {
+      color: var(--accent-bright);
+    }
+
+    .launch-card-secondary .launch-kicker {
+      color: var(--accent-strong);
+    }
+
+    .launch-card h2 {
+      margin-top: 12px;
+      font-size: clamp(24px, 3vw, 34px);
+      line-height: 1.12;
+      letter-spacing: -0.03em;
+    }
+
+    .flow-list {
+      display: grid;
+      gap: 12px;
+      margin-top: 20px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .flow-item {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 12px;
+      align-items: start;
+      padding: 14px;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(8px);
+    }
+
+    .flow-item span {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      background: var(--accent-bright);
+      color: #14211b;
+      font-family: "SFMono-Regular", "Menlo", "Monaco", monospace;
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .flow-item strong {
+      display: block;
+      font-size: 15px;
+    }
+
+    .flow-item p {
+      margin-top: 4px;
+      color: rgba(243, 247, 239, 0.76);
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    .launch-bullets {
+      list-style: none;
+      padding: 0;
+      margin: 16px 0 0;
+      display: grid;
+      gap: 10px;
+    }
+
+    .launch-bullets li {
+      position: relative;
+      padding: 12px 14px 12px 38px;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.68);
+      border: 1px solid rgba(54, 83, 59, 0.08);
+      color: var(--text);
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .launch-bullets li::before {
+      content: "";
+      position: absolute;
+      left: 14px;
+      top: 16px;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: linear-gradient(180deg, var(--accent-strong), var(--accent));
+      box-shadow: 0 0 0 4px rgba(108, 141, 113, 0.12);
+    }
+
+    .launch-disclaimer {
+      margin-top: 14px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.7;
     }
 
     button {
@@ -614,6 +874,66 @@
       gap: 12px;
     }
 
+    .mint-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .mint-hero-copy {
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.8;
+      max-width: 560px;
+    }
+
+    .mint-chip {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: var(--soft);
+      border: 1px solid var(--line);
+      color: var(--accent-strong);
+      font-size: 12px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .mint-perks {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .mint-perk {
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 14px;
+      background: linear-gradient(180deg, #ffffff, #f7fbf4);
+    }
+
+    .mint-perk strong {
+      display: block;
+      font-family: "SFMono-Regular", "Menlo", "Monaco", monospace;
+      font-size: 24px;
+      line-height: 1;
+      letter-spacing: -0.03em;
+      color: var(--accent-strong);
+    }
+
+    .mint-perk span {
+      display: block;
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.65;
+    }
+
     .mint-box p {
       margin: 0;
       color: var(--muted);
@@ -646,22 +966,23 @@
       margin-top: 22px;
     }
     @media (max-width: 860px) {
+      .intro-grid,
       .result-top { grid-template-columns: 1fr; }
+      .intro-stats,
+      .mint-perks { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     }
 
 @media (max-width: 860px) {
-      .hero-grid,
-      .result-hero {
-        grid-template-columns: 1fr;
-      }
       .dim-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     }
 
     @media (max-width: 600px) {
       .shell { padding: 14px 12px 42px; }
-      .hero, .test-wrap, .result-wrap { padding: 16px; }
-      .hero h1 { font-size: 32px; }
+      .hero, .test-wrap, .result-wrap { padding: 18px 16px; }
+      .hero h1 { font-size: 38px; }
       .question-title { font-size: 15px; }
+      .intro-stats,
+      .mint-perks,
       .dim-grid,
       .score-grid { grid-template-columns: 1fr; }
     }
@@ -670,10 +991,87 @@
 <body>
   <div class="shell">
     <section id="intro" class="screen active">
-      <div class="hero card hero-minimal">
-        <h1>MBTI已经过时，SBTI来了。</h1>
-        <div class="hero-actions hero-actions-single">
-          <button id="startBtn" class="btn-primary">开始测试</button>
+      <div class="hero card intro-hero">
+        <div class="eyebrow">
+          <span class="eyebrow-dot"></span>
+          SBTI x FLAP HOLDER DROP
+        </div>
+        <div class="intro-grid">
+          <div class="intro-copy">
+            <div class="intro-kicker">人格测试只是入口，NFT 才是你的链上座位</div>
+            <h1>做完这份测试，<span class="headline-accent">把你的人格结果 mint 成一张可参与税收分润的 NFT。</span></h1>
+            <p class="sub">计划在 Flap 上发行代币。代币买卖都会收取 <strong>3%</strong> 交易税，税收统一进入指定合约；每到小时整，合约将把该小时税收的 <strong>20%</strong> 拨给 SBTI NFT 持有者。先测出你是谁，再决定你要不要把这张人格卡铸造成自己的链上凭证。</p>
+            <div class="hero-actions">
+              <button id="startBtn" class="btn-primary">开始测试</button>
+              <a href="#introMechanics" class="intro-link">查看分润机制</a>
+            </div>
+            <div class="intro-stats">
+              <div class="intro-stat">
+                <strong>27</strong>
+                <span>测试结果将映射为 27 张不同的人格 NFT。</span>
+              </div>
+              <div class="intro-stat">
+                <strong>3%</strong>
+                <span>代币买卖都会向税收合约贡献统一交易税。</span>
+              </div>
+              <div class="intro-stat">
+                <strong>20%</strong>
+                <span>每个整点结算时，上一小时税收中的 20% 拨给持有者池。</span>
+              </div>
+              <div class="intro-stat">
+                <strong>01h</strong>
+                <span>分配节奏按小时整批结算，更像一张会呼吸的收益凭证。</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="launch-stack">
+            <article class="launch-card launch-card-primary" id="introMechanics">
+              <div class="launch-kicker">持有者路径</div>
+              <h2>测试结果 -> mint -> 持有 -> 小时整分润</h2>
+              <div class="flow-list">
+                <div class="flow-item">
+                  <span>01</span>
+                  <div>
+                    <strong>完成测试</strong>
+                    <p>先从 27 种人格里测出你当前的主类型，结果页会同步展示对应 NFT。</p>
+                  </div>
+                </div>
+                <div class="flow-item">
+                  <span>02</span>
+                  <div>
+                    <strong>Mint 结果 NFT</strong>
+                    <p>把这次测试结果铸造成你的链上人格卡，每种人格每个钱包最多 mint 一次。</p>
+                  </div>
+                </div>
+                <div class="flow-item">
+                  <span>03</span>
+                  <div>
+                    <strong>进入持有者池</strong>
+                    <p>NFT 将作为分润凭证，记录你在这套人格收藏中的席位和身份。</p>
+                  </div>
+                </div>
+                <div class="flow-item">
+                  <span>04</span>
+                  <div>
+                    <strong>小时整结算</strong>
+                    <p>代币税收进入专用合约后，每个整点结算上一小时税收，并向持有者池拨付 20%。</p>
+                  </div>
+                </div>
+              </div>
+            </article>
+
+            <article class="launch-card launch-card-secondary">
+              <div class="launch-kicker">计划机制</div>
+              <ul class="launch-bullets">
+                <li>代币将在 Flap 上发行，买卖双方都触发 3% 交易税。</li>
+                <li>税收资金统一打入指定合约地址，不走人工中转钱包。</li>
+                <li>每到小时整，系统结算该小时税收，并从中划出 20% 给 NFT 持有者池。</li>
+                <li>你的测试结果不是一张普通海报，而是一张可被铸造成分润凭证的人格卡。</li>
+              </ul>
+              <p class="launch-disclaimer">页面展示的是你计划上线的代币税收分润结构。最终比例、结算口径和分发规则以正式上线的链上合约版本为准。</p>
+            </article>
+          </div>
         </div>
       </div>
     </section>
@@ -731,7 +1129,27 @@
           </div>
 
           <div class="note-box mint-box">
-            <h3>纪念 NFT</h3>
+            <div class="mint-head">
+              <div>
+                <h3>纪念 NFT / 分润凭证</h3>
+                <p class="mint-hero-copy">上线后，这张人格卡不只是纪念 NFT，也会成为你参与税收分润池的链上凭证。</p>
+              </div>
+              <div class="mint-chip">小时整结算</div>
+            </div>
+            <div class="mint-perks">
+              <div class="mint-perk">
+                <strong>3%</strong>
+                <span>代币买卖交易税统一流入专用合约。</span>
+              </div>
+              <div class="mint-perk">
+                <strong>20%</strong>
+                <span>该小时税收中的 20% 将拨给 NFT 持有者池。</span>
+              </div>
+              <div class="mint-perk">
+                <strong>1 / 结果</strong>
+                <span>每个钱包对每种人格结果最多 mint 一次。</span>
+              </div>
+            </div>
             <p id="nftResultMeta">答完题后，这里会显示当前结果对应的 NFT。</p>
             <p id="nftContractMeta">Mint 尚未启用：还没有配置 BSC 合约地址。</p>
             <div class="result-actions" style="margin-top: 0;">
@@ -741,6 +1159,7 @@
               </div>
             </div>
             <p id="mintStatus" class="mint-status"></p>
+          </div>
         </div>
 
         <div class="result-actions">
