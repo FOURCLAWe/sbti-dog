@@ -1199,6 +1199,119 @@
       line-height: 1.7;
     }
 
+    .holdings-box {
+      margin-top: 18px;
+      padding: 16px;
+      border-radius: 18px;
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(245, 249, 243, 0.94));
+    }
+
+    .holdings-head {
+      display: grid;
+      gap: 6px;
+    }
+
+    .holdings-head h4 {
+      font-size: 14px;
+      color: var(--text);
+    }
+
+    .holdings-meta {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.7;
+    }
+
+    .holdings-list {
+      margin-top: 14px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+    }
+
+    .holding-card {
+      display: grid;
+      grid-template-columns: 58px 1fr;
+      gap: 12px;
+      padding: 12px;
+      border-radius: 16px;
+      border: 1px solid rgba(54, 83, 59, 0.1);
+      background: rgba(255, 255, 255, 0.88);
+    }
+
+    .holding-card.current {
+      border-color: rgba(108, 141, 113, 0.32);
+      box-shadow: 0 14px 24px rgba(108, 141, 113, 0.12);
+    }
+
+    .holding-card img {
+      width: 58px;
+      height: 58px;
+      object-fit: cover;
+      border-radius: 14px;
+      background: #eff5ee;
+      border: 1px solid rgba(54, 83, 59, 0.08);
+    }
+
+    .holding-copy {
+      min-width: 0;
+    }
+
+    .holding-copy strong {
+      display: block;
+      font-size: 13px;
+      line-height: 1.4;
+      color: var(--text);
+      word-break: break-word;
+    }
+
+    .holding-copy span {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    .holding-meta-row {
+      margin-top: 10px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .holding-balance,
+    .holding-tag {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 26px;
+      padding: 0 10px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: var(--soft);
+      color: var(--accent-strong);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+    }
+
+    .holding-tag {
+      background: rgba(210, 255, 128, 0.22);
+    }
+
+    .holdings-empty {
+      padding: 14px 16px;
+      border-radius: 16px;
+      border: 1px dashed rgba(54, 83, 59, 0.18);
+      background: rgba(255, 255, 255, 0.72);
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.7;
+    }
+
     .mint-box .rule-card {
       margin-top: 4px;
     }
@@ -1496,6 +1609,15 @@
               </div>
             </div>
             <p id="mintStatus" class="mint-status"></p>
+            <div class="holdings-box">
+              <div class="holdings-head">
+                <h4>我的 NFT 持仓</h4>
+                <p id="nftHoldingsMeta" class="holdings-meta">连接钱包后读取当前地址已持有的 SBTI NFT。</p>
+              </div>
+              <div id="nftHoldingsList" class="holdings-list">
+                <div class="holdings-empty">连接钱包后，这里会显示当前地址已持有的人格 NFT。</div>
+              </div>
+            </div>
           </div>
         </div>
 

@@ -7,6 +7,8 @@
   const mintNftBtn = document.getElementById("mintNftBtn");
   const nftResultMeta = document.getElementById("nftResultMeta");
   const nftContractMeta = document.getElementById("nftContractMeta");
+  const nftHoldingsMeta = document.getElementById("nftHoldingsMeta");
+  const nftHoldingsList = document.getElementById("nftHoldingsList");
   const mintStatus = document.getElementById("mintStatus");
   const resultScreen = document.getElementById("result");
   const resultTypeName = document.getElementById("resultTypeName");
@@ -18,12 +20,14 @@
   const abi = [
     "function mint(uint256 tokenId) external",
     "function hasMinted(address account, uint256 tokenId) external view returns (bool)",
-    "function balanceOf(address account, uint256 id) external view returns (uint256)"
+    "function balanceOf(address account, uint256 id) external view returns (uint256)",
+    "function balanceOfBatch(address[] accounts, uint256[] ids) external view returns (uint256[])"
   ];
 
   let currentAccount = "";
   let currentResult = null;
   let mintInFlight = false;
+  let holdingsRequestId = 0;
 
   function getWalletProvider() {
     const candidates = [];
@@ -76,6 +80,23 @@
     mintStatus.className = type ? `mint-status ${type}` : "mint-status";
   }
 
+  function escapeHtml(value) {
+    return String(value).replace(/[&<>"']/g, (character) => {
+      const entities = {
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        "\"": "&quot;",
+        "'": "&#39;"
+      };
+      return entities[character] || character;
+    });
+  }
+
+  function formatShortAddress(account) {
+    return account ? `${account.slice(0, 6)}...${account.slice(-4)}` : "";
+  }
+
   function formatWalletHint() {
     return "当前浏览器没有检测到可用的 EVM 钱包。请在 MetaMask、OKX 或 Binance Wallet 的内置浏览器中打开，或在桌面浏览器安装钱包扩展。";
   }
@@ -121,6 +142,141 @@
     return match ? match[1] : "";
   }
 
+  function setHoldingsEmpty(metaMessage, listMessage) {
+    if (nftHoldingsMeta) {
+      nftHoldingsMeta.textContent = metaMessage;
+    }
+
+    if (nftHoldingsList) {
+      nftHoldingsList.innerHTML = `<div class="holdings-empty">${escapeHtml(listMessage || metaMessage)}</div>`;
+    }
+  }
+
+  function resetHoldingsInfo() {
+    holdingsRequestId += 1;
+    setHoldingsEmpty(
+      "连接钱包后读取当前地址已持有的 SBTI NFT。",
+      "连接钱包后，这里会显示当前地址已持有的人格 NFT。"
+    );
+  }
+
+  function renderHoldings(ownedResults) {
+    if (!nftHoldingsMeta || !nftHoldingsList) {
+      return;
+    }
+
+    if (!ownedResults.length) {
+      setHoldingsEmpty(
+        `${formatShortAddress(currentAccount)} 当前还没有持有任何 SBTI NFT。`,
+        "当前地址还没有持有任何 SBTI NFT。"
+      );
+      return;
+    }
+
+    const totalBalance = ownedResults.reduce((sum, entry) => sum + entry.balance, 0n);
+    nftHoldingsMeta.textContent =
+      `${formatShortAddress(currentAccount)} 当前持有 ${ownedResults.length} 种 / ${totalBalance.toString()} 枚 SBTI NFT。`;
+
+    nftHoldingsList.innerHTML = ownedResults
+      .map(({ item, balance }) => {
+        const isCurrent = currentResult && item.code === currentResult.code;
+        return `
+          <div class="holding-card${isCurrent ? " current" : ""}">
+            <img src="${escapeHtml(item.imageUrl)}" alt="${escapeHtml(item.cn)}" loading="lazy" />
+            <div class="holding-copy">
+              <strong>#${escapeHtml(item.tokenId)} ${escapeHtml(item.code)}</strong>
+              <span>${escapeHtml(item.cn)}</span>
+              <div class="holding-meta-row">
+                <span class="holding-balance">x${escapeHtml(balance.toString())}</span>
+                ${isCurrent ? '<span class="holding-tag">当前结果</span>' : ""}
+              </div>
+            </div>
+          </div>
+        `;
+      })
+      .join("");
+  }
+
+  async function readOwnedResults(contract, account) {
+    try {
+      const batchBalances = await contract.balanceOfBatch(
+        results.map(() => account),
+        results.map((item) => BigInt(item.tokenId))
+      );
+
+      return results
+        .map((item, index) => ({ item, balance: batchBalances[index] }))
+        .filter(({ balance }) => balance > 0n);
+    } catch (batchError) {
+      const balances = await Promise.all(
+        results.map((item) => contract.balanceOf(account, item.tokenId))
+      );
+
+      return results
+        .map((item, index) => ({ item, balance: balances[index] }))
+        .filter(({ balance }) => balance > 0n);
+    }
+  }
+
+  async function updateHoldingsState() {
+    if (!nftHoldingsMeta || !nftHoldingsList) {
+      return;
+    }
+
+    const requestId = ++holdingsRequestId;
+
+    if (!config.contractAddress) {
+      setHoldingsEmpty(
+        "当前还没有配置 NFT 合约地址。",
+        "合约地址配置完成后，这里会显示当前地址的 NFT 持仓。"
+      );
+      return;
+    }
+
+    if (!hasWallet()) {
+      setHoldingsEmpty(
+        "当前浏览器没有检测到可用的 EVM 钱包，暂时无法读取 NFT 持仓。",
+        "请在 MetaMask、OKX 或 Binance Wallet 的内置浏览器中打开，或在桌面浏览器安装钱包扩展。"
+      );
+      return;
+    }
+
+    if (!currentAccount) {
+      resetHoldingsInfo();
+      return;
+    }
+
+    if (!(await isExpectedNetwork())) {
+      if (requestId !== holdingsRequestId) return;
+      setHoldingsEmpty(
+        `切到 ${config.chainName || "BSC 主网"} 后查看当前地址持仓。`,
+        `当前钱包不在 ${config.chainName || "BSC 主网"}，先切链再查看 NFT 持仓。`
+      );
+      return;
+    }
+
+    setHoldingsEmpty(
+      `正在读取 ${formatShortAddress(currentAccount)} 的 SBTI NFT 持仓...`,
+      "正在读取链上持仓..."
+    );
+
+    try {
+      const walletProvider = getWalletProvider();
+      const provider = new window.ethers.BrowserProvider(walletProvider);
+      const contract = new window.ethers.Contract(config.contractAddress, abi, provider);
+      const ownedResults = await readOwnedResults(contract, currentAccount);
+
+      if (requestId !== holdingsRequestId) return;
+      renderHoldings(ownedResults);
+    } catch (error) {
+      if (requestId !== holdingsRequestId) return;
+      setHoldingsEmpty(
+        `读取持仓失败：${getErrorMessage(error)}`,
+        "暂时没能读取链上持仓，请稍后再试。"
+      );
+    }
+  }
+
   function resetResultInfo() {
     currentResult = null;
     nftResultMeta.textContent = "答完题后，这里会显示当前结果对应的 NFT。";
@@ -128,6 +284,7 @@
       ? `合约地址：${config.contractAddress}`
       : "Mint 尚未启用：前端还没有配置合约地址。";
     mintNftBtn.disabled = true;
+    resetHoldingsInfo();
   }
 
   function syncResultInfo() {
@@ -149,11 +306,13 @@
     if (!config.contractAddress || !config.mintEnabled) {
       nftContractMeta.textContent = "Mint 尚未启用：前端还没有配置合约地址。";
       mintNftBtn.disabled = true;
+      updateHoldingsState();
       return;
     }
 
     nftContractMeta.textContent = `合约地址：${config.contractAddress}`;
     updateMintState();
+    updateHoldingsState();
   }
 
   async function ensureBscNetwork() {
@@ -212,7 +371,7 @@
         return false;
       }
 
-      await updateMintState();
+      await Promise.all([updateMintState(), updateHoldingsState()]);
       return true;
     } catch (error) {
       setStatus(`连接钱包失败：${getErrorMessage(error)}`, "error");
@@ -301,7 +460,7 @@
 
       await tx.wait();
       setStatus("Mint 成功，这枚结果 NFT 已经进你的钱包了。", "success");
-      await updateMintState();
+      await Promise.all([updateMintState(), updateHoldingsState()]);
     } catch (error) {
       setStatus(`Mint 失败：${getErrorMessage(error)}`, "error");
       mintNftBtn.disabled = false;
@@ -344,6 +503,35 @@
     }
   }
 
+  async function hydrateWalletState() {
+    if (!hasWallet()) {
+      resetHoldingsInfo();
+      return;
+    }
+
+    const walletProvider = getWalletProvider();
+    if (!walletProvider) {
+      resetHoldingsInfo();
+      return;
+    }
+
+    try {
+      const accounts = await walletProvider.request({ method: "eth_accounts" });
+      currentAccount = accounts[0] || "";
+      connectWalletBtn.textContent = currentAccount
+        ? `${currentAccount.slice(0, 6)}...${currentAccount.slice(-4)}`
+        : "连接钱包";
+
+      if (currentAccount) {
+        await Promise.all([updateMintState(), updateHoldingsState()]);
+      } else {
+        resetHoldingsInfo();
+      }
+    } catch (error) {
+      resetHoldingsInfo();
+    }
+  }
+
   if (connectWalletBtn) {
     connectWalletBtn.addEventListener("click", connectWallet);
   }
@@ -378,14 +566,17 @@
         ? `${currentAccount.slice(0, 6)}...${currentAccount.slice(-4)}`
         : "连接钱包";
       updateMintState();
+      updateHoldingsState();
     });
 
     walletProvider.on("chainChanged", () => {
       updateMintState();
+      updateHoldingsState();
     });
   }
 
   installHooks();
   installObservers();
   syncResultInfo();
+  hydrateWalletState();
 })();
