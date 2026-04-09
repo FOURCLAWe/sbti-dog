@@ -8,6 +8,12 @@
   const nftResultMeta = document.getElementById("nftResultMeta");
   const nftContractMeta = document.getElementById("nftContractMeta");
   const mintStatus = document.getElementById("mintStatus");
+  const resultScreen = document.getElementById("result");
+  const resultTypeName = document.getElementById("resultTypeName");
+  const submitBtn = document.getElementById("submitBtn");
+  const restartBtn = document.getElementById("restartBtn");
+  const startBtn = document.getElementById("startBtn");
+  const toTopBtn = document.getElementById("toTopBtn");
 
   const abi = [
     "function mint(uint256 tokenId) external",
@@ -109,20 +115,32 @@
   }
 
   function getCurrentResultCode() {
-    const title = document.getElementById("resultTypeName");
-    if (!title) return "";
-    const raw = title.textContent.trim();
+    if (!resultTypeName) return "";
+    const raw = resultTypeName.textContent.trim();
     const match = raw.match(/^([A-Za-z0-9!_-]+(?:-[A-Za-z0-9!_-]+)?)/);
     return match ? match[1] : "";
   }
 
+  function resetResultInfo() {
+    currentResult = null;
+    nftResultMeta.textContent = "答完题后，这里会显示当前结果对应的 NFT。";
+    nftContractMeta.textContent = config.contractAddress
+      ? `合约地址：${config.contractAddress}`
+      : "Mint 尚未启用：前端还没有配置合约地址。";
+    mintNftBtn.disabled = true;
+  }
+
   function syncResultInfo() {
+    if (!resultScreen || !resultScreen.classList.contains("active")) {
+      resetResultInfo();
+      return;
+    }
+
     const code = getCurrentResultCode();
     currentResult = resultMap.get(code) || null;
 
     if (!currentResult) {
-      nftResultMeta.textContent = "答完题后，这里会显示当前结果对应的 NFT。";
-      mintNftBtn.disabled = true;
+      resetResultInfo();
       return;
     }
 
@@ -303,8 +321,49 @@
     }
   }
 
+  function installObservers() {
+    if (resultTypeName && typeof MutationObserver !== "undefined") {
+      const titleObserver = new MutationObserver(() => {
+        window.setTimeout(syncResultInfo, 0);
+      });
+      titleObserver.observe(resultTypeName, {
+        childList: true,
+        characterData: true,
+        subtree: true
+      });
+    }
+
+    if (resultScreen && typeof MutationObserver !== "undefined") {
+      const screenObserver = new MutationObserver(() => {
+        window.setTimeout(syncResultInfo, 0);
+      });
+      screenObserver.observe(resultScreen, {
+        attributes: true,
+        attributeFilter: ["class"]
+      });
+    }
+  }
+
   if (connectWalletBtn) {
     connectWalletBtn.addEventListener("click", connectWallet);
+  }
+
+  if (submitBtn) {
+    submitBtn.addEventListener("click", () => {
+      window.setTimeout(syncResultInfo, 0);
+    });
+  }
+
+  if (restartBtn) {
+    restartBtn.addEventListener("click", resetResultInfo);
+  }
+
+  if (startBtn) {
+    startBtn.addEventListener("click", resetResultInfo);
+  }
+
+  if (toTopBtn) {
+    toTopBtn.addEventListener("click", resetResultInfo);
   }
 
   if (mintNftBtn) {
@@ -327,5 +386,6 @@
   }
 
   installHooks();
+  installObservers();
   syncResultInfo();
 })();
