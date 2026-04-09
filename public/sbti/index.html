@@ -433,6 +433,54 @@
       line-height: 1.7;
     }
 
+    .rule-card {
+      margin-top: 14px;
+      padding: 16px;
+      border-radius: 18px;
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(245, 249, 243, 0.9));
+    }
+
+    .rule-card h4 {
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--accent-strong);
+    }
+
+    .rule-list {
+      list-style: none;
+      padding: 0;
+      margin: 12px 0 0;
+      display: grid;
+      gap: 10px;
+    }
+
+    .rule-list li {
+      display: grid;
+      grid-template-columns: 24px 1fr;
+      gap: 10px;
+      align-items: start;
+      color: var(--text);
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    .rule-list strong {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+      border-radius: 999px;
+      background: var(--soft);
+      border: 1px solid var(--line);
+      color: var(--accent-strong);
+      font-size: 12px;
+      font-family: "SFMono-Regular", "Menlo", "Monaco", monospace;
+    }
+
     .intro-bottom-grid {
       display: grid;
       grid-template-columns: minmax(0, 1.12fr) minmax(0, 0.88fr);
@@ -1151,6 +1199,10 @@
       line-height: 1.7;
     }
 
+    .mint-box .rule-card {
+      margin-top: 4px;
+    }
+
     .mint-status {
       min-height: 22px;
       font-size: 13px;
@@ -1265,7 +1317,7 @@
                   <span>03</span>
                   <div>
                     <strong>进入持有者池</strong>
-                    <p>NFT 将作为分润凭证，记录你在这套人格收藏中的席位和身份。</p>
+                    <p>NFT 将作为分润凭证，记录你在这套人格收藏中的席位和身份；满足分红门槛后即可进入持有者池。</p>
                   </div>
                 </div>
                 <div class="flow-item">
@@ -1286,6 +1338,13 @@
                 <li>每到小时整，系统只拨付当前可分配税池的 20%，剩余 80% 自动递延到下一个自然小时继续拨付。</li>
                 <li>你的测试结果不是一张普通海报，而是一张可被铸造成分润凭证的人格卡。</li>
               </ul>
+              <div class="rule-card">
+                <h4>分红规则</h4>
+                <ul class="rule-list">
+                  <li><strong>1</strong><span>需要持有 SBTI NFT。</span></li>
+                  <li><strong>2</strong><span>同一钱包内持有 &gt; 10,000 $SBTI。</span></li>
+                </ul>
+              </div>
               <p class="launch-disclaimer">$SBTI 的税收分润结构、结算口径和分发规则以链上合约版本为准。</p>
             </article>
           </div>
@@ -1416,6 +1475,13 @@
                 <strong>1 / 结果</strong>
                 <span>每个钱包对每种人格结果最多 mint 一次。</span>
               </div>
+            </div>
+            <div class="rule-card">
+              <h4>分红规则</h4>
+              <ul class="rule-list">
+                <li><strong>1</strong><span>需要持有当前测试结果对应的 SBTI NFT。</span></li>
+                <li><strong>2</strong><span>同一钱包内持有 &gt; 10,000 $SBTI。</span></li>
+              </ul>
             </div>
             <p id="nftResultMeta">答完题后，这里会显示当前结果对应的 NFT。</p>
             <p id="nftContractMeta">合约已部署到 BSC 主网，答完题后可 mint 当前结果对应的人格 NFT。</p>
