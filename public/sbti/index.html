@@ -1172,7 +1172,7 @@
           <div class="intro-copy">
             <div class="intro-kicker">人格测试只是入口，NFT 才是你的链上座位</div>
             <h1>做完这份测试，<span class="headline-accent">把你的人格结果 mint 成一张可参与税收分润的 NFT。</span></h1>
-            <p class="sub">计划在 Flap 上发行代币。代币买卖都会收取 <strong>3%</strong> 交易税，税收统一进入指定合约；每到小时整，合约将把该小时税收的 <strong>20%</strong> 拨给 SBTI NFT 持有者。先测出你是谁，再决定你要不要把这张人格卡铸造成自己的链上凭证。</p>
+            <p class="sub">计划在 Flap 上发行代币。代币买卖都会收取 <strong>3%</strong> 交易税，税收统一进入指定合约；每到小时整，系统会先向 SBTI NFT 持有者池拨付当前可分配税池的 <strong>20%</strong>，剩余 <strong>80%</strong> 结转到下一个自然小时继续拨付，直到拨付完为止。先测出你是谁，再决定你要不要把这张人格卡铸造成自己的链上凭证。</p>
             <div class="hero-actions">
               <button id="startBtn" class="btn-primary">开始测试</button>
               <a href="#introMechanics" class="intro-link">查看分润机制</a>
@@ -1188,7 +1188,7 @@
               </div>
               <div class="intro-stat">
                 <strong>20%</strong>
-                <span>每个整点结算时，上一小时税收中的 20% 拨给持有者池。</span>
+                <span>每个整点只拨付当前可分配税池的 20%，剩余部分递延到下一个自然小时。</span>
               </div>
               <div class="intro-stat">
                 <strong>01h</strong>
@@ -1227,7 +1227,7 @@
                   <span>04</span>
                   <div>
                     <strong>小时整结算</strong>
-                    <p>代币税收进入专用合约后，每个整点结算上一小时税收，并向持有者池拨付 20%。</p>
+                    <p>代币税收进入专用合约后，每个整点先拨付当前可分配税池的 20%，剩余 80% 结转到下一个自然小时继续拨付，直到拨付完为止。</p>
                   </div>
                 </div>
               </div>
@@ -1238,7 +1238,7 @@
               <ul class="launch-bullets">
                 <li>代币将在 Flap 上发行，买卖双方都触发 3% 交易税。</li>
                 <li>税收资金统一打入指定合约地址，不走人工中转钱包。</li>
-                <li>每到小时整，系统结算该小时税收，并从中划出 20% 给 NFT 持有者池。</li>
+                <li>每到小时整，系统只拨付当前可分配税池的 20%，剩余 80% 自动递延到下一个自然小时继续拨付。</li>
                 <li>你的测试结果不是一张普通海报，而是一张可被铸造成分润凭证的人格卡。</li>
               </ul>
               <p class="launch-disclaimer">页面展示的是你计划上线的代币税收分润结构。最终比例、结算口径和分发规则以正式上线的链上合约版本为准。</p>
@@ -1250,7 +1250,7 @@
           <section class="intro-panel">
             <div class="panel-kicker">Hourly Tax Flow</div>
             <h3>这不是一张静态测试海报，而是一张挂钩代币税收节奏的链上卡片。</h3>
-            <p class="panel-sub">人格测试负责把用户映射进收藏品集合；Flap 代币负责产生链上税收；NFT 则作为记录你席位的分润凭证。首屏把三件事讲清楚，用户才会理解为什么要先测试、再 mint。</p>
+            <p class="panel-sub">人格测试负责把用户映射进收藏品集合；Flap 代币负责产生链上税收；NFT 则作为记录你席位的分润凭证。税池不会一小时内一次性放完，而是每个整点先释放 20%，剩余部分逐小时递延，直到拨付完为止。</p>
             <div class="tokenomics-rows">
               <div class="tokenomics-row">
                 <div class="tokenomics-label">Buy / Sell Tax</div>
@@ -1270,7 +1270,7 @@
             </div>
             <div class="tokenomics-note">
               <p>用户完成测试后，会得到 27 种人格之一，并获得对应的 NFT mint 资格。</p>
-              <p>代币税收先进入指定合约，再按小时整批结算，让整套玩法更像一张“有现金流叙事”的人格凭证。</p>
+              <p>代币税收先进入指定合约，再按自然小时逐批释放；每次只拨付 20%，剩余部分继续滚入后续小时，让整套玩法更像一张“有现金流叙事”的人格凭证。</p>
             </div>
           </section>
 
@@ -1354,7 +1354,7 @@
             <div class="mint-head">
               <div>
                 <h3>纪念 NFT / 分润凭证</h3>
-                <p class="mint-hero-copy">上线后，这张人格卡不只是纪念 NFT，也会成为你参与税收分润池的链上凭证。</p>
+                <p class="mint-hero-copy">上线后，这张人格卡不只是纪念 NFT，也会成为你参与税收分润池的链上凭证。税池按自然小时逐步释放，不会一次性发完。</p>
               </div>
               <div class="mint-chip">小时整结算</div>
             </div>
@@ -1365,7 +1365,7 @@
               </div>
               <div class="mint-perk">
                 <strong>20%</strong>
-                <span>该小时税收中的 20% 将拨给 NFT 持有者池。</span>
+                <span>每个整点只拨付当前可分配税池的 20%，剩余 80% 顺延到后续自然小时。</span>
               </div>
               <div class="mint-perk">
                 <strong>1 / 结果</strong>
