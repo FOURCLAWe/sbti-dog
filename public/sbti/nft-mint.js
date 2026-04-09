@@ -74,6 +74,21 @@
     return "当前浏览器没有检测到可用的 EVM 钱包。请在 MetaMask、OKX 或 Binance Wallet 的内置浏览器中打开，或在桌面浏览器安装钱包扩展。";
   }
 
+  function formatWrongNetworkHint() {
+    return `当前钱包不在 ${config.chainName || "BSC 主网"}。先切到 BSC，再 mint 这枚 NFT。`;
+  }
+
+  async function getCurrentChainId() {
+    const walletProvider = getWalletProvider();
+    if (!walletProvider) return "";
+    return walletProvider.request({ method: "eth_chainId" });
+  }
+
+  async function isExpectedNetwork() {
+    const currentChainId = await getCurrentChainId();
+    return currentChainId === config.chainIdHex;
+  }
+
   function getErrorMessage(error) {
     if (!error) return "未知错误";
 
@@ -202,6 +217,12 @@
     if (!currentAccount) {
       mintNftBtn.disabled = true;
       setStatus("检测到钱包后，先点“连接钱包”，再 mint 当前结果。");
+      return;
+    }
+
+    if (!(await isExpectedNetwork())) {
+      mintNftBtn.disabled = mintInFlight ? true : false;
+      setStatus(formatWrongNetworkHint(), "error");
       return;
     }
 
