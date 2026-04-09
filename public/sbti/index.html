@@ -249,16 +249,6 @@
       line-height: 1.7;
     }
 
-    .token-link-meta code {
-      font-family: "SFMono-Regular", "Menlo", "Monaco", monospace;
-      font-size: 12px;
-      color: var(--accent-strong);
-      background: rgba(255, 255, 255, 0.76);
-      border: 1px solid var(--line);
-      border-radius: 999px;
-      padding: 7px 10px;
-    }
-
     .token-link-badge {
       display: inline-flex;
       align-items: center;
@@ -1229,16 +1219,15 @@
           <div class="intro-copy">
             <div class="intro-kicker">人格测试只是入口，NFT 才是你的链上座位</div>
             <h1>做完这份测试，<span class="headline-accent">把你的人格结果 mint 成一张可参与税收分润的 NFT。</span></h1>
-            <p class="sub">计划在 Flap 上发行 <strong>$SBTI</strong>。$SBTI 买卖都会收取 <strong>3%</strong> 交易税，税收统一进入指定合约；每到小时整，系统会先向 SBTI NFT 持有者池拨付当前可分配税池的 <strong>20%</strong>，剩余 <strong>80%</strong> 结转到下一个自然小时继续拨付，直到拨付完为止。先测出你是谁，再决定你要不要把这张人格卡铸造成自己的链上凭证。</p>
+            <p class="sub"><strong>$SBTI</strong> 在 Flap 交易时，买卖都会收取 <strong>3%</strong> 交易税，税收统一进入指定合约；每到小时整，系统会先向 SBTI NFT 持有者池拨付当前可分配税池的 <strong>20%</strong>，剩余 <strong>80%</strong> 结转到下一个自然小时继续拨付，直到拨付完为止。先测出你是谁，再决定要不要把这张人格卡铸造成自己的链上凭证。</p>
             <div class="hero-actions">
               <button id="startBtn" class="btn-primary">开始测试</button>
               <a href="#introMechanics" class="intro-link">查看分润机制</a>
               <a id="tokenBuyLink" href="https://flap.sh/bnb/xxx" target="_blank" rel="noreferrer" class="intro-link intro-link-strong">Flap 购买 $SBTI</a>
             </div>
             <div class="token-link-meta">
-              <span class="token-link-badge">CA 待补</span>
-              <span>$SBTI 发行后，把真实合约地址发我，我会把购买链接从占位版补成正式版。</span>
-              <code>https://flap.sh/bnb/xxx</code>
+              <span class="token-link-badge">即将开放</span>
+              <span>$SBTI 开放交易后，这里会直达 Flap 购买页。</span>
             </div>
             <div class="intro-stats">
               <div class="intro-stat">
@@ -1297,14 +1286,14 @@
             </article>
 
             <article class="launch-card launch-card-secondary">
-              <div class="launch-kicker">计划机制</div>
+              <div class="launch-kicker">分润机制</div>
               <ul class="launch-bullets">
-                <li>$SBTI 将在 Flap 上发行，买卖双方都触发 3% 交易税。</li>
+                <li>Flap 上的 $SBTI 买卖双方都触发 3% 交易税。</li>
                 <li>税收资金统一打入指定合约地址，不走人工中转钱包。</li>
                 <li>每到小时整，系统只拨付当前可分配税池的 20%，剩余 80% 自动递延到下一个自然小时继续拨付。</li>
                 <li>你的测试结果不是一张普通海报，而是一张可被铸造成分润凭证的人格卡。</li>
               </ul>
-              <p class="launch-disclaimer">页面展示的是你计划上线的 $SBTI 税收分润结构。最终比例、结算口径和分发规则以正式上线的链上合约版本为准。</p>
+              <p class="launch-disclaimer">$SBTI 的税收分润结构、结算口径和分发规则以链上合约版本为准。</p>
             </article>
           </div>
         </div>
@@ -1417,7 +1406,7 @@
             <div class="mint-head">
               <div>
                 <h3>纪念 NFT / 分润凭证</h3>
-                <p class="mint-hero-copy">上线后，这张人格卡不只是纪念 NFT，也会成为你参与税收分润池的链上凭证。税池按自然小时逐步释放，不会一次性发完。</p>
+                <p class="mint-hero-copy">这张人格卡不只是纪念 NFT，也会成为你参与税收分润池的链上凭证。税池按自然小时逐步释放，不会一次性发完。</p>
               </div>
               <div class="mint-chip">小时整结算</div>
             </div>
@@ -1436,10 +1425,10 @@
               </div>
             </div>
             <p id="nftResultMeta">答完题后，这里会显示当前结果对应的 NFT。</p>
-            <p id="nftContractMeta">Mint 尚未启用：还没有配置 BSC 合约地址。</p>
+            <p id="nftContractMeta">合约已部署到 BSC 主网，答完题后可 mint 当前结果对应的人格 NFT。</p>
             <div class="mint-link-row">
               <a id="tokenBuyLinkResult" href="https://flap.sh/bnb/xxx" target="_blank" rel="noreferrer" class="intro-link">Flap 购买 $SBTI</a>
-              <span class="mint-link-note">当前是占位链接，真实 CA 上线后可直接替换 `xxx`。</span>
+              <span class="mint-link-note">购买入口会在正式开放交易后更新到对应页面。</span>
             </div>
             <div class="result-actions" style="margin-top: 0;">
               <div style="display:flex; gap:12px; flex-wrap:wrap;">
