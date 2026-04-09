@@ -591,6 +591,126 @@
       word-break: break-word;
     }
 
+    .engine-detail-grid {
+      display: grid;
+      grid-template-columns: minmax(260px, 0.75fr) minmax(0, 1.25fr);
+      gap: 12px;
+      margin-top: 18px;
+      align-items: stretch;
+    }
+
+    .engine-detail-card {
+      border-radius: 20px;
+      padding: 18px;
+      background: rgba(255, 255, 255, 0.82);
+      border: 1px solid rgba(54, 83, 59, 0.08);
+    }
+
+    .engine-detail-label {
+      display: block;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent-strong);
+    }
+
+    .engine-countdown-time {
+      display: block;
+      margin-top: 12px;
+      font-family: "SFMono-Regular", "Menlo", "Monaco", monospace;
+      font-size: clamp(30px, 4vw, 42px);
+      line-height: 1;
+      letter-spacing: -0.04em;
+      color: var(--text);
+    }
+
+    .engine-countdown-copy {
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.75;
+    }
+
+    .engine-history-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .engine-history-head strong {
+      display: block;
+      margin-top: 8px;
+      font-size: 22px;
+      line-height: 1.15;
+      letter-spacing: -0.03em;
+      color: var(--text);
+    }
+
+    .engine-history-meta {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 32px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: var(--soft);
+      border: 1px solid var(--line);
+      color: var(--accent-strong);
+      font-size: 12px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .engine-history-list {
+      margin-top: 14px;
+      min-height: 86px;
+      display: grid;
+      gap: 10px;
+      align-content: start;
+    }
+
+    .engine-history-item {
+      padding: 14px;
+      border-radius: 16px;
+      background: linear-gradient(180deg, #ffffff, #f8fcf7);
+      border: 1px solid rgba(54, 83, 59, 0.08);
+    }
+
+    .engine-history-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .engine-history-row + .engine-history-row {
+      margin-top: 8px;
+    }
+
+    .engine-history-item strong {
+      display: block;
+      font-size: 14px;
+      color: var(--text);
+    }
+
+    .engine-history-item span {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.7;
+    }
+
+    .engine-history-amount {
+      color: var(--accent-strong);
+      font-size: 16px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
     .engine-flow {
       display: grid;
       gap: 12px;
@@ -1340,6 +1460,7 @@
       .result-top { grid-template-columns: 1fr; }
       .artifact-grid { grid-template-columns: 1fr; }
       .engine-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .engine-detail-grid { grid-template-columns: 1fr; }
       .intro-stats,
       .mint-perks { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     }
@@ -1356,6 +1477,7 @@
       .intro-stats,
       .artifact-grid-secondary,
       .engine-grid,
+      .engine-detail-grid,
       .mint-perks,
       .dim-grid,
       .score-grid { grid-template-columns: 1fr; }
@@ -1518,6 +1640,23 @@
               <div class="engine-stat">
                 <strong>触发模式</strong>
                 <span id="dividendAutomationMode">Automation / 任何人可触发</span>
+              </div>
+            </div>
+            <div class="engine-detail-grid">
+              <div class="engine-detail-card">
+                <span class="engine-detail-label">距离下一整点</span>
+                <strong id="dividendCountdown" class="engine-countdown-time">--:--:--</strong>
+                <div id="dividendCountdownHint" class="engine-countdown-copy">每个自然小时都会重新开始倒计时。</div>
+              </div>
+              <div class="engine-detail-card">
+                <div class="engine-history-head">
+                  <div>
+                    <span class="engine-detail-label">分红记录</span>
+                    <strong>最近链上结算</strong>
+                  </div>
+                  <span id="dividendHistoryMeta" class="engine-history-meta"></span>
+                </div>
+                <div id="dividendHistoryList" class="engine-history-list"></div>
               </div>
             </div>
             <div class="engine-flow">

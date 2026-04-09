@@ -71,7 +71,7 @@ contract SBTIHourlyDividendVault is Ownable, ReentrancyGuard, IAutomationCompati
         if (registryAddress == address(0)) revert InvalidRegistry();
 
         holderRegistry = ISBTIEligibleHolderRegistry(registryAddress);
-        nextSettlementAt = block.timestamp + SETTLEMENT_INTERVAL;
+        nextSettlementAt = _nextNaturalHour(block.timestamp);
     }
 
     receive() external payable {
@@ -84,6 +84,10 @@ contract SBTIHourlyDividendVault is Ownable, ReentrancyGuard, IAutomationCompati
         }
 
         return address(this).balance - totalReservedForClaims;
+    }
+
+    function _nextNaturalHour(uint256 timestamp) internal pure returns (uint256) {
+        return ((timestamp / SETTLEMENT_INTERVAL) + 1) * SETTLEMENT_INTERVAL;
     }
 
     function previewNextRelease() public view returns (uint256) {
@@ -142,7 +146,7 @@ contract SBTIHourlyDividendVault is Ownable, ReentrancyGuard, IAutomationCompati
         uint256 releaseAmount = (availableBalance * RELEASE_BPS) / BPS_DENOMINATOR;
 
         lastSettlementAt = block.timestamp;
-        nextSettlementAt = block.timestamp + SETTLEMENT_INTERVAL;
+        nextSettlementAt = _nextNaturalHour(block.timestamp);
         lastReleaseAmount = releaseAmount;
 
         if (releaseAmount == 0 || holderCount == 0) {
