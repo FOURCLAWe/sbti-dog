@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Egg Account | Egg on Tempo</title>
+    <meta
+      name="description"
+      content="Connect a wallet for Egg on Tempo and view native balance, Egg NFT holdings, and $EGG holdings."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DotGothic16&family=M+PLUS+Rounded+1c:wght@400;500;700;800&family=Mochiy+Pop+One&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="icon" type="image/svg+xml" href="../assets/egg-mark.svg" />
+    <link rel="stylesheet" href="../styles.css" />
+  </head>
+  <body>
+    <main class="egg-page egg-docs egg-account">
+      <header class="site-header">
+        <a class="brand-link" href="../index.html" aria-label="Back to Egg home">
+          <img src="../assets/egg-mark.svg" alt="Egg logo" />
+          <div class="brand-copy">
+            <p class="brand-name">Egg Account</p>
+            <p class="brand-sub">Wallet & Holdings</p>
+          </div>
+        </a>
+
+        <nav class="site-nav" aria-label="Account navigation">
+          <a href="../index.html">Home</a>
+          <a href="#holdings">Holdings</a>
+          <a href="../docs/index.html">Docs</a>
+        </nav>
+
+        <div class="header-actions">
+          <a class="button button-secondary" href="../index.html">Back to Site</a>
+          <button class="button button-primary wallet-connect" id="wallet-connect" type="button">
+            Connect Wallet
+          </button>
+        </div>
+      </header>
+
+      <section id="holdings" class="docs-content reveal">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Holdings</p>
+            <h2>NFTs and tokens.</h2>
+          </div>
+          <p class="section-kicker">Connect a wallet to view Egg NFT IDs and the current $EGG position.</p>
+        </div>
+
+        <div class="portfolio-tabs" role="tablist" aria-label="Holdings view">
+          <button
+            class="portfolio-tab is-active"
+            type="button"
+            role="tab"
+            aria-selected="true"
+            data-account-tab="items"
+          >
+            Egg NFTs
+          </button>
+          <button
+            class="portfolio-tab"
+            type="button"
+            role="tab"
+            aria-selected="false"
+            data-account-tab="tokens"
+          >
+            $EGG
+          </button>
+        </div>
+
+        <div class="portfolio-panel is-active" role="tabpanel" data-account-panel="items">
+          <div class="portfolio-toolbar">
+            <label class="portfolio-search" for="nft-search">
+              <span>Search by ID</span>
+              <input id="nft-search" type="search" placeholder="Search Egg #" />
+            </label>
+
+            <article class="portfolio-summary-card">
+              <span>Held NFTs</span>
+              <strong id="wallet-nft-count-large">-</strong>
+            </article>
+          </div>
+
+          <div class="portfolio-chip-list" id="wallet-nft-chip-list" aria-live="polite"></div>
+          <div class="nft-grid" id="wallet-nft-grid" aria-live="polite"></div>
+          <p class="portfolio-note" id="wallet-nft-grid-note">Connect to view holdings.</p>
+        </div>
+
+        <div class="portfolio-panel" role="tabpanel" data-account-panel="tokens">
+          <div class="token-position-card">
+            <div class="token-position-head">
+              <div>
+                <span>$EGG Balance</span>
+                <strong id="wallet-egg-token-display">-</strong>
+              </div>
+              <span class="value-tag">Hatched supply</span>
+            </div>
+
+            <p id="wallet-egg-token-description">Connect to view holdings.</p>
+
+            <div class="docs-hero-actions">
+              <a class="button button-secondary" href="../index.html#trade">Open Trade</a>
+              <a class="button button-primary" href="../index.html#hatch">Hatch More</a>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script src="../app.js" type="module"></script>
+  </body>
+</html>

@@ -1,0 +1,2203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Token - TempoBoard</title>
+  <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg?v=20260403logo2">
+  <link rel="apple-touch-icon" href="/assets/logo.svg?v=20260403logo2">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.7.0/ethers.umd.min.js"></script>
+  <script src="https://unpkg.com/lightweight-charts@4.2.0/dist/lightweight-charts.standalone.production.js"></script>
+  <script>
+    (() => {
+      try {
+        localStorage.setItem("tempomeme-theme", "dark");
+      } catch (e) {}
+      document.documentElement.dataset.theme = "dark";
+      document.documentElement.style.colorScheme = "dark";
+    })();
+  </script>
+  <style>
+    :root {
+      --bg: #050505;
+      --bg-soft: #0d0f0d;
+      --panel: rgba(22,24,21,0.88);
+      --panel-2: rgba(31,34,30,0.88);
+      --panel-3: rgba(18,19,18,0.94);
+      --line: rgba(255,255,255,0.08);
+      --text: #f4f3ee;
+      --muted: #9aa194;
+      --green: #97ff5d;
+      --green-soft: rgba(151,255,93,0.12);
+      --green-line: rgba(151,255,93,0.22);
+      --gold: #e8bf52;
+      --gold-soft: rgba(232,191,82,0.12);
+      --gold-line: rgba(232,191,82,0.22);
+      --red: #ff8f80;
+      --shadow: 0 24px 60px rgba(0,0,0,0.36);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Manrope", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(151,255,93,0.08), transparent 18%),
+        radial-gradient(circle at 82% 8%, rgba(232,191,82,0.13), transparent 20%),
+        linear-gradient(180deg, #040504 0%, #090a09 48%, #050505 100%);
+      background-attachment: fixed;
+    }
+
+    body::before,
+    body::after {
+      content: "";
+      position: fixed;
+      pointer-events: none;
+      z-index: 0;
+      border-radius: 10px;
+      filter: blur(90px);
+      opacity: 0.38;
+    }
+
+    body::before {
+      top: -90px;
+      right: -60px;
+      width: 340px;
+      height: 340px;
+      background: rgba(232,191,82,0.1);
+    }
+
+    body::after {
+      left: -110px;
+      bottom: 90px;
+      width: 300px;
+      height: 300px;
+      background: rgba(151,255,93,0.08);
+    }
+
+    h1, h2, h3 { font-family: "Space Grotesk", sans-serif; letter-spacing: -0.03em; }
+    @keyframes riseIn {
+      from { opacity: 0; transform: translateY(18px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes softPulse {
+      0%, 100% { box-shadow: 0 0 0 rgba(141,255,85,0); }
+      50% { box-shadow: 0 0 24px rgba(141,255,85,0.1); }
+    }
+
+    .page {
+      position: relative;
+      z-index: 1;
+      width: min(1480px, calc(100% - 28px));
+      margin: 0 auto;
+      padding: 18px 0 28px;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .topbar-left, .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .pill, .link-btn {
+      min-height: 42px;
+      padding: 0 16px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      background: linear-gradient(180deg, rgba(30,33,29,0.95), rgba(18,20,18,0.98));
+      border: 1px solid rgba(255,255,255,0.07);
+      color: var(--text);
+      font-size: 13px;
+      font-weight: 700;
+      text-decoration: none;
+      transition: transform 180ms ease, border-color 180ms ease, background 180ms ease;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 390px;
+      gap: 16px;
+      align-items: start;
+    }
+
+    .panel {
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(180deg, rgba(22,24,21,0.92), rgba(12,13,12,0.98));
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+      animation: riseIn 420ms ease both;
+    }
+
+    .panel::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+      pointer-events: none;
+    }
+
+    .token-hero {
+      padding: 22px;
+      margin-bottom: 14px;
+      background:
+        radial-gradient(circle at top right, rgba(232,191,82,0.16), transparent 34%),
+        radial-gradient(circle at left center, rgba(151,255,93,0.08), transparent 28%);
+    }
+
+    .token-hero-top {
+      display: grid;
+      grid-template-columns: 86px minmax(0, 1fr) auto;
+      gap: 16px;
+      align-items: center;
+    }
+
+    .token-icon {
+      width: 92px;
+      height: 92px;
+      border-radius: 14px;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #f1ca64, #d7a528);
+      color: #151106;
+      font-size: 28px;
+      font-weight: 900;
+      border: 1px solid rgba(232,191,82,0.18);
+      transition: transform 220ms ease, box-shadow 220ms ease;
+    }
+
+    .token-name {
+      font-size: 44px;
+      line-height: 0.96;
+      margin: 0 0 6px;
+    }
+
+    .token-subline {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .token-description {
+      margin: 12px 0 0;
+      max-width: 760px;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.65;
+    }
+
+    .token-description[hidden] {
+      display: none !important;
+    }
+
+    .token-links {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+
+    .token-links[hidden] {
+      display: none !important;
+    }
+
+    .token-link {
+      min-height: 34px;
+      padding: 0 14px;
+      border-radius: 10px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: linear-gradient(180deg, rgba(22,24,21,0.96), rgba(12,13,12,0.98));
+      border: 1px solid rgba(255,255,255,0.08);
+      color: var(--text);
+      text-decoration: none;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.01em;
+      transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease, color 180ms ease;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
+    }
+
+    .token-link:hover {
+      transform: translateY(-2px);
+      border-color: rgba(232,191,82,0.2);
+      box-shadow: 0 16px 30px rgba(232,191,82,0.14);
+      color: var(--green);
+    }
+
+    .token-link-label {
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; }
+
+    .price-box {
+      text-align: right;
+      min-width: 210px;
+    }
+
+    .price-main {
+      font-family: "Space Grotesk", sans-serif;
+      font-size: 38px;
+      font-weight: 700;
+      line-height: 1;
+    }
+
+    .price-sub {
+      margin-top: 8px;
+      color: var(--green);
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .stat-box {
+      padding: 16px;
+      border-radius: 12px;
+      background: linear-gradient(180deg, rgba(16,18,16,0.96), rgba(11,12,11,0.98));
+      border: 1px solid rgba(255,255,255,0.07);
+      transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.02);
+    }
+
+    .stat-label {
+      color: var(--muted);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-weight: 800;
+    }
+
+    .stat-value {
+      margin-top: 10px;
+      font-size: 22px;
+      font-weight: 800;
+    }
+
+    .left-stack, .right-stack {
+      display: grid;
+      gap: 14px;
+    }
+
+    .chart-panel, .table-panel, .trade-panel {
+      padding: 18px;
+    }
+
+    .section-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+
+    .section-title {
+      font-size: 24px;
+      font-weight: 700;
+    }
+
+    .section-copy {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    .chart-shell {
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.07);
+      background: linear-gradient(180deg, rgba(21,23,27,0.98), rgba(17,19,23,1));
+    }
+
+    .chart-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 12px;
+      min-height: 46px;
+      padding: 0 14px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      background: #202124;
+    }
+
+    .toolbar-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .interval-group { gap: 6px; }
+
+    .chart-tool {
+      min-height: 28px;
+      padding: 0 8px;
+      border-radius: 6px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: #d5d8de;
+      font-size: 12px;
+      font-weight: 700;
+      border: 1px solid transparent;
+      background: transparent;
+      cursor: pointer;
+      transition: transform 160ms ease, border-color 160ms ease, background 160ms ease, color 160ms ease;
+    }
+
+    .chart-tool.active {
+      color: #5d85ff;
+      background: transparent;
+      border-color: transparent;
+    }
+
+    .ohlc-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-height: 38px;
+      padding: 0 14px;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      color: #cfd5df;
+      font-size: 11px;
+      font-weight: 700;
+      flex-wrap: wrap;
+      background: #1d1f23;
+    }
+
+    .ohlc-bar strong {
+      color: #f0f3f8;
+      font-weight: 800;
+    }
+
+    .ohlc-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 999px;
+      background: #19c1a5;
+      box-shadow: 0 0 0 6px rgba(25,193,165,0.14);
+      flex-shrink: 0;
+    }
+
+    .ohlc-bar .up { color: var(--green); }
+    .ohlc-bar .down { color: var(--red); }
+
+    .chart-canvas-wrap {
+      position: relative;
+      height: 420px;
+      padding: 0;
+      background: #1b1d21;
+    }
+
+    #priceChart {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .chart-volume-readout {
+      position: absolute;
+      left: 14px;
+      bottom: 14px;
+      color: #33cfd0;
+      font-size: 11px;
+      font-weight: 800;
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    .chart-statusbar {
+      min-height: 38px;
+      padding: 0 14px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 10px;
+      border-top: 1px solid rgba(255,255,255,0.05);
+      background: #1a1c20;
+    }
+
+    .chart-status-meta {
+      color: #c6ccd5;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .chart-meta-link {
+      color: #b6bcc7;
+    }
+
+    .chart-auto {
+      color: #5d85ff;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .tabs {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .tab-btn {
+      min-height: 46px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: linear-gradient(180deg, rgba(16,18,16,0.96), rgba(11,12,11,0.98));
+      color: var(--text);
+      font-size: 15px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: transform 180ms ease, border-color 180ms ease, background 180ms ease;
+    }
+
+    .tab-btn.active {
+      background: var(--green-soft);
+      border-color: var(--green-line);
+      color: var(--green);
+    }
+
+    .field-stack { display: grid; gap: 12px; }
+
+    .field label {
+      display: block;
+      margin-bottom: 8px;
+      color: #96a391;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-weight: 800;
+    }
+
+    .input {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: var(--bg-soft);
+      color: var(--text);
+      padding: 13px 14px;
+      font-size: 14px;
+      outline: none;
+      transition: box-shadow 180ms ease, border-color 180ms ease;
+    }
+
+    .preset-row {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .slippage-wrap {
+      display: grid;
+      gap: 8px;
+      padding: 12px 14px;
+      border-radius: 10px;
+      background: rgba(255,255,255,0.02);
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .slippage-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .slippage-title {
+      color: #96a391;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-weight: 800;
+    }
+
+    .slippage-value {
+      color: var(--text);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .slippage-controls {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 92px;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .slippage-presets {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .slippage-custom {
+      position: relative;
+    }
+
+    .slippage-input {
+      padding-right: 28px;
+      text-align: right;
+    }
+
+    .slippage-suffix {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+      pointer-events: none;
+    }
+
+    .preset-btn {
+      min-height: 38px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.07);
+      background: linear-gradient(180deg, rgba(28,30,28,0.96), rgba(17,18,17,0.98));
+      color: var(--text);
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 160ms ease, border-color 160ms ease, background 160ms ease;
+    }
+
+    .metric-list {
+      display: grid;
+      gap: 8px;
+    }
+
+    .metric-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      min-height: 42px;
+      padding: 0 14px;
+      align-items: center;
+      border-radius: 10px;
+      background: var(--panel-3);
+      color: var(--muted);
+      font-size: 13px;
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .metric-row span:last-child {
+      color: var(--text);
+      font-weight: 700;
+    }
+
+    .trade-action {
+      width: 100%;
+      min-height: 48px;
+      border: none;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 900;
+      cursor: pointer;
+      transition: transform 180ms ease, filter 180ms ease, box-shadow 180ms ease;
+    }
+
+    .trade-action.buy {
+      background: linear-gradient(135deg, #f1ca64, #d7a528);
+      color: #151106;
+    }
+
+    .trade-action.sell {
+      background: linear-gradient(180deg, rgba(28,30,28,0.96), rgba(17,18,17,0.98));
+      color: #f0f2ef;
+      border: 1px solid rgba(255,255,255,0.07);
+    }
+
+    .interactive-trade {
+      --trade-accent: var(--green);
+      --trade-soft: rgba(151,255,93,0.14);
+      --trade-line: rgba(151,255,93,0.26);
+      --trade-glow: rgba(151,255,93,0.22);
+    }
+
+    .interactive-trade.trade-mode-sell {
+      --trade-accent: var(--red);
+      --trade-soft: rgba(255,143,128,0.14);
+      --trade-line: rgba(255,143,128,0.24);
+      --trade-glow: rgba(255,143,128,0.18);
+    }
+
+    .interactive-trade::after {
+      content: "";
+      position: absolute;
+      inset: auto -70px -90px auto;
+      width: 180px;
+      height: 180px;
+      border-radius: 999px;
+      background: var(--trade-glow);
+      filter: blur(56px);
+      pointer-events: none;
+      opacity: 0.9;
+    }
+
+    .interactive-trade .section-title,
+    .interactive-trade .field label {
+      color: var(--trade-accent);
+    }
+
+    .interactive-trade .tab-btn {
+      border-color: var(--trade-line);
+      color: var(--trade-accent);
+      background: linear-gradient(180deg, rgba(15,17,15,0.98), rgba(9,10,9,0.99));
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.02);
+    }
+
+    .interactive-trade .tab-btn.active {
+      background: linear-gradient(180deg, var(--trade-soft), rgba(255,255,255,0.02));
+      border-color: var(--trade-line);
+      color: var(--trade-accent);
+      box-shadow: 0 14px 30px var(--trade-glow), inset 0 1px 0 rgba(255,255,255,0.04);
+    }
+
+    .interactive-trade .preset-btn {
+      border-color: var(--trade-line);
+      color: var(--trade-accent);
+      background: linear-gradient(180deg, rgba(20,22,20,0.98), rgba(11,12,11,0.99));
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.02);
+    }
+
+    .interactive-trade .preset-btn.active {
+      background: linear-gradient(180deg, var(--trade-soft), rgba(255,255,255,0.03));
+      border-color: var(--trade-line);
+      box-shadow: 0 12px 26px var(--trade-glow), inset 0 1px 0 rgba(255,255,255,0.04);
+      transform: translateY(-1px);
+    }
+
+    .interactive-trade .metric-row {
+      border-color: rgba(255,255,255,0.04);
+    }
+
+    .interactive-trade .metric-row span:first-child {
+      color: var(--trade-accent);
+      opacity: 0.88;
+    }
+
+    .interactive-trade .input {
+      border-color: rgba(255,255,255,0.08);
+      background:
+        linear-gradient(180deg, rgba(11,12,11,0.98), rgba(8,9,8,1)),
+        linear-gradient(90deg, var(--trade-soft), transparent 40%);
+      background-blend-mode: normal;
+    }
+
+    .interactive-trade .input:focus {
+      box-shadow: 0 0 0 4px var(--trade-soft), 0 14px 30px var(--trade-glow);
+      border-color: var(--trade-line);
+    }
+
+    .interactive-trade.trade-mode-buy .trade-action.buy {
+      background: linear-gradient(135deg, #b6ff89, #70ea2d);
+      color: #081004;
+      box-shadow: 0 18px 34px rgba(151,255,93,0.28);
+      border: none;
+    }
+
+    .interactive-trade.trade-mode-sell .trade-action.sell {
+      background: linear-gradient(135deg, #ffb3a8, #ff7364);
+      color: #240907;
+      box-shadow: 0 18px 34px rgba(255,143,128,0.24);
+      border: none;
+    }
+
+    .trade-status {
+      min-height: 20px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    .progress-wrap {
+      padding: 16px;
+      border-radius: 12px;
+      background: linear-gradient(180deg, rgba(16,18,16,0.96), rgba(11,12,11,0.98));
+      border: 1px solid rgba(255,255,255,0.07);
+    }
+
+    .progress-track {
+      height: 10px;
+      border-radius: 999px;
+      background: #0a0b0a;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.05);
+      margin-top: 10px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #d6a22a, #96ff61);
+      transition: width 0.45s ease;
+    }
+
+    .table-wrap {
+      overflow: auto;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.07);
+      background: linear-gradient(180deg, rgba(16,18,16,0.96), rgba(11,12,11,0.98));
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 720px;
+    }
+
+    th, td {
+      padding: 14px 12px;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      text-align: left;
+      font-size: 13px;
+    }
+
+    th {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .buy-text { color: var(--green); font-weight: 800; }
+    .sell-text { color: var(--red); font-weight: 800; }
+
+    .pill:hover, .link-btn:hover, .chart-tool:hover, .tab-btn:hover, .preset-btn:hover {
+      transform: translateY(-2px);
+      border-color: rgba(232,191,82,0.16);
+    }
+
+    .interactive-trade .tab-btn:hover,
+    .interactive-trade .preset-btn:hover {
+      border-color: var(--trade-line);
+      box-shadow: 0 10px 24px var(--trade-glow);
+    }
+
+    .trade-action:hover {
+      transform: translateY(-2px);
+      filter: brightness(1.03);
+      box-shadow: 0 18px 32px rgba(232,191,82,0.18);
+    }
+
+    .token-hero:hover .token-icon {
+      transform: translateY(-2px) scale(1.02);
+      box-shadow: 0 14px 24px rgba(232,191,82,0.16);
+    }
+
+    .stat-box:hover {
+      transform: translateY(-3px);
+      border-color: rgba(232,191,82,0.16);
+      animation: softPulse 2.2s ease-in-out infinite;
+    }
+
+    .input:focus {
+      box-shadow: 0 0 0 4px rgba(232,191,82,0.07);
+      border-color: rgba(232,191,82,0.18);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation: none !important;
+        transition: none !important;
+      }
+    }
+
+    .empty-state {
+      min-height: 160px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--muted);
+      font-size: 14px;
+      background: linear-gradient(180deg, rgba(16,18,16,0.96), rgba(11,12,11,0.98));
+      border: 1px dashed rgba(255,255,255,0.1);
+      border-radius: 12px;
+    }
+
+    @media (max-width: 1180px) {
+      .layout { grid-template-columns: 1fr; }
+      .right-stack { order: -1; }
+    }
+
+    @media (max-width: 860px) {
+      .token-hero-top {
+        grid-template-columns: 72px 1fr;
+      }
+      .price-box {
+        grid-column: 1 / -1;
+        text-align: left;
+      }
+      .stats-row {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+      .chart-statusbar {
+        min-height: auto;
+        padding: 12px 16px;
+        justify-content: flex-start;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .page {
+        width: calc(100% - 16px);
+        padding-top: 12px;
+      }
+      .topbar {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .stats-row, .preset-row {
+        grid-template-columns: 1fr;
+      }
+      .token-name {
+        font-size: 30px;
+      }
+      .chart-toolbar {
+        padding: 10px 12px;
+        align-items: flex-start;
+      }
+      .chart-canvas-wrap {
+        height: 340px;
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="/assets/theme.css?v=20260404a">
+  <script src="/assets/theme.js?v=20260330d" defer></script>
+  <script src="/assets/wallet.js?v=20260322b"></script>
+</head>
+<body>
+  <main class="page">
+    <div class="topbar">
+      <div class="topbar-left">
+        <a href="/tokens" class="link-btn">← Back to Tokens</a>
+      </div>
+      <div class="topbar-right">
+        <button type="button" class="theme-toggle compact" data-theme-toggle>
+          <span class="theme-toggle-icon" aria-hidden="true">☀</span>
+          <span class="theme-toggle-label">Light Mode</span>
+        </button>
+        <button onclick="connectWallet()" id="connectBtn" class="pill" style="cursor:pointer;">Connect Wallet</button>
+      </div>
+    </div>
+
+    <section class="panel token-hero">
+      <div class="token-hero-top">
+        <div id="tokenIcon" class="token-icon">?</div>
+        <div>
+          <h1 id="tokenName" class="token-name">Loading...</h1>
+          <div class="token-subline">
+            <span id="tokenSymbol">-</span>
+            <span id="tokenAddr" class="mono"></span>
+            <span id="creatorAddr" class="mono"></span>
+            <span id="createdTime"></span>
+          </div>
+          <p id="tokenDescription" class="token-description" hidden></p>
+          <div id="tokenLinks" class="token-links" hidden></div>
+        </div>
+        <div class="price-box">
+          <div id="tokenPrice" class="price-main">-.--</div>
+          <div id="priceChange" class="price-sub">Live Price</div>
+        </div>
+      </div>
+
+      <div class="stats-row">
+        <div class="stat-box">
+          <div class="stat-label">Market Cap</div>
+          <div id="marketCap" class="stat-value">-</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-label">Curve Progress</div>
+          <div id="curveProgressTop" class="stat-value">0.0%</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-label">Holders</div>
+          <div id="holdersCount" class="stat-value">-</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-label">Status</div>
+          <div id="graduatedStatus" class="stat-value">Live</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="layout">
+      <div class="left-stack">
+        <section class="panel chart-panel">
+          <div class="section-head">
+            <div class="section-title">Price Chart</div>
+            <div id="chartPrice" class="pill">-.--</div>
+          </div>
+          <div class="chart-shell">
+            <div class="chart-toolbar">
+              <div class="toolbar-group interval-group">
+                <button id="interval-1m" type="button" class="chart-tool active" onclick="setChartInterval('1m')">1m</button>
+                <button id="interval-5m" type="button" class="chart-tool" onclick="setChartInterval('5m')">5m</button>
+                <button id="interval-15m" type="button" class="chart-tool" onclick="setChartInterval('15m')">15m</button>
+                <button id="interval-1h" type="button" class="chart-tool" onclick="setChartInterval('1h')">1h</button>
+                <button id="interval-4h" type="button" class="chart-tool" onclick="setChartInterval('4h')">4h</button>
+                <button id="interval-1d" type="button" class="chart-tool" onclick="setChartInterval('1d')">1d</button>
+              </div>
+            </div>
+            <div id="ohlcBar" class="ohlc-bar">
+              <span class="ohlc-dot"></span>
+              <span>O=<strong>-</strong></span>
+              <span>H=<strong>-</strong></span>
+              <span>L=<strong>-</strong></span>
+              <span>C=<strong>-</strong></span>
+            </div>
+            <div class="chart-canvas-wrap">
+              <div id="priceChart"></div>
+              <div id="chartVolumeReadout" class="chart-volume-readout">--</div>
+            </div>
+            <div class="chart-statusbar">
+              <div class="toolbar-group chart-status-meta">
+                <span id="chartClock">--:--:-- UTC+00:00</span>
+                <span class="chart-meta-link">%</span>
+                <span class="chart-meta-link">log</span>
+                <span class="chart-auto">auto</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel table-panel">
+          <div class="section-head">
+            <div class="section-title">Activity</div>
+          </div>
+          <div id="activityTableWrap" class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Wallet</th>
+                  <th>Side</th>
+                  <th>pathUSD</th>
+                  <th>Tokens</th>
+                  <th>Block</th>
+                </tr>
+              </thead>
+              <tbody id="activityTableBody">
+                <tr><td colspan="5">Loading...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="panel table-panel">
+          <div class="section-head">
+            <div class="section-title">Holders</div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Address</th>
+                  <th>Balance</th>
+                  <th>Share</th>
+                </tr>
+              </thead>
+              <tbody id="holdersTableBody">
+                <tr><td colspan="3">Loading...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+
+      <aside class="right-stack">
+        <section id="tradePanel" class="panel trade-panel interactive-trade trade-mode-buy">
+          <div class="section-head">
+            <div class="section-title">Trade</div>
+          </div>
+
+          <div class="tabs">
+            <button id="buyTab" class="tab-btn active" onclick="setTradeMode('buy')">Buy</button>
+            <button id="sellTab" class="tab-btn" onclick="setTradeMode('sell')">Sell</button>
+          </div>
+
+          <div class="field-stack">
+            <div class="metric-list">
+              <div class="metric-row"><span>pathUSD Balance</span><span id="walletUsdcBalance">-</span></div>
+              <div class="metric-row"><span>Your Balance</span><span id="walletTokenBalance">-</span></div>
+            </div>
+
+            <div class="field">
+              <label id="amountLabel" for="tradeAmount">Buy Amount (pathUSD)</label>
+              <input id="tradeAmount" class="input" type="number" min="0" step="any" value="100" oninput="handleTradeAmountInput()">
+            </div>
+
+            <div id="buyPresetRow" class="preset-row">
+              <button class="preset-btn" data-preset="10" onclick="setPreset(10, this)">10</button>
+              <button class="preset-btn active" data-preset="100" onclick="setPreset(100, this)">100</button>
+              <button class="preset-btn" data-preset="500" onclick="setPreset(500, this)">500</button>
+            </div>
+
+            <div id="sellPercentRow" class="preset-row" style="display:none;">
+              <button class="preset-btn" data-percent="25" onclick="setSellPercent(25, this)">25%</button>
+              <button class="preset-btn" data-percent="50" onclick="setSellPercent(50, this)">50%</button>
+              <button class="preset-btn" data-percent="100" onclick="setSellPercent(100, this)">100%</button>
+            </div>
+
+            <div class="slippage-wrap">
+              <div class="slippage-head">
+                <span class="slippage-title">Slippage</span>
+                <span id="slippageValue" class="slippage-value">1%</span>
+              </div>
+              <div class="slippage-controls">
+                <div id="slippagePresetRow" class="slippage-presets">
+                  <button class="preset-btn" data-slippage="0.5" onclick="setSlippagePreset(0.5, this)">0.5%</button>
+                  <button class="preset-btn active" data-slippage="1" onclick="setSlippagePreset(1, this)">1%</button>
+                  <button class="preset-btn" data-slippage="3" onclick="setSlippagePreset(3, this)">3%</button>
+                </div>
+                <div class="slippage-custom">
+                  <input id="slippageInput" class="input slippage-input" type="number" min="0.1" max="50" step="0.1" value="1" oninput="handleSlippageInput()">
+                  <span class="slippage-suffix">%</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="metric-list">
+              <div class="metric-row"><span id="estimateLabel">You Receive</span><span id="tradeEstimate">-.--</span></div>
+              <div class="metric-row"><span>Minimum Received</span><span id="minimumReceived">-.--</span></div>
+            </div>
+
+            <button id="tradeActionBtn" onclick="submitTrade()" class="trade-action buy">Buy</button>
+            <div id="tradeStatus" class="trade-status"></div>
+          </div>
+        </section>
+
+        <section class="panel trade-panel">
+          <div class="section-head">
+            <div class="section-title">Progress</div>
+            <div id="graduatedBadge" class="pill" style="display:none;">Graduated</div>
+          </div>
+
+          <div class="progress-wrap">
+            <div class="metric-row"><span>Curve Progress</span><span id="curveProgressLabel">0.0%</span></div>
+            <div class="progress-track">
+              <div id="progressFill" class="progress-fill" style="width:0%"></div>
+            </div>
+            <div class="metric-row" style="margin-top:10px;"><span>Completion</span><span id="curveProgressBottom">0.0%</span></div>
+          </div>
+        </section>
+      </aside>
+    </section>
+  </main>
+
+  <script>
+    const USDC_ADDRESS = "0x20c0000000000000000000000000000000000000";
+    const PRIMARY_LAUNCH_CONTRACT = "0x5866914946e4B7c7B2C789cc5EE259b73CBa2274";
+    const LAUNCH_ABI = [
+      "function buy(address tokenAddr, uint256 usdcAmount)",
+      "function sell(address tokenAddr, uint256 tokenAmount)",
+      "function getPrice(address tokenAddr) view returns (uint256)",
+      "function estimateBuy(address tokenAddr, uint256 usdcAmount) view returns (uint256 tokensOut, uint256 fee)",
+      "function estimateSell(address tokenAddr, uint256 tokenAmount) view returns (uint256 usdcOut, uint256 fee)",
+      "function launches(address) view returns (address creator, uint256 raised, uint256 sold, bool graduated)",
+      "event LaunchCreated(address indexed token, address indexed creator, string name, string symbol, string meta)",
+      "event TokenBought(address indexed token, address indexed buyer, uint256 usdcIn, uint256 tokensOut)",
+      "event TokenSold(address indexed token, address indexed seller, uint256 tokensIn, uint256 usdcOut)"
+    ];
+    const USDC_ABI = [
+      "function balanceOf(address) view returns (uint256)",
+      "function approve(address spender, uint256 amount) returns (bool)",
+      "function allowance(address owner, address spender) view returns (uint256)"
+    ];
+    const TOKEN_ABI = [
+      "function name() view returns (string)",
+      "function symbol() view returns (string)",
+      "function approve(address spender, uint256 amount) returns (bool)",
+      "function allowance(address owner, address spender) view returns (uint256)",
+      "function balanceOf(address) view returns (uint256)",
+      "function totalSupply() view returns (uint256)",
+      "event Transfer(address indexed from, address indexed to, uint256 value)"
+    ];
+
+    const TEMPO_CHAIN = {
+      chainId: "0x1079",
+      chainName: "Tempo Mainnet",
+      nativeCurrency: { name: "USD", symbol: "USD", decimals: 18 },
+      rpcUrls: ["https://rpc.tempo.xyz"],
+      blockExplorerUrls: ["https://explore.mainnet.tempo.xyz"]
+    };
+    const HIDDEN_TOKENS = new Set([
+      "0xba439c26d31930cfd5a9b344f5a1c582dc9f422b",
+      "0x1c9d8d0ceaea2c71de15aee11b6314741ef5e92c",
+      "0x892dc4fd65b96bc3fcc3bce2df2a480b9303227c"
+    ]);
+    const SUPPLY_RAW = 1000000000n * 10n ** 18n;
+    const SALE_CAP_RAW = 800000000n * 10n ** 18n;
+    const PRICE_RATIO_SCALE = 10n ** 18n;
+    const PRICE_DENOM = 10n ** 18n;
+    const PRIMARY_INIT_PRICE_RAW = 3n * 10n ** 12n;
+    const PRIMARY_PRICE_DELTA_RAW = 62n * 10n ** 12n;
+
+    let provider, signer, userAddress, priceChart, candleSeries, volumeSeries, chartResizeObserver, chartClockTimer;
+    let walletSession;
+    let tradeMode = "buy";
+    let chartInterval = "1m";
+    let latestTrades = [];
+    let launchContextPromise = null;
+    let slippagePercent = 1;
+    let latestTradeQuote = null;
+    const params = new URLSearchParams(window.location.search);
+    const tokenAddress = params.get("token");
+    const blockCache = new Map();
+
+    function isHiddenToken(tokenAddr) {
+      return !!tokenAddr && HIDDEN_TOKENS.has(tokenAddr.toLowerCase());
+    }
+
+    function launchCandidates() {
+      return [{ address: PRIMARY_LAUNCH_CONTRACT, version: "v2" }];
+    }
+
+    function getCurveModel(context) {
+      const address = context?.address?.toLowerCase();
+      if (!address) return null;
+      if (address === PRIMARY_LAUNCH_CONTRACT.toLowerCase()) {
+        return {
+          type: "sale-cap-quadratic",
+          initPriceRaw: PRIMARY_INIT_PRICE_RAW,
+          priceDeltaRaw: PRIMARY_PRICE_DELTA_RAW,
+          denominatorRaw: SALE_CAP_RAW
+        };
+      }
+      return null;
+    }
+
+    function parseLaunchPrice(priceRaw) {
+      return Number(ethers.formatUnits(priceRaw, 18));
+    }
+
+    function formatRelativeTime(timestamp) {
+      if (!timestamp) return "-";
+      const diff = Math.max(0, Math.floor(Date.now() / 1000) - Number(timestamp));
+      if (diff < 60) return "Just now";
+      if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
+      if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
+      if (diff < 604800) return `${Math.floor(diff / 86400)}d ago`;
+      return `${Math.floor(diff / 604800)}w ago`;
+    }
+
+    async function queryFilterChunked(contract, filter, fromBlock, toBlock, chunkSize = 4000) {
+      const results = [];
+      for (let start = fromBlock; start <= toBlock; start += chunkSize) {
+        const end = Math.min(toBlock, start + chunkSize - 1);
+        const chunk = await contract.queryFilter(filter, start, end);
+        if (chunk.length) results.push(...chunk);
+      }
+      return results;
+    }
+
+    async function getLaunchContext() {
+      if (launchContextPromise) return launchContextPromise;
+      launchContextPromise = (async () => {
+        const latestBlock = await provider.getBlockNumber();
+        const launch = new ethers.Contract(PRIMARY_LAUNCH_CONTRACT, LAUNCH_ABI, provider);
+        const launchRecord = await findLaunchMeta(launch, provider, tokenAddress);
+        return {
+          address: PRIMARY_LAUNCH_CONTRACT,
+          version: "v2",
+          launch,
+          createdBlock: launchRecord?.blockNumber ?? Math.max(0, latestBlock - 20000),
+          createdAt: launchRecord?.timestamp ?? null,
+          launchRecord
+        };
+      })();
+      return launchContextPromise;
+    }
+
+    function initChart() {
+      const container = document.getElementById("priceChart");
+      container.innerHTML = "";
+      priceChart = LightweightCharts.createChart(container, {
+        layout: {
+          background: { color: "#1b1d21" },
+          textColor: "#d2d8e1",
+          fontFamily: "Manrope, sans-serif"
+        },
+        grid: {
+          vertLines: { color: "rgba(255,255,255,0.06)" },
+          horzLines: { color: "rgba(255,255,255,0.06)" }
+        },
+        rightPriceScale: {
+          borderColor: "rgba(255,255,255,0.12)",
+          scaleMargins: {
+            top: 0.10,
+            bottom: 0.12
+          }
+        },
+        timeScale: {
+          borderColor: "rgba(255,255,255,0.12)",
+          timeVisible: true,
+          secondsVisible: false,
+          barSpacing: 12,
+          rightOffset: 6
+        },
+        crosshair: {
+          vertLine: {
+            color: "rgba(255,255,255,0.16)",
+            labelBackgroundColor: "#20242d"
+          },
+          horzLine: {
+            color: "rgba(255,255,255,0.16)",
+            labelBackgroundColor: "#20242d"
+          }
+        },
+        handleScroll: true,
+        handleScale: true
+      });
+
+      candleSeries = priceChart.addCandlestickSeries({
+        upColor: "#6cff45",
+        downColor: "#ff5a45",
+        borderVisible: true,
+        borderUpColor: "#6cff45",
+        borderDownColor: "#ff5a45",
+        wickUpColor: "#6cff45",
+        wickDownColor: "#ff5a45",
+        wickVisible: true,
+        priceLineVisible: true,
+        lastValueVisible: true,
+        priceFormat: {
+          type: "price",
+          precision: 8,
+          minMove: 0.00000001
+        }
+      });
+
+      const resize = () => {
+        const rect = container.getBoundingClientRect();
+        priceChart.applyOptions({ width: Math.max(280, Math.floor(rect.width)), height: Math.max(320, Math.floor(rect.height)) });
+      };
+
+      resize();
+      if (chartResizeObserver) chartResizeObserver.disconnect();
+      chartResizeObserver = new ResizeObserver(resize);
+      chartResizeObserver.observe(container);
+    }
+
+    function formatChartTime(timestamp, interval) {
+      const date = new Date(timestamp * 1000);
+      if (interval === "1h" || interval === "4h") {
+        return {
+          time: Math.floor(timestamp),
+          label: date.toLocaleString([], { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" })
+        };
+      }
+      return {
+        time: Math.floor(timestamp),
+        label: date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+      };
+    }
+
+    async function init() {
+      if (!tokenAddress) {
+        document.getElementById("tokenName").textContent = "Token not specified";
+        return;
+      }
+      if (isHiddenToken(tokenAddress)) {
+        window.location.replace("/tokens");
+        return;
+      }
+      provider = new ethers.JsonRpcProvider("https://rpc.tempo.xyz");
+      updateSlippageUi();
+      initChart();
+      updateChartClock();
+      if (chartClockTimer) clearInterval(chartClockTimer);
+      chartClockTimer = window.setInterval(updateChartClock, 1000);
+      const walletRestorePromise = autoConnect();
+      const initialDataPromise = Promise.all([
+        loadTokenInfo(),
+        loadActivity(),
+        loadHolders()
+      ]);
+      await Promise.allSettled([walletRestorePromise, initialDataPromise]);
+      setInterval(loadTokenInfo, 10000);
+    }
+
+    function applyWalletConnected(address) {
+      document.getElementById("connectBtn").textContent = window.TempomemeWallet.formatAddress(address);
+    }
+
+    function resetWalletUi(showWrongNetwork = false) {
+      signer = null;
+      userAddress = null;
+      provider = new ethers.JsonRpcProvider("https://rpc.tempo.xyz");
+      document.getElementById("connectBtn").textContent = showWrongNetwork ? "Switch to Tempo" : "Connect Wallet";
+      document.getElementById("walletTokenBalance").textContent = "Wallet not connected";
+      document.getElementById("walletUsdcBalance").textContent = "Wallet not connected";
+    }
+
+    async function autoConnect() {
+      if (!walletSession) return;
+      await walletSession.init();
+    }
+
+    function setTradeStatus(message = "", tone = "muted") {
+      const el = document.getElementById("tradeStatus");
+      if (!el) return;
+      el.textContent = message;
+      if (tone === "error") el.style.color = "#ffb0a3";
+      else if (tone === "success") el.style.color = "#d9ffc7";
+      else el.style.color = "#879082";
+    }
+
+    function normalizeDecimalInput(value) {
+      const raw = String(value ?? "").trim();
+      if (!raw) return "";
+      if (/[eE]/.test(raw)) return null;
+      if (!/^\d*\.?\d*$/.test(raw)) return null;
+      if (raw === "." || raw === "0.") return "0";
+      if (raw.endsWith(".")) return raw.slice(0, -1);
+      return raw;
+    }
+
+    function parseTradeAmount(amount, decimals) {
+      const normalized = normalizeDecimalInput(amount);
+      if (normalized === null || normalized === "") return null;
+      try {
+        return ethers.parseUnits(normalized, decimals);
+      } catch (e) {
+        return null;
+      }
+    }
+
+    function formatPercent(value) {
+      return `${Number(value).toFixed(1).replace(/\.0$/, "")}%`;
+    }
+
+    function getCurrentTokenTicker() {
+      const symbol = document.getElementById("tokenSymbol")?.textContent?.trim();
+      if (!symbol || symbol === "-") return "tokens";
+      return symbol;
+    }
+
+    function clampSlippagePercent(value) {
+      if (!Number.isFinite(value)) return null;
+      return Math.min(50, Math.max(0.1, value));
+    }
+
+    function currentSlippageBps() {
+      return Math.round(slippagePercent * 100);
+    }
+
+    function applySlippageTolerance(rawAmount) {
+      if (rawAmount === null || rawAmount === undefined) return 0n;
+      const bps = BigInt(currentSlippageBps());
+      return rawAmount * (10000n - bps) / 10000n;
+    }
+
+    function syncSlippagePresetState() {
+      const presetButtons = document.querySelectorAll('#slippagePresetRow .preset-btn');
+      presetButtons.forEach((button) => {
+        const value = Number(button.dataset.slippage);
+        button.classList.toggle("active", Math.abs(value - slippagePercent) < 0.001);
+      });
+    }
+
+    function updateSlippageUi() {
+      const label = formatPercent(slippagePercent);
+      document.getElementById("slippageValue").textContent = label;
+      document.getElementById("slippageInput").value = Number(slippagePercent).toFixed(1).replace(/\.0$/, "");
+      syncSlippagePresetState();
+    }
+
+    function setSlippagePreset(value, buttonEl) {
+      const nextValue = clampSlippagePercent(Number(value));
+      if (nextValue === null) return;
+      slippagePercent = nextValue;
+      updateSlippageUi();
+      if (buttonEl) setPresetActive("slippagePresetRow", buttonEl);
+      updateTradeEstimate();
+    }
+
+    function handleSlippageInput() {
+      const input = document.getElementById("slippageInput");
+      const parsed = Number(input.value);
+      const nextValue = clampSlippagePercent(parsed);
+      if (nextValue === null) return;
+      slippagePercent = nextValue;
+      updateSlippageUi();
+      updateTradeEstimate();
+    }
+
+    function setMinimumReceivedDisplay(quoteRaw, decimals, symbol) {
+      const minRaw = applySlippageTolerance(quoteRaw);
+      const label = decimals === 18
+        ? `${Number(ethers.formatUnits(minRaw, decimals)).toLocaleString()} ${symbol}`
+        : `${ethers.formatUnits(minRaw, decimals)} ${symbol}`;
+      document.getElementById("minimumReceived").textContent = label;
+    }
+
+    function clearTradeQuote() {
+      latestTradeQuote = null;
+      document.getElementById("minimumReceived").textContent = "-.--";
+    }
+
+    function captureTradeQuote(mode, amountRaw, quoteRaw, decimals, symbol) {
+      latestTradeQuote = { mode, amountRaw, quoteRaw, decimals, symbol };
+      setMinimumReceivedDisplay(quoteRaw, decimals, symbol);
+    }
+
+    async function ensureSlippageTolerance(launch, amountRaw) {
+      if (!latestTradeQuote || latestTradeQuote.mode !== tradeMode || latestTradeQuote.amountRaw !== amountRaw) {
+        return true;
+      }
+
+      let refreshedQuote = 0n;
+      if (tradeMode === "buy") {
+        const [tokensOut] = await launch.estimateBuy(tokenAddress, amountRaw);
+        refreshedQuote = tokensOut;
+      } else {
+        const [usdcOut] = await launch.estimateSell(tokenAddress, amountRaw);
+        refreshedQuote = usdcOut;
+      }
+
+      const minimumAccepted = applySlippageTolerance(latestTradeQuote.quoteRaw);
+      if (refreshedQuote < minimumAccepted) {
+        await updateTradeEstimate();
+        setTradeStatus(`Quote moved beyond ${formatPercent(slippagePercent)} slippage. Review and try again.`, "error");
+        return false;
+      }
+
+      captureTradeQuote(tradeMode, amountRaw, refreshedQuote, latestTradeQuote.decimals, latestTradeQuote.symbol);
+      return true;
+    }
+
+    function normalizeExternalUrl(url) {
+      const raw = String(url || "").trim();
+      if (!raw) return "";
+      const withProtocol = /^[a-zA-Z][a-zA-Z\d+\-.]*:/.test(raw) ? raw : `https://${raw}`;
+      try {
+        return new URL(withProtocol).toString();
+      } catch (e) {
+        return "";
+      }
+    }
+
+    function renderTokenLinks(meta = {}) {
+      const wrap = document.getElementById("tokenLinks");
+      if (!wrap) return;
+      const links = [];
+      const websiteUrl = normalizeExternalUrl(meta.website);
+      const twitterUrl = normalizeExternalUrl(meta.twitter);
+
+      if (websiteUrl) {
+        links.push(`<a class="token-link" href="${websiteUrl}" target="_blank" rel="noopener noreferrer"><span class="token-link-label">Web</span><span>Website</span></a>`);
+      }
+      if (twitterUrl) {
+        links.push(`<a class="token-link" href="${twitterUrl}" target="_blank" rel="noopener noreferrer"><span class="token-link-label">X</span><span>Profile</span></a>`);
+      }
+
+      if (!links.length) {
+        wrap.innerHTML = "";
+        wrap.hidden = true;
+        return;
+      }
+
+      wrap.innerHTML = links.join("");
+      wrap.hidden = false;
+    }
+
+    function renderTokenDescription(meta = {}) {
+      const descriptionEl = document.getElementById("tokenDescription");
+      if (!descriptionEl) return;
+      const description = typeof meta.description === "string" ? meta.description.trim() : "";
+      descriptionEl.textContent = description;
+      descriptionEl.hidden = !description;
+    }
+
+    function clearPresetActive(rowId) {
+      document.querySelectorAll(`#${rowId} .preset-btn`).forEach((button) => button.classList.remove("active"));
+    }
+
+    function setPresetActive(rowId, buttonEl) {
+      clearPresetActive(rowId);
+      if (buttonEl) buttonEl.classList.add("active");
+    }
+
+    function handleTradeAmountInput() {
+      if (tradeMode === "buy") clearPresetActive("buyPresetRow");
+      else clearPresetActive("sellPercentRow");
+      updateTradeEstimate();
+    }
+
+    function setTradeMode(mode) {
+      tradeMode = mode;
+      const panel = document.getElementById("tradePanel");
+      panel.classList.toggle("trade-mode-buy", mode === "buy");
+      panel.classList.toggle("trade-mode-sell", mode === "sell");
+      document.getElementById("buyTab").classList.toggle("active", mode === "buy");
+      document.getElementById("sellTab").classList.toggle("active", mode === "sell");
+      document.getElementById("amountLabel").textContent = mode === "buy" ? "Buy Amount (pathUSD)" : "Sell Amount (Tokens)";
+      document.getElementById("estimateLabel").textContent = mode === "buy" ? "You Receive" : "You Receive";
+      document.getElementById("buyPresetRow").style.display = mode === "buy" ? "grid" : "none";
+      document.getElementById("sellPercentRow").style.display = mode === "sell" ? "grid" : "none";
+      const btn = document.getElementById("tradeActionBtn");
+      btn.textContent = mode === "buy" ? "Buy" : "Sell";
+      btn.className = `trade-action ${mode}`;
+      document.getElementById("tradeAmount").value = mode === "buy" ? "100" : "";
+      clearPresetActive("buyPresetRow");
+      clearPresetActive("sellPercentRow");
+      if (mode === "buy") {
+        document.querySelector('#buyPresetRow .preset-btn[data-preset="100"]')?.classList.add("active");
+      }
+      setTradeStatus("");
+      clearTradeQuote();
+      updateTradeEstimate();
+    }
+
+    function setPreset(value, buttonEl) {
+      setPresetActive("buyPresetRow", buttonEl);
+      document.getElementById("tradeAmount").value = value;
+      setTradeStatus("");
+      updateTradeEstimate();
+    }
+
+    async function setSellPercent(percent, buttonEl) {
+      if (tradeMode !== "sell") return;
+      if (!userAddress) return;
+      try {
+        const token = new ethers.Contract(tokenAddress, TOKEN_ABI, provider);
+        const balance = await token.balanceOf(userAddress);
+        const balanceFloat = Number(ethers.formatUnits(balance, 18));
+        const value = balanceFloat * (percent / 100);
+        setPresetActive("sellPercentRow", buttonEl);
+        document.getElementById("tradeAmount").value = value > 0 ? value.toFixed(6).replace(/\.?0+$/, "") : "0";
+        setTradeStatus("");
+        updateTradeEstimate();
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    async function loadTokenInfo() {
+      try {
+        const token = new ethers.Contract(tokenAddress, TOKEN_ABI, provider);
+        const context = await getLaunchContext();
+        const launch = context.launch;
+
+        const [name, symbol, info, price, totalSupply] = await Promise.all([
+          token.name(),
+          token.symbol(),
+          launch.launches(tokenAddress),
+          launch.getPrice(tokenAddress),
+          token.totalSupply()
+        ]);
+
+        const launchRecord = context.launchRecord || await findLaunchMeta(launch, provider, tokenAddress);
+        const localMeta = getLocalMeta(tokenAddress);
+        const meta = launchRecord?.meta || localMeta || {};
+
+        document.getElementById("tokenName").textContent = name;
+        document.getElementById("tokenSymbol").textContent = symbol;
+        document.getElementById("tokenAddr").textContent = tokenAddress;
+        document.getElementById("creatorAddr").textContent = info[0] ? `Creator ${info[0].slice(0, 6)}...${info[0].slice(-4)}` : "";
+        document.getElementById("createdTime").textContent = context.createdAt ? `Created ${formatRelativeTime(context.createdAt)}` : "";
+        renderTokenDescription(meta);
+        renderTokenLinks(meta);
+        if (meta.image) {
+          document.getElementById("tokenIcon").innerHTML = `<img src="${meta.image}" class="w-full h-full object-cover" onerror="this.parentElement.textContent='${symbol.slice(0,2).toUpperCase()}'">`;
+        } else {
+          document.getElementById("tokenIcon").textContent = symbol.slice(0, 2).toUpperCase();
+        }
+
+        const priceValue = parseLaunchPrice(price);
+        const sold = Number(ethers.formatUnits(info[2], 18));
+        const pct = Math.min((sold / 800000000) * 100, 100).toFixed(1);
+        const totalSupplyValue = Number(ethers.formatUnits(totalSupply, 18));
+        const marketCap = priceValue * totalSupplyValue;
+
+        document.getElementById("tokenPrice").textContent = priceValue.toFixed(8) + " pathUSD";
+        document.getElementById("priceChange").textContent = info[3] ? "Graduated" : "Live Price";
+        document.getElementById("marketCap").textContent = "$" + marketCap.toLocaleString(undefined, { maximumFractionDigits: 0 });
+        document.getElementById("curveProgressTop").textContent = pct + "%";
+        document.getElementById("curveProgressLabel").textContent = pct + "%";
+        document.getElementById("curveProgressBottom").textContent = pct + "%";
+        document.getElementById("progressFill").style.width = pct + "%";
+        document.getElementById("graduatedStatus").textContent = info[3] ? "Graduated" : "Live";
+        document.getElementById("graduatedBadge").style.display = info[3] ? "inline-flex" : "none";
+
+        await updateWalletBalances();
+        await updateTradeEstimate();
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    async function updateWalletBalances() {
+      await Promise.all([
+        updateWalletTokenBalance(),
+        updateWalletUsdcBalance()
+      ]);
+    }
+
+    async function updateWalletTokenBalance() {
+      const el = document.getElementById("walletTokenBalance");
+      if (!el) return;
+      if (!userAddress) {
+        el.textContent = "Wallet not connected";
+        return;
+      }
+      try {
+        const token = new ethers.Contract(tokenAddress, TOKEN_ABI, provider);
+        const balance = await token.balanceOf(userAddress);
+        el.textContent = Number(ethers.formatUnits(balance, 18)).toLocaleString(undefined, { maximumFractionDigits: 4 });
+      } catch (e) {
+        el.textContent = "-";
+      }
+    }
+
+    async function updateWalletUsdcBalance() {
+      const el = document.getElementById("walletUsdcBalance");
+      if (!el) return;
+      if (!userAddress) {
+        el.textContent = "Wallet not connected";
+        return;
+      }
+      try {
+        const usdc = new ethers.Contract(USDC_ADDRESS, USDC_ABI, provider);
+        const balance = await usdc.balanceOf(userAddress);
+        el.textContent = Number(ethers.formatUnits(balance, 6)).toLocaleString(undefined, { maximumFractionDigits: 2 }) + " pathUSD";
+      } catch (e) {
+        el.textContent = "-";
+      }
+    }
+
+    async function loadActivity() {
+      try {
+        const context = await getLaunchContext();
+        const launch = context.launch;
+        const latestBlock = await provider.getBlockNumber();
+        const fromBlock = Math.max(0, context.createdBlock);
+        const [buyEvents, sellEvents] = await Promise.all([
+          queryFilterChunked(launch, launch.filters.TokenBought(tokenAddress), fromBlock, latestBlock),
+          queryFilterChunked(launch, launch.filters.TokenSold(tokenAddress), fromBlock, latestBlock)
+        ]);
+
+        let runningSoldRaw = 0n;
+        const orderedEvents = [...buyEvents, ...sellEvents]
+          .sort((a, b) => {
+            if (a.blockNumber !== b.blockNumber) return a.blockNumber - b.blockNumber;
+            return a.index - b.index;
+          });
+
+        const enriched = await Promise.all(
+          orderedEvents.map(async (ev) => {
+            const isBuy = ev.fragment.name === "TokenBought";
+            const tokenRaw = isBuy ? BigInt(ev.args[3].toString()) : BigInt(ev.args[2].toString());
+            const wallet = ev.args[1];
+            const usdc = isBuy
+              ? Number(ethers.formatUnits(ev.args[2], 6))
+              : Number(ethers.formatUnits(ev.args[3], 6));
+            const tokenAmt = Number(ethers.formatUnits(tokenRaw, 18));
+            const block = await getBlockCached(ev.blockNumber);
+
+            if (isBuy) {
+              runningSoldRaw += tokenRaw;
+            } else {
+              runningSoldRaw = runningSoldRaw > tokenRaw ? runningSoldRaw - tokenRaw : 0n;
+            }
+
+            const grossUsdc = isBuy ? usdc : usdc / 0.99;
+            const executionPrice = tokenAmt > 0 ? grossUsdc / tokenAmt : 0;
+            const markPrice = getMarkPriceFromSoldRaw(runningSoldRaw, context);
+            const chartPrice = Number.isFinite(markPrice) && markPrice > 0 ? markPrice : executionPrice;
+
+            return {
+              wallet,
+              isBuy,
+              usdc,
+              tokenAmt,
+              blockNumber: ev.blockNumber,
+              timestamp: Number(block.timestamp),
+              executionPrice,
+              markPrice,
+              chartPrice,
+              soldRaw: runningSoldRaw
+            };
+          })
+        );
+
+        latestTrades = enriched;
+        updateTradeChart(enriched);
+
+        const rows = [...enriched].reverse().slice(0, 20).map((item) => `
+              <tr>
+                <td class="mono">${item.wallet.slice(0, 6)}...${item.wallet.slice(-4)}</td>
+                <td class="${item.isBuy ? "buy-text" : "sell-text"}">${item.isBuy ? "Buy" : "Sell"}</td>
+                <td>${item.usdc.toFixed(2)}</td>
+                <td>${item.tokenAmt.toLocaleString(undefined, { maximumFractionDigits: 2 })}</td>
+                <td>${item.blockNumber}</td>
+              </tr>
+            `);
+
+        document.getElementById("activityTableBody").innerHTML = rows.length
+          ? rows.join("")
+          : '<tr><td colspan="5">No live activity yet</td></tr>';
+      } catch (e) {
+        console.error(e);
+        document.getElementById("activityTableBody").innerHTML = '<tr><td colspan="5">Failed to load activity</td></tr>';
+        document.getElementById("ohlcBar").innerHTML = '<span>No chart data</span>';
+      }
+    }
+
+    function getMarkPriceFromSoldRaw(soldRaw, context) {
+      const model = getCurveModel(context);
+      if (!model) return null;
+
+      const cappedSold = soldRaw > model.denominatorRaw ? model.denominatorRaw : soldRaw;
+      const ratio = (cappedSold * PRICE_RATIO_SCALE) / model.denominatorRaw;
+
+      if (model.type === "sale-cap-quadratic") {
+        const priceRaw = model.initPriceRaw + (model.priceDeltaRaw * ratio * ratio) / PRICE_DENOM / PRICE_DENOM;
+        return Number(ethers.formatUnits(priceRaw, 18));
+      }
+
+      if (model.type === "supply-ratio-quadratic") {
+        const priceRaw = model.initPriceRaw + (model.slopeRaw * ratio * ratio) / PRICE_DENOM / PRICE_DENOM;
+        return Number(ethers.formatUnits(priceRaw, 18));
+      }
+
+      return null;
+    }
+
+    async function getBlockCached(blockNumber) {
+      if (!blockCache.has(blockNumber)) {
+        blockCache.set(blockNumber, await provider.getBlock(blockNumber));
+      }
+      return blockCache.get(blockNumber);
+    }
+
+    function setChartInterval(interval) {
+      chartInterval = interval;
+      ["1m", "5m", "15m", "1h", "4h", "1d"].forEach((key) => {
+        document.getElementById(`interval-${key}`)?.classList.toggle("active", key === interval);
+      });
+      updateTradeChart(latestTrades);
+    }
+
+    function formatUtcOffset() {
+      const offsetMinutes = -new Date().getTimezoneOffset();
+      const sign = offsetMinutes >= 0 ? "+" : "-";
+      const absMinutes = Math.abs(offsetMinutes);
+      const hours = String(Math.floor(absMinutes / 60)).padStart(2, "0");
+      const minutes = String(absMinutes % 60).padStart(2, "0");
+      return `UTC${sign}${hours}:${minutes}`;
+    }
+
+    function updateChartClock() {
+      const el = document.getElementById("chartClock");
+      if (!el) return;
+      const now = new Date();
+      const time = now.toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: false
+      });
+      el.textContent = `${time} ${formatUtcOffset()}`;
+    }
+
+    function aggregateTradesByInterval(trades, interval) {
+      const intervalSecondsMap = {
+        "1m": 60,
+        "5m": 300,
+        "15m": 900,
+        "1h": 3600,
+        "4h": 14400,
+        "1d": 86400
+      };
+      const intervalSeconds = intervalSecondsMap[interval] || 60;
+      const validTrades = [...trades]
+        .filter((t) => Number.isFinite(t.chartPrice) && t.chartPrice > 0 && Number.isFinite(t.timestamp))
+        .sort((a, b) => a.timestamp - b.timestamp);
+
+      if (!validTrades.length) return [];
+
+      const firstBucket = Math.floor(validTrades[0].timestamp / intervalSeconds) * intervalSeconds;
+      const lastBucket = Math.floor(validTrades[validTrades.length - 1].timestamp / intervalSeconds) * intervalSeconds;
+      const buckets = new Map();
+
+      for (const trade of validTrades) {
+        const bucketStart = Math.floor(trade.timestamp / intervalSeconds) * intervalSeconds;
+        if (!buckets.has(bucketStart)) {
+          buckets.set(bucketStart, []);
+        }
+        buckets.get(bucketStart).push(trade);
+      }
+
+      const bars = [];
+      let previousClose = null;
+
+      for (let bucketStart = firstBucket; bucketStart <= lastBucket; bucketStart += intervalSeconds) {
+        const items = buckets.get(bucketStart) || [];
+
+        if (items.length) {
+          const prices = items.map((item) => item.chartPrice);
+          const open = previousClose ?? prices[0];
+          const close = prices[prices.length - 1];
+          const high = Math.max(open, ...prices);
+          const low = Math.min(open, ...prices);
+          const volume = items.reduce((sum, item) => sum + item.usdc, 0);
+          bars.push({
+            timestamp: bucketStart,
+            open,
+            high,
+            low,
+            close,
+            volume
+          });
+          previousClose = close;
+        } else if (previousClose !== null) {
+          bars.push({
+            timestamp: bucketStart,
+            open: previousClose,
+            high: previousClose,
+            low: previousClose,
+            close: previousClose,
+            volume: 0
+          });
+        }
+      }
+
+      return bars;
+    }
+
+    function updateTradeChart(trades) {
+      const grouped = aggregateTradesByInterval(trades, chartInterval).slice(-60);
+
+      if (!grouped.length) {
+        document.getElementById("ohlcBar").innerHTML = "<span>No chart data</span>";
+        document.getElementById("chartPrice").textContent = "-.--";
+        document.getElementById("chartVolumeReadout").textContent = "--";
+        if (candleSeries) candleSeries.setData([]);
+        return;
+      }
+
+      const candles = grouped.map((item) => ({
+        time: Math.floor(item.timestamp),
+        open: item.open,
+        high: item.high,
+        low: item.low,
+        close: item.close
+      }));
+      candleSeries.setData(candles);
+      priceChart.timeScale().fitContent();
+      priceChart.applyOptions({
+        timeScale: {
+          barSpacing: grouped.length < 12 ? 22 : grouped.length < 24 ? 16 : 12
+        }
+      });
+
+      const open = grouped[0].open;
+      const high = Math.max(...grouped.map((item) => item.high));
+      const low = Math.min(...grouped.map((item) => item.low));
+      const close = grouped[grouped.length - 1].close;
+      const lastVolume = grouped[grouped.length - 1].volume;
+      const delta = close - open;
+      const deltaPct = open ? (delta / open) * 100 : 0;
+
+      document.getElementById("chartPrice").textContent = close.toFixed(8) + " pathUSD";
+      document.getElementById("chartVolumeReadout").textContent = Number(lastVolume).toLocaleString(undefined, { maximumFractionDigits: 8 });
+      document.getElementById("ohlcBar").innerHTML = `
+        <span class="ohlc-dot"></span>
+        <span>O=<strong>${open.toFixed(8)}</strong></span>
+        <span>H=<strong>${high.toFixed(8)}</strong></span>
+        <span>L=<strong>${low.toFixed(8)}</strong></span>
+        <span>C=<strong>${close.toFixed(8)}</strong></span>
+        <span class="${delta >= 0 ? "up" : "down"}">${delta >= 0 ? "+" : ""}${delta.toFixed(8)} (${deltaPct.toFixed(2)}%)</span>
+      `;
+    }
+
+    async function loadHolders() {
+      try {
+        const token = new ethers.Contract(tokenAddress, TOKEN_ABI, provider);
+        const latestBlock = await provider.getBlockNumber();
+        const chunkSize = 100000;
+        const addressSet = new Set();
+
+        for (let toBlock = latestBlock; toBlock >= 0; toBlock -= chunkSize) {
+          const fromBlock = Math.max(0, toBlock - chunkSize + 1);
+          const events = await token.queryFilter(token.filters.Transfer(), fromBlock, toBlock);
+          for (const ev of events) {
+            if (ev.args[0] && ev.args[0] !== ethers.ZeroAddress) addressSet.add(ev.args[0].toLowerCase());
+            if (ev.args[1] && ev.args[1] !== ethers.ZeroAddress) addressSet.add(ev.args[1].toLowerCase());
+          }
+          if (fromBlock === 0 || addressSet.size > 300) break;
+        }
+
+        const totalSupply = await token.totalSupply();
+        const totalSupplyValue = Number(ethers.formatUnits(totalSupply, 18));
+        const holders = [];
+
+        for (const addr of addressSet) {
+          try {
+            const bal = await token.balanceOf(addr);
+            if (bal > 0n) {
+              const value = Number(ethers.formatUnits(bal, 18));
+              holders.push({
+                address: addr,
+                value,
+                pct: totalSupplyValue ? (value / totalSupplyValue) * 100 : 0
+              });
+            }
+          } catch (e) {}
+        }
+
+        holders.sort((a, b) => b.value - a.value);
+        document.getElementById("holdersCount").textContent = holders.length.toString();
+        document.getElementById("holdersTableBody").innerHTML = holders.length
+          ? holders.slice(0, 20).map((h) => `
+              <tr>
+                <td class="mono">${h.address.slice(0, 6)}...${h.address.slice(-4)}</td>
+                <td>${h.value.toLocaleString(undefined, { maximumFractionDigits: 2 })}</td>
+                <td>${h.pct.toFixed(4)}%</td>
+              </tr>
+            `).join("")
+          : '<tr><td colspan="3">No holder data yet</td></tr>';
+      } catch (e) {
+        console.error(e);
+        document.getElementById("holdersTableBody").innerHTML = '<tr><td colspan="3">Failed to load holders</td></tr>';
+      }
+    }
+
+    async function updateTradeEstimate() {
+      const amount = document.getElementById("tradeAmount").value;
+      if (!amount || !tokenAddress) {
+        clearTradeQuote();
+        setTradeStatus("");
+        return;
+      }
+      const feeEl = document.getElementById("tradeFee");
+      try {
+        const { launch } = await getLaunchContext();
+        if (tradeMode === "buy") {
+          const parsedAmount = parseTradeAmount(amount, 6);
+          if (!parsedAmount || parsedAmount <= 0n) {
+            document.getElementById("tradeEstimate").textContent = "-.--";
+            clearTradeQuote();
+            if (feeEl) feeEl.textContent = "-.--";
+            setTradeStatus("Enter a valid pathUSD amount.", "error");
+            return;
+          }
+          const [tokensOut, fee] = await launch.estimateBuy(tokenAddress, parsedAmount);
+          const tokenTicker = getCurrentTokenTicker();
+          document.getElementById("tradeEstimate").textContent = Number(ethers.formatUnits(tokensOut, 18)).toLocaleString() + " " + tokenTicker;
+          captureTradeQuote("buy", parsedAmount, tokensOut, 18, tokenTicker);
+          if (feeEl) feeEl.textContent = ethers.formatUnits(fee, 6) + " pathUSD";
+          setTradeStatus(tokensOut > 0n ? "" : "Amount too small for this trade.", tokensOut > 0n ? "muted" : "error");
+        } else {
+          const parsedAmount = parseTradeAmount(amount, 18);
+          if (!parsedAmount || parsedAmount <= 0n) {
+            document.getElementById("tradeEstimate").textContent = "-.--";
+            clearTradeQuote();
+            if (feeEl) feeEl.textContent = "-.--";
+            setTradeStatus("Enter a valid token amount.", "error");
+            return;
+          }
+          const [usdcOut, fee] = await launch.estimateSell(tokenAddress, parsedAmount);
+          document.getElementById("tradeEstimate").textContent = ethers.formatUnits(usdcOut, 6) + " pathUSD";
+          captureTradeQuote("sell", parsedAmount, usdcOut, 6, "pathUSD");
+          if (feeEl) feeEl.textContent = ethers.formatUnits(fee, 6) + " pathUSD";
+          setTradeStatus(usdcOut > 0n ? "" : "Sell amount is too small. Increase the amount and try again.", usdcOut > 0n ? "muted" : "error");
+        }
+      } catch (e) {
+        clearTradeQuote();
+        setTradeStatus("Unable to estimate this trade.", "error");
+      }
+    }
+
+    async function connectWallet(requestAccess = true) {
+      if (!walletSession) return false;
+      return await walletSession.connect(requestAccess, { silent: !requestAccess });
+    }
+
+    function initWallet() {
+      walletSession = window.TempomemeWallet.createSession({
+        chain: TEMPO_CHAIN,
+        onConnect: async ({ address, signer: nextSigner }) => {
+          signer = nextSigner;
+          userAddress = address;
+          applyWalletConnected(address);
+          await updateWalletBalances();
+          await updateTradeEstimate();
+        },
+        onDisconnect: ({ reason }) => {
+          resetWalletUi(reason === "wrongChain");
+          updateTradeEstimate();
+        },
+        onWrongChain: () => {
+          resetWalletUi(true);
+          updateTradeEstimate();
+        },
+        onError: (message, error) => {
+          console.error("wallet error", error || message);
+          setTradeStatus(message, "error");
+        }
+      });
+    }
+
+    async function submitTrade() {
+      if (tradeMode === "buy") return buyTokens();
+      return sellTokens();
+    }
+
+    async function buyTokens() {
+      if (!signer) return;
+      const amount = document.getElementById("tradeAmount").value;
+      if (!amount || amount <= 0) return;
+      try {
+        const { address: launchAddress } = await getLaunchContext();
+        const usdcAmount = parseTradeAmount(amount, 6);
+        if (!usdcAmount || usdcAmount <= 0n) {
+          setTradeStatus("Enter a valid pathUSD amount.", "error");
+          return;
+        }
+        const usdc = new ethers.Contract(USDC_ADDRESS, USDC_ABI, signer);
+        const launch = new ethers.Contract(launchAddress, LAUNCH_ABI, signer);
+        const [tokensOut] = await launch.estimateBuy(tokenAddress, usdcAmount);
+        if (tokensOut <= 0n) {
+          setTradeStatus("Buy amount is too small. Increase the amount and try again.", "error");
+          return;
+        }
+        setTradeStatus("Submitting buy transaction...", "muted");
+        const allowance = await usdc.allowance(userAddress, launchAddress);
+        if (allowance < usdcAmount) {
+          await (await usdc.approve(launchAddress, usdcAmount)).wait();
+        }
+        if (!(await ensureSlippageTolerance(launch, usdcAmount))) return;
+        const tx = await launch.buy(tokenAddress, usdcAmount);
+        await tx.wait();
+        setTradeStatus("Buy completed.", "success");
+        await updateWalletBalances();
+        await Promise.all([loadTokenInfo(), loadActivity(), loadHolders()]);
+      } catch (e) {
+        console.error(e);
+        setTradeStatus(e?.shortMessage || e?.reason || "Buy failed.", "error");
+      }
+    }
+
+    async function sellTokens() {
+      if (!signer) return;
+      const amount = document.getElementById("tradeAmount").value;
+      if (!amount || amount <= 0) return;
+      try {
+        const { address: launchAddress } = await getLaunchContext();
+        const tokenAmount = parseTradeAmount(amount, 18);
+        if (!tokenAmount || tokenAmount <= 0n) {
+          setTradeStatus("Enter a valid token amount.", "error");
+          return;
+        }
+        const token = new ethers.Contract(tokenAddress, TOKEN_ABI, signer);
+        const launch = new ethers.Contract(launchAddress, LAUNCH_ABI, signer);
+        const [usdcOut] = await launch.estimateSell(tokenAddress, tokenAmount);
+        if (usdcOut <= 0n) {
+          setTradeStatus("Sell amount is too small. Increase the amount and try again.", "error");
+          return;
+        }
+        setTradeStatus("Submitting sell transaction...", "muted");
+        const allowance = await token.allowance(userAddress, launchAddress);
+        if (allowance < tokenAmount) {
+          await (await token.approve(launchAddress, tokenAmount)).wait();
+        }
+        if (!(await ensureSlippageTolerance(launch, tokenAmount))) return;
+        const tx = await launch.sell(tokenAddress, tokenAmount);
+        await tx.wait();
+        setTradeStatus("Sell completed.", "success");
+        await updateWalletBalances();
+        await Promise.all([loadTokenInfo(), loadActivity(), loadHolders()]);
+      } catch (e) {
+        console.error(e);
+        setTradeStatus(e?.shortMessage || e?.reason || "Sell failed.", "error");
+      }
+    }
+
+    function getLocalMeta(tokenAddr) {
+      try {
+        const raw = localStorage.getItem(`tempo_meta_${tokenAddr.toLowerCase()}`);
+        return raw ? JSON.parse(raw) : null;
+      } catch (e) {
+        return null;
+      }
+    }
+
+    async function findLaunchMeta(launch, provider, tokenAddr) {
+      try {
+        const latestBlock = await provider.getBlockNumber();
+        const chunkSize = 4000;
+        const filter = launch.filters.LaunchCreated(tokenAddr);
+        const startBlock = Math.max(0, latestBlock - 20000);
+        for (let toBlock = latestBlock; toBlock >= startBlock; toBlock -= chunkSize) {
+          const fromBlock = Math.max(0, toBlock - chunkSize + 1);
+          const events = await launch.queryFilter(filter, fromBlock, toBlock);
+          if (events.length > 0) {
+            const launchEvent = events[events.length - 1];
+            const metaText = launchEvent.args.meta;
+            let meta = null;
+            try {
+              meta = metaText ? JSON.parse(metaText) : null;
+            } catch (e) {
+              meta = null;
+            }
+            const block = await getBlockCached(launchEvent.blockNumber);
+            return {
+              meta,
+              blockNumber: launchEvent.blockNumber,
+              timestamp: Number(block?.timestamp || 0)
+            };
+          }
+          if (fromBlock === startBlock) break;
+        }
+      } catch (e) {
+        console.error("findLaunchMeta error", e);
+      }
+      return null;
+    }
+
+    initWallet();
+    init();
+  </script>
+</body>
+</html>

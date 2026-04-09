@@ -1,0 +1,8 @@
+{
+  "name": "SBTI Result NFT",
+  "description": "Authorized commemorative NFT collection for the SBTI personality test. Each token represents one final SBTI result type.",
+  "image": "https://sbti.dog/sbti/image/CTRL.png",
+  "external_link": "https://sbti.dog/sbti/index.html",
+  "seller_fee_basis_points": 0,
+  "fee_recipient": "0x0000000000000000000000000000000000000000"
+}

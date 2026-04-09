@@ -1,0 +1,24 @@
+{
+  "name": "SBTI HHHH - 傻乐者",
+  "description": "Authorized commemorative NFT for the SBTI result HHHH（傻乐者）.\n\n恭喜您！由于您的思维回路过于清奇，标准人格库已全面崩溃。第一人格匹配率只有60％以下时，系统才会为您强制匹配这个人格——【HHHH - 傻乐者】。这个人格有什么特质？哈哈哈哈哈哈哈哈哈哈哈哈！对不起，这就是全部的特质了。您可以查看十五维度进行不专业的评估，实在是抱歉！作者设置人格时没有考虑全面，因此才会出现这样的状况。哈哈哈哈哈哈……笑着笑着，我便哭了出来。怎么会有人的脑回路这么新奇。\n\nIntro: 哈哈哈哈哈哈。",
+  "image": "https://sbti.dog/sbti/image/HHHH.png",
+  "external_url": "https://sbti.dog/sbti/index.html",
+  "attributes": [
+    {
+      "trait_type": "Collection",
+      "value": "SBTI Result NFT"
+    },
+    {
+      "trait_type": "Result Code",
+      "value": "HHHH"
+    },
+    {
+      "trait_type": "Result Name",
+      "value": "傻乐者"
+    },
+    {
+      "trait_type": "Token ID",
+      "value": 27
+    }
+  ]
+}

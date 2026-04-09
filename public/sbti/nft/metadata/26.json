@@ -1,0 +1,24 @@
+{
+  "name": "SBTI DRUNK - 酒鬼",
+  "description": "Authorized commemorative NFT for the SBTI result DRUNK（酒鬼）.\n\n您为什么走路摇摇晃晃？您为什么总是情绪高涨？您为什么看东西是重影的？因为您体内流淌的不是血液，是美味的五粮液！是国窖1573！是江小白！是陕西五粮液！哦，美味的白酒，每一滴都在燃烧，都在沸腾。您是否已经习惯了将白酒灌入保温杯，当作白开水一饮而下？多么伟大的白酒！它让您在饭桌上谈笑风生，在厕所里抱着马桶忏悔人生；它让您觉得自己是夜场诗人，是宇宙中心那团不灭的火，直到第二天上午十点，您的头像裂开的核桃，嘴角挂着食物残渣，灵魂缩在角落里。您终于明白，昨晚那个高谈阔论、拍桌怒吼的人，已经成为了一个酒鬼。\n\nIntro: 烈酒烧喉，不得不醉。",
+  "image": "https://sbti.dog/sbti/image/DRUNK.png",
+  "external_url": "https://sbti.dog/sbti/index.html",
+  "attributes": [
+    {
+      "trait_type": "Collection",
+      "value": "SBTI Result NFT"
+    },
+    {
+      "trait_type": "Result Code",
+      "value": "DRUNK"
+    },
+    {
+      "trait_type": "Result Name",
+      "value": "酒鬼"
+    },
+    {
+      "trait_type": "Token ID",
+      "value": 26
+    }
+  ]
+}

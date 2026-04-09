@@ -1,0 +1,1160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create Token - TempoBoard</title>
+  <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg?v=20260403logo2">
+  <link rel="apple-touch-icon" href="/assets/logo.svg?v=20260403logo2">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.7.0/ethers.umd.min.js"></script>
+  <script>
+    (() => {
+      try {
+        localStorage.setItem("tempomeme-theme", "dark");
+      } catch (e) {}
+      document.documentElement.dataset.theme = "dark";
+      document.documentElement.style.colorScheme = "dark";
+    })();
+  </script>
+  <style>
+    :root {
+      --bg: #050505;
+      --bg-soft: #0d0f0d;
+      --panel: rgba(22,24,21,0.88);
+      --panel-2: rgba(31,34,30,0.88);
+      --panel-3: rgba(18,19,18,0.94);
+      --line: rgba(255,255,255,0.08);
+      --text: #f4f3ee;
+      --muted: #9aa194;
+      --green: #97ff5d;
+      --green-soft: rgba(151,255,93,0.12);
+      --green-line: rgba(151,255,93,0.22);
+      --gold: #e8bf52;
+      --gold-soft: rgba(232,191,82,0.12);
+      --gold-line: rgba(232,191,82,0.22);
+      --shadow: 0 24px 60px rgba(0,0,0,0.36);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; min-height: 100vh; font-family: "Manrope", sans-serif; color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(151,255,93,0.08), transparent 18%),
+        radial-gradient(circle at 82% 8%, rgba(232,191,82,0.13), transparent 20%),
+        linear-gradient(180deg, #040504 0%, #090a09 48%, #050505 100%);
+      background-attachment: fixed;
+    }
+    body::before,
+    body::after {
+      content: "";
+      position: fixed;
+      pointer-events: none;
+      z-index: 0;
+      border-radius: 999px;
+      filter: blur(90px);
+      opacity: 0.38;
+    }
+    body::before {
+      top: -80px;
+      right: -50px;
+      width: 320px;
+      height: 320px;
+      background: rgba(232,191,82,0.1);
+    }
+    body::after {
+      left: -90px;
+      bottom: 80px;
+      width: 280px;
+      height: 280px;
+      background: rgba(151,255,93,0.08);
+    }
+    h1, h2, h3 { font-family: "Space Grotesk", sans-serif; letter-spacing: -0.03em; }
+    @keyframes riseIn {
+      from { opacity: 0; transform: translateY(18px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .app { position: relative; z-index: 1; display: grid; grid-template-columns: 208px minmax(0, 1fr); min-height: 100vh; }
+    .sidebar {
+      position: sticky; top: 0; height: 100vh; padding: 18px 14px; background: linear-gradient(180deg, rgba(10,11,10,0.92), rgba(7,8,7,0.98));
+      border-right: 1px solid rgba(255,255,255,0.06); display: flex; flex-direction: column; gap: 16px; box-shadow: inset -1px 0 0 rgba(232,191,82,0.06);
+    }
+    .brand {
+      display: flex; align-items: center; gap: 10px; padding: 10px 10px 16px; font-family: "Space Grotesk", sans-serif;
+      font-size: 22px; font-weight: 700; min-width: 0;
+    }
+    .brand-mark {
+      width: 38px; height: 38px; border-radius: 10px; display: inline-flex; align-items: center; justify-content: center;
+      min-width: 38px; flex: 0 0 38px; line-height: 0;
+      background: #050505; color: #071005; overflow: hidden; padding: 0; border: 1px solid rgba(232,191,82,0.18); box-shadow: 0 14px 30px rgba(232,191,82,0.16);
+    }
+    .brand-mark img,
+    .brand-mark svg { width: 100%; height: 100%; display: block; object-fit: cover; }
+    .nav { display: grid; gap: 6px; }
+    .nav-item {
+      display: flex; align-items: center; gap: 12px; min-height: 48px; padding: 0 14px; border-radius: 10px; color: #d9dfd5; border: 1px solid transparent;
+    }
+    .nav-item.active { background: linear-gradient(90deg, rgba(232,191,82,0.14), rgba(151,255,93,0.08)); color: var(--text); border-color: rgba(232,191,82,0.18); }
+    .nav-item:hover { background: rgba(255,255,255,0.04); transform: translateX(4px); border-color: rgba(255,255,255,0.05); }
+    .nav-item-disabled {
+      position: relative;
+      opacity: 0.82;
+      cursor: default;
+    }
+    .nav-item-disabled:hover {
+      background: rgba(255,255,255,0.025);
+      border-color: rgba(255,255,255,0.04);
+      transform: none;
+    }
+    .nav-icon {
+      width: 16px;
+      flex: 0 0 16px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      font-size: 14px;
+      line-height: 1;
+    }
+
+    .nav-icon svg {
+      width: 16px;
+      height: 16px;
+      display: block;
+    }
+    .nav-label { font-size: 15px; font-weight: 600; }
+    .soon-badge {
+      margin-left: auto;
+      font-size: 11px;
+      font-weight: 700;
+      color: rgba(217, 223, 213, 0.58);
+      letter-spacing: 0.02em;
+      opacity: 0;
+      transform: translateY(2px);
+      transition: opacity 140ms ease, transform 140ms ease;
+      pointer-events: none;
+    }
+    .nav-item-disabled:hover .soon-badge {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .sidebar-foot {
+      margin-top: auto; padding: 14px; border-radius: 12px; background: linear-gradient(180deg, rgba(24,26,23,0.9), rgba(14,15,14,0.98)); border: 1px solid rgba(255,255,255,0.07); box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
+    }
+    .wallet-btn, .submit-btn {
+      width: 100%; min-height: 46px; border: none; border-radius: 10px; background: linear-gradient(135deg, #f1ca64, #d7a528);
+      color: #151106; font-size: 14px; font-weight: 900; cursor: pointer; transition: transform 180ms ease, filter 180ms ease, box-shadow 180ms ease; box-shadow: 0 16px 28px rgba(232,191,82,0.2);
+    }
+    .network-badge {
+      display: none; margin-top: 10px; min-height: 34px; align-items: center; justify-content: center; border-radius: 10px;
+      background: rgba(151,255,93,0.1); border: 1px solid rgba(151,255,93,0.18); color: #d7ffc2; font-size: 12px; font-weight: 700;
+    }
+    .network-badge.show { display: flex; }
+    .main { min-width: 0; }
+    .topbar {
+      width: min(1040px, calc(100% - 40px));
+      margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 16px 0 0;
+    }
+    .pill {
+      min-height: 42px; padding: 0 16px; border-radius: 10px; display: inline-flex; align-items: center; background: linear-gradient(180deg, rgba(30,33,29,0.95), rgba(18,20,18,0.98));
+      border: 1px solid rgba(255,255,255,0.07); color: var(--text); font-size: 13px; font-weight: 700; transition: transform 180ms ease, border-color 180ms ease, background 180ms ease; box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
+    }
+    .pill-button {
+      appearance: none;
+      -webkit-appearance: none;
+      font-family: inherit;
+      cursor: pointer;
+    }
+    .page { padding: 24px 20px 36px; }
+    .create-shell {
+      width: min(980px, 100%);
+      margin: 0 auto;
+      display: grid;
+      gap: 16px;
+    }
+    .create-head {
+      display: grid;
+      gap: 6px;
+      padding: 0 4px;
+    }
+    .create-eyebrow {
+      color: #f0ca67;
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+    }
+    .create-subtitle {
+      color: var(--text);
+      font-size: 34px;
+      font-weight: 700;
+      line-height: 1;
+    }
+    .create-copy {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.8;
+      max-width: 620px;
+    }
+    .create-card {
+      padding: 30px;
+    }
+    .required-mark {
+      color: #ff7f61;
+    }
+    .optional-label {
+      color: #99a7bd;
+      font-weight: 600;
+    }
+    .optional-block {
+      border-top: 1px solid rgba(255,255,255,0.06);
+      margin-top: 6px;
+      padding-top: 14px;
+    }
+    .optional-block summary {
+      list-style: none;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      cursor: pointer;
+      color: var(--text);
+      font-size: 14px;
+      font-weight: 800;
+    }
+    .optional-block summary::-webkit-details-marker { display: none; }
+    .optional-summary-left {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .optional-summary-right {
+      color: var(--muted);
+      font-size: 18px;
+      line-height: 1;
+      transition: transform 180ms ease;
+    }
+    .optional-block[open] .optional-summary-right {
+      transform: rotate(180deg);
+    }
+    .optional-body {
+      display: grid;
+      gap: 12px;
+      margin-top: 14px;
+      justify-items: center;
+    }
+    .social-surface {
+      width: min(760px, 100%);
+      display: grid;
+      gap: 12px;
+    }
+    .actions-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 14px;
+      margin-top: 6px;
+      width: min(820px, 100%);
+      margin-inline: auto;
+    }
+    .actions-copy {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.7;
+      min-width: 0;
+      max-width: none;
+      padding-right: 8px;
+    }
+    #resultBox:empty {
+      display: none;
+    }
+    .layout {
+      width: min(1040px, 100%);
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 18px;
+    }
+    .layout-main {
+      display: grid;
+      gap: 18px;
+    }
+    .panel {
+      position: relative; overflow: hidden; background: linear-gradient(180deg, rgba(22,24,21,0.92), rgba(12,13,12,0.98)); border: 1px solid rgba(255,255,255,0.07); border-radius: 16px; box-shadow: var(--shadow); animation: riseIn 420ms ease both;
+    }
+    .panel::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+      pointer-events: none;
+    }
+    .hero {
+      padding: 30px;
+      min-height: 260px;
+      background:
+        radial-gradient(circle at top right, rgba(232,191,82,0.16), transparent 34%),
+        radial-gradient(circle at left center, rgba(151,255,93,0.08), transparent 28%);
+    }
+    .hero-kicker { color: #f0ca67; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.18em; }
+    .hero h1 { margin: 14px 0 12px; font-size: 60px; line-height: 0.92; max-width: 640px; }
+    .hero p { color: var(--muted); font-size: 15px; line-height: 1.9; max-width: 620px; }
+    .hero-grid { display: grid; gap: 12px; margin-top: 22px; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .hero-stat { padding: 18px; border-radius: 12px; background: linear-gradient(180deg, rgba(31,34,30,0.92), rgba(15,16,15,0.98)); border: 1px solid rgba(255,255,255,0.07); box-shadow: inset 0 1px 0 rgba(255,255,255,0.03); }
+    .hero-stat-label { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 800; }
+    .hero-stat-value { margin-top: 10px; font-size: 24px; font-family: "Space Grotesk", sans-serif; font-weight: 700; }
+    .form-panel, .side-panel { padding: 22px; }
+    .side-panel {
+      width: 100%;
+    }
+    .section-head {
+      display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 14px;
+    }
+    .section-title { font-size: 32px; font-weight: 700; }
+    .mini-chip {
+      display: inline-flex; align-items: center; min-height: 28px; padding: 0 10px; border-radius: 10px; background: var(--gold-soft);
+      border: 1px solid var(--gold-line); color: var(--gold); font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em;
+    }
+    .field-stack { display: grid; gap: 22px; }
+    .identity-grid {
+      display: grid;
+      grid-template-columns: 220px minmax(0, 1fr);
+      gap: 22px;
+      align-items: start;
+    }
+    .identity-fields {
+      display: grid;
+      gap: 18px;
+    }
+    .artwork-field {
+      display: grid;
+      gap: 10px;
+    }
+    .field {
+      padding: 10px 12px 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.04);
+      background: linear-gradient(180deg, rgba(18,22,30,0.54), rgba(12,15,21,0.4));
+      transition: border-color 180ms ease, box-shadow 180ms ease, background 180ms ease;
+    }
+    .field-inline-label {
+      display: block;
+      color: #96a391;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-weight: 800;
+    }
+    .grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+    .field label {
+      display: block; margin-bottom: 8px; color: #96a391; font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 800;
+    }
+    .input, .textarea {
+      width: 100%; border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; background: linear-gradient(180deg, rgba(16,18,16,0.96), rgba(11,12,11,0.98)); color: var(--text);
+      padding: 13px 14px; font-size: 14px; outline: none; transition: box-shadow 180ms ease, border-color 180ms ease;
+    }
+    .textarea { resize: vertical; min-height: 168px; }
+    .artwork-tile {
+      width: 220px;
+      aspect-ratio: 1;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: linear-gradient(180deg, rgba(16,18,16,0.96), rgba(9,10,9,0.99));
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
+      display: block;
+      cursor: pointer;
+      overflow: hidden;
+      transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+    }
+    .artwork-preview {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    .artwork-preview img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 12px;
+      display: block;
+    }
+    .artwork-placeholder {
+      display: grid;
+      gap: 10px;
+      justify-items: center;
+      text-align: center;
+      color: var(--muted);
+    }
+    .artwork-icon {
+      width: 58px;
+      height: 58px;
+      border-radius: 12px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.07);
+      color: #f3d98b;
+      font-size: 28px;
+      font-weight: 800;
+      line-height: 1;
+    }
+    .artwork-placeholder-title {
+      color: var(--text);
+      font-size: 15px;
+      font-weight: 800;
+    }
+    .artwork-placeholder-meta {
+      font-size: 12px;
+      line-height: 1.7;
+      color: var(--muted);
+    }
+    .settings-strip {
+      width: min(820px, 100%);
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+    .setting-chip {
+      min-height: 76px;
+      padding: 14px 16px;
+      border-radius: 12px;
+      background: linear-gradient(180deg, rgba(20,22,20,0.96), rgba(11,12,11,0.98));
+      border: 1px solid rgba(255,255,255,0.07);
+      display: grid;
+      align-content: center;
+      gap: 6px;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
+    }
+    .setting-chip.primary {
+      border-color: rgba(151,255,93,0.22);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.03), 0 14px 28px rgba(151,255,93,0.08);
+    }
+    .setting-label {
+      color: var(--muted);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-weight: 800;
+    }
+    .setting-value {
+      color: var(--text);
+      font-size: 19px;
+      font-family: "Space Grotesk", sans-serif;
+      font-weight: 700;
+      line-height: 1.1;
+    }
+    .social-section {
+      display: grid;
+      gap: 12px;
+    }
+    .section-inline-title {
+      width: min(820px, 100%);
+      margin: 0 auto;
+      color: var(--text);
+      font-size: 14px;
+      font-weight: 800;
+    }
+    .social-grid {
+      width: min(820px, 100%);
+      margin: 0 auto;
+      display: grid;
+      gap: 16px;
+    }
+    .image-box {
+      display: grid;
+      grid-template-columns: 108px minmax(0, 1fr);
+      gap: 16px;
+      padding: 16px;
+      border-radius: 12px;
+      background: linear-gradient(180deg, rgba(16,18,16,0.96), rgba(11,12,11,0.98));
+      border: 1px solid rgba(255,255,255,0.08);
+      align-items: start;
+    }
+    .preview {
+      width: 108px; height: 108px; border-radius: 16px; flex-shrink: 0; display: flex; align-items: center; justify-content: center;
+      background: linear-gradient(135deg, #f1ca64, #d7a528); color: #151106; font-size: 30px; font-weight: 900; overflow: hidden; transition: transform 180ms ease, box-shadow 180ms ease;
+    }
+    .image-controls { display: grid; gap: 12px; min-width: 0; }
+    .upload-surface {
+      display: grid;
+      justify-items: center;
+      align-content: center;
+      gap: 14px;
+      width: min(520px, 100%);
+      min-height: 168px;
+      margin: 0 auto;
+      padding: 18px 20px;
+      border-radius: 12px;
+      border: 1px dashed rgba(255,255,255,0.12);
+      background: linear-gradient(180deg, rgba(21,23,21,0.96), rgba(12,14,12,0.98));
+    }
+    .upload-copy {
+      display: grid;
+      gap: 6px;
+      min-width: 0;
+      text-align: center;
+      justify-items: center;
+    }
+    .upload-title {
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--text);
+    }
+    .upload-note {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.7;
+      max-width: 320px;
+    }
+    .upload-btn {
+      min-width: 176px;
+      min-height: 56px;
+      padding: 8px 12px 8px 10px;
+      border-radius: 12px;
+      border: 1px solid rgba(232,191,82,0.2);
+      background:
+        linear-gradient(180deg, rgba(232,191,82,0.14), rgba(232,191,82,0.07));
+      color: #f6e3aa;
+      display: inline-flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 12px;
+      cursor: pointer;
+      transition: transform 180ms ease, border-color 180ms ease, background 180ms ease, box-shadow 180ms ease;
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.06),
+        0 10px 24px rgba(0,0,0,0.18);
+    }
+    .upload-btn-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 12px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.08);
+      color: #fff4cf;
+      font-size: 18px;
+      font-weight: 900;
+      line-height: 1;
+    }
+    .upload-btn-copy {
+      display: grid;
+      gap: 2px;
+      min-width: 0;
+    }
+    .upload-btn-label {
+      color: #f4ebca;
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .upload-btn-meta {
+      color: rgba(255,244,207,0.7);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+    }
+    .hint {
+      margin-top: 16px; padding: 16px; border-radius: 12px; background: linear-gradient(180deg, rgba(16,18,16,0.96), rgba(11,12,11,0.98)); border: 1px solid rgba(255,255,255,0.08); color: var(--muted);
+      font-size: 13px; line-height: 1.7; transition: border-color 180ms ease, box-shadow 180ms ease;
+    }
+    .metric-list { display: grid; gap: 10px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .metric-row {
+      display: flex; justify-content: space-between; gap: 10px; min-height: 44px; padding: 0 14px; align-items: center; border-radius: 10px;
+      background: var(--panel-3); color: var(--muted); font-size: 13px; border: 1px solid rgba(255,255,255,0.05);
+    }
+    .metric-row strong { color: var(--text); }
+    .wallet-btn:hover, .submit-btn:hover, .pill:hover, .upload-btn:hover { transform: translateY(-2px); border-color: rgba(232,191,82,0.16); }
+    .wallet-btn:hover, .submit-btn:hover { filter: brightness(1.03); box-shadow: 0 18px 32px rgba(232,191,82,0.18); }
+    .preview:hover { transform: translateY(-2px) scale(1.01); box-shadow: 0 14px 24px rgba(232,191,82,0.16); }
+    .artwork-tile:hover { transform: translateY(-2px); border-color: rgba(232,191,82,0.16); box-shadow: 0 18px 32px rgba(232,191,82,0.12); }
+    .field:focus-within {
+      border-color: rgba(104,221,255,0.14);
+      background: linear-gradient(180deg, rgba(20,28,38,0.68), rgba(12,17,26,0.56));
+      box-shadow: 0 0 0 3px rgba(104,221,255,0.05);
+    }
+    .field:focus-within label {
+      color: #b9cce3;
+    }
+    .input:focus, .textarea:focus {
+      box-shadow: 0 0 0 3px rgba(104,221,255,0.05);
+      border-color: rgba(104,221,255,0.14);
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation: none !important;
+        transition: none !important;
+      }
+    }
+    @media (max-width: 1100px) {
+      .app { grid-template-columns: 1fr; }
+      .sidebar { position: static; height: auto; border-right: none; border-bottom: 1px solid var(--line); }
+    }
+    @media (max-width: 760px) {
+      .page, .topbar { padding-left: 14px; padding-right: 14px; }
+      .topbar { width: calc(100% - 28px); }
+      .grid-2 { grid-template-columns: 1fr; }
+      .identity-grid { grid-template-columns: 1fr; }
+      .identity-fields { gap: 14px; }
+      .artwork-tile { width: min(220px, 100%); }
+      .artwork-field { justify-items: center; }
+      .field-inline-label { width: 100%; }
+      .settings-strip { grid-template-columns: 1fr; }
+      .social-grid, .section-inline-title { width: 100%; }
+      .social-surface { width: 100%; }
+      .image-box { grid-template-columns: 1fr; }
+      .preview { width: 96px; height: 96px; }
+      .upload-surface {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+      .create-card { padding: 18px; }
+      .actions-row {
+        grid-template-columns: 1fr;
+        align-items: stretch;
+        width: 100%;
+      }
+      .submit-btn { width: 100%; }
+      .metric-list { grid-template-columns: 1fr; }
+      .hero h1 { font-size: 42px; }
+      .hero { padding: 24px 18px; }
+      .hero-grid { grid-template-columns: 1fr; }
+    }
+
+    html[data-theme="light"] .create-card {
+      background: linear-gradient(180deg, rgba(250,246,238,0.98), rgba(241,234,222,0.98));
+    }
+
+    html[data-theme="light"] .field label {
+      color: #7a7469;
+    }
+
+    html[data-theme="light"] .field-inline-label,
+    html[data-theme="light"] .setting-label {
+      color: #7a7469;
+    }
+
+    html[data-theme="light"] .optional-label {
+      color: #8d92a3;
+    }
+
+    html[data-theme="light"] .submit-btn {
+      background: linear-gradient(135deg, #f2c857, #e0a91f);
+      color: #181108;
+      box-shadow: 0 16px 28px rgba(180,124,16,0.16);
+    }
+
+    html[data-theme="light"] .image-box {
+      background: linear-gradient(180deg, rgba(247,242,233,0.98), rgba(238,230,216,0.98));
+      border-color: rgba(65,52,23,0.1);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.68);
+    }
+
+    html[data-theme="light"] .artwork-tile {
+      background: linear-gradient(180deg, rgba(255,255,255,0.9), rgba(242,235,223,0.98));
+      border-color: rgba(65,52,23,0.1);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.74);
+    }
+
+    html[data-theme="light"] .artwork-icon {
+      background: rgba(232,191,82,0.1);
+      border-color: rgba(180,124,16,0.12);
+      color: #c38712;
+    }
+
+    html[data-theme="light"] .artwork-placeholder-title,
+    html[data-theme="light"] .section-inline-title {
+      color: #1f180f;
+    }
+
+    html[data-theme="light"] .artwork-placeholder-meta,
+    html[data-theme="light"] .create-copy {
+      color: #6b6255;
+    }
+
+    html[data-theme="light"] .setting-chip {
+      background: linear-gradient(180deg, rgba(255,255,255,0.7), rgba(244,238,227,0.92));
+      border-color: rgba(191,164,106,0.18);
+      box-shadow: 0 16px 32px rgba(207,184,144,0.12);
+    }
+
+    html[data-theme="light"] .setting-chip.primary {
+      border-color: rgba(102,184,71,0.22);
+      box-shadow: 0 16px 32px rgba(140,196,118,0.14);
+    }
+
+    html[data-theme="light"] .setting-value {
+      color: #1e170d;
+    }
+
+    html[data-theme="light"] .preview {
+      background: linear-gradient(135deg, #f3ca59, #e3ad20);
+      color: #1a1207;
+      box-shadow: 0 14px 28px rgba(180,124,16,0.16);
+    }
+
+    html[data-theme="light"] .upload-surface {
+      border-color: rgba(65,52,23,0.12);
+      background: linear-gradient(180deg, rgba(243,236,223,0.98), rgba(233,224,208,0.98));
+    }
+
+    html[data-theme="light"] .upload-title {
+      color: #21180d;
+    }
+
+    html[data-theme="light"] .upload-note {
+      color: #6b6255;
+    }
+
+    html[data-theme="light"] .upload-btn {
+      border-color: rgba(180,124,16,0.16);
+      background: linear-gradient(180deg, rgba(255,255,255,0.96), rgba(243,236,223,0.98));
+      color: #1d160c;
+      box-shadow: 0 12px 26px rgba(87,66,20,0.08), inset 0 1px 0 rgba(255,255,255,0.85);
+    }
+
+    html[data-theme="light"] .upload-btn-icon {
+      background: rgba(232,191,82,0.12);
+      border-color: rgba(180,124,16,0.12);
+      color: #c38712;
+    }
+
+    html[data-theme="light"] .upload-btn-label {
+      color: #20180d;
+    }
+
+    html[data-theme="light"] .upload-btn-meta {
+      color: #8a7b60;
+    }
+
+    html[data-theme="light"] .optional-block {
+      border-top-color: rgba(65,52,23,0.1);
+    }
+
+    html[data-theme="light"] .optional-block summary {
+      color: #1b160f;
+    }
+
+    html[data-theme="light"] .optional-summary-right {
+      color: #6c6457;
+    }
+
+    html[data-theme="light"] .social-surface {
+      background: linear-gradient(180deg, rgba(255,255,255,0.56), rgba(248,242,230,0.78));
+      border: 1px solid rgba(191,164,106,0.2);
+      border-radius: 18px;
+      padding: 18px;
+      box-shadow: 0 18px 36px rgba(207, 184, 144, 0.14);
+    }
+
+    html[data-theme="light"] .actions-copy,
+    html[data-theme="light"] .hint {
+      color: #635c50;
+    }
+  </style>
+  <link rel="stylesheet" href="/assets/theme.css?v=20260404a">
+  <script src="/assets/theme.js?v=20260330d" defer></script>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">
+        <span class="brand-mark" aria-label="TempoBoard logo">
+          <img src="/assets/logo.svg?v=20260403logo2" alt="TempoBoard logo">
+        </span>
+        <span>TempoBoard</span>
+      </div>
+
+      <nav class="nav">
+        <a href="/" class="nav-item">
+          <span class="nav-icon">⌂</span>
+          <span class="nav-label">Home</span>
+        </a>
+        <a href="/create" class="nav-item active">
+          <span class="nav-icon">＋</span>
+          <span class="nav-label">Create Token</span>
+        </a>
+        <a href="/tokens" class="nav-item">
+          <span class="nav-icon">▦</span>
+          <span class="nav-label">Tokens</span>
+        </a>
+        <a href="/docs" class="nav-item">
+          <span class="nav-icon">◫</span>
+          <span class="nav-label">Docs</span>
+        </a>
+        <div class="nav-item nav-item-disabled" aria-disabled="true">
+          <span class="nav-icon">◌</span>
+          <span class="nav-label">Stake</span>
+          <span class="soon-badge">soon</span>
+        </div>
+        <a href="https://x.com/tempoboard?s=21" target="_blank" rel="noreferrer" class="nav-item">
+          <span class="nav-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M22 5.924a8.828 8.828 0 0 1-2.357.646 4.078 4.078 0 0 0 1.804-2.254 8.138 8.138 0 0 1-2.606.995A4.084 4.084 0 0 0 11.86 8.1a11.59 11.59 0 0 1-8.42-4.27 4.087 4.087 0 0 0 1.263 5.453A4.03 4.03 0 0 1 2.85 8.77v.052a4.09 4.09 0 0 0 3.276 4.006 4.112 4.112 0 0 1-1.844.07 4.089 4.089 0 0 0 3.815 2.837A8.195 8.195 0 0 1 2 17.433 11.548 11.548 0 0 0 8.26 19.27c7.547 0 11.674-6.252 11.674-11.674 0-.178-.004-.355-.012-.53A8.263 8.263 0 0 0 22 5.924Z" fill="#1D9BF0"/>
+            </svg>
+          </span>
+          <span class="nav-label">Twitter</span>
+        </a>
+      </nav>
+    </aside>
+
+    <main class="main">
+      <div class="topbar">
+        <div class="topbar-left">
+          <div class="topbar-title">Create Token</div>
+          <div class="section-copy">Deploy a new pathUSD-native launch on Tempo.</div>
+        </div>
+        <div class="topbar-right">
+          <button type="button" onclick="connectWallet()" class="pill pill-button" id="walletPreview">Connect Wallet</button>
+        </div>
+      </div>
+
+      <div class="page">
+        <section class="create-shell">
+          <div class="create-head">
+            <div class="create-eyebrow">Create token</div>
+            <div class="create-subtitle">Set the token identity and go live.</div>
+            <div class="create-copy">Everything launches against the same pathUSD curve: fixed settlement, 80% internal sale, then external liquidity.</div>
+          </div>
+
+          <section class="panel create-card">
+            <div class="field-stack">
+              <div class="identity-grid">
+                <div class="artwork-field">
+                  <label for="imageFile" class="field-inline-label">Token artwork <span class="optional-label">(Optional)</span></label>
+                  <label class="artwork-tile">
+                    <div id="imagePreview" class="artwork-preview">
+                      <div class="artwork-placeholder">
+                        <div class="artwork-icon">+</div>
+                        <div class="artwork-placeholder-title">Upload image</div>
+                        <div class="artwork-placeholder-meta">PNG JPG WEBP</div>
+                      </div>
+                    </div>
+                    <input type="file" id="imageFile" accept="image/*" class="hidden" onchange="handleImageUpload(event)">
+                  </label>
+                  <input id="image" type="hidden">
+                </div>
+
+                <div class="identity-fields">
+                  <div class="field">
+                    <label for="name">Coin name <span class="required-mark">*</span></label>
+                    <input id="name" class="input" placeholder="Name your coin">
+                  </div>
+                  <div class="field">
+                    <label for="symbol">Ticker <span class="required-mark">*</span></label>
+                    <input id="symbol" class="input" placeholder="Add a coin ticker (e.g. DOGE)">
+                  </div>
+                </div>
+              </div>
+
+              <div class="field">
+                <label for="description">Description <span class="optional-label">(Optional)</span></label>
+                <textarea id="description" class="textarea" placeholder="Write a short description"></textarea>
+              </div>
+
+              <div class="settings-strip">
+                <div class="setting-chip primary">
+                  <div class="setting-label">Settlement token</div>
+                  <div class="setting-value">pathUSD</div>
+                </div>
+                <div class="setting-chip">
+                  <div class="setting-label">Internal sale cap</div>
+                  <div class="setting-value">80%</div>
+                </div>
+                <div class="setting-chip">
+                  <div class="setting-label">External LP reserve</div>
+                  <div class="setting-value">19,124.58 pathUSD</div>
+                </div>
+              </div>
+
+              <div class="social-section">
+                <div class="section-inline-title">Social links <span class="optional-label">(Optional)</span></div>
+                <div class="social-grid">
+                  <div class="field">
+                    <label for="website">Website</label>
+                    <input id="website" class="input" placeholder="Add URL">
+                  </div>
+                  <div class="field">
+                    <label for="twitter">X</label>
+                    <input id="twitter" class="input" placeholder="Add URL">
+                  </div>
+                </div>
+              </div>
+
+              <div class="actions-row">
+                <div class="actions-copy">Creation deploys a new token on-chain and registers it in the TempoBoard launch contract.</div>
+                <button onclick="createLaunch()" class="submit-btn">Create Launch</button>
+              </div>
+
+              <div class="hint" id="resultBox"></div>
+            </div>
+          </section>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <script src="/assets/wallet.js?v=20260322b"></script>
+  <script>
+    let provider, signer, userAddress;
+    let walletSession;
+    const LAUNCH_CONTRACT = "0x5866914946e4B7c7B2C789cc5EE259b73CBa2274";
+    const LAUNCH_ABI = [
+      "function createLaunch(string name, string symbol, string meta) returns (address)",
+      "function createToken(string name, string symbol, string meta) returns (address)",
+      "event LaunchCreated(address indexed token, address indexed creator, string name, string symbol, string meta)"
+    ];
+    const TEMPO_CHAIN = {
+      chainId: "0x1079",
+      chainName: "Tempo Mainnet",
+      nativeCurrency: { name: "USD", symbol: "USD", decimals: 18 },
+      rpcUrls: ["https://rpc.tempo.xyz"],
+      blockExplorerUrls: ["https://explore.mainnet.tempo.xyz"]
+    };
+    const MAX_IMAGE_META_BYTES = 12000;
+
+    function readFileAsDataUrl(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = (event) => resolve(String(event.target?.result || ""));
+        reader.onerror = () => reject(new Error("Failed to read image file."));
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function loadImageElement(src) {
+      return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.onload = () => resolve(img);
+        img.onerror = () => reject(new Error("Failed to decode image."));
+        img.src = src;
+      });
+    }
+
+    async function buildCompressedImageDataUrl(file) {
+      const originalDataUrl = await readFileAsDataUrl(file);
+      const image = await loadImageElement(originalDataUrl);
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d", { alpha: true });
+      if (!ctx) throw new Error("Canvas is not available in this browser.");
+
+      let targetMaxSide = 220;
+      let quality = 0.82;
+      let bestDataUrl = "";
+
+      for (let attempt = 0; attempt < 10; attempt += 1) {
+        const scale = Math.min(1, targetMaxSide / Math.max(image.naturalWidth, image.naturalHeight));
+        const width = Math.max(1, Math.round(image.naturalWidth * scale));
+        const height = Math.max(1, Math.round(image.naturalHeight * scale));
+
+        canvas.width = width;
+        canvas.height = height;
+        ctx.clearRect(0, 0, width, height);
+        ctx.drawImage(image, 0, 0, width, height);
+
+        const mimeType = attempt < 7 ? "image/webp" : "image/jpeg";
+        const dataUrl = canvas.toDataURL(mimeType, quality);
+        bestDataUrl = dataUrl;
+
+        if (new TextEncoder().encode(dataUrl).length <= MAX_IMAGE_META_BYTES) {
+          return dataUrl;
+        }
+
+        if (quality > 0.46) {
+          quality -= 0.08;
+        } else {
+          targetMaxSide = Math.max(96, Math.round(targetMaxSide * 0.82));
+        }
+      }
+
+      if (new TextEncoder().encode(bestDataUrl).length > MAX_IMAGE_META_BYTES) {
+        throw new Error("Image is too large for on-chain metadata. Try a simpler square image.");
+      }
+
+      return bestDataUrl;
+    }
+
+    async function handleImageUpload(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      if (!file.type.startsWith("image/")) {
+        setResult("Please upload a valid image file.", true);
+        e.target.value = "";
+        return;
+      }
+      const uploadBtnText = document.getElementById("uploadBtnText");
+      const uploadBtnMeta = document.getElementById("uploadBtnMeta");
+      if (uploadBtnText) {
+        uploadBtnText.textContent = file.name.length > 22 ? `${file.name.slice(0, 19)}...` : file.name;
+      }
+      if (uploadBtnMeta) {
+        uploadBtnMeta.textContent = "Optimizing image...";
+      }
+      setResult("Optimizing image for launch metadata...");
+      try {
+        const compressedDataUrl = await buildCompressedImageDataUrl(file);
+        document.getElementById("image").value = compressedDataUrl;
+        document.getElementById("imagePreview").innerHTML = `<img src="${compressedDataUrl}" class="w-full h-full object-cover">`;
+        if (uploadBtnMeta) {
+          uploadBtnMeta.textContent = "Ready to launch";
+        }
+        setResult("Image ready.");
+      } catch (error) {
+        document.getElementById("image").value = "";
+        document.getElementById("imagePreview").innerHTML = `
+          <div class="artwork-placeholder">
+            <div class="artwork-icon">+</div>
+            <div class="artwork-placeholder-title">Upload image</div>
+            <div class="artwork-placeholder-meta">PNG JPG WEBP</div>
+          </div>
+        `;
+        if (uploadBtnMeta) {
+          uploadBtnMeta.textContent = "Upload failed";
+        }
+        e.target.value = "";
+        setResult(error.message || "Image upload failed.", true);
+      }
+    }
+
+    function applyWalletConnected(address, announce = false) {
+      const short = window.TempomemeWallet.formatAddress(address);
+      const connectBtn = document.getElementById("connectBtn");
+      if (connectBtn) connectBtn.textContent = short;
+      document.getElementById("walletPreview").textContent = short;
+      const networkBadge = document.getElementById("networkBadge");
+      if (networkBadge) {
+        networkBadge.textContent = "Tempo Mainnet";
+        networkBadge.classList.add("show");
+      }
+      if (announce) {
+        setResult(`Wallet connected: ${address}`);
+      }
+    }
+
+    function resetWalletUi(showWrongNetwork = false) {
+      provider = null;
+      signer = null;
+      userAddress = null;
+      const connectBtn = document.getElementById("connectBtn");
+      if (connectBtn) connectBtn.textContent = "Connect Wallet";
+      document.getElementById("walletPreview").textContent = "Connect Wallet";
+      const networkBadge = document.getElementById("networkBadge");
+      if (networkBadge) {
+        if (showWrongNetwork) {
+          networkBadge.textContent = "Switch to Tempo Mainnet";
+          networkBadge.classList.add("show");
+        } else {
+          networkBadge.textContent = "Tempo Mainnet";
+          networkBadge.classList.remove("show");
+        }
+      }
+    }
+
+    async function autoConnect() {
+      if (!walletSession) return;
+      await walletSession.init();
+    }
+
+    async function connectWallet(requestAccess = true) {
+      if (!walletSession) return false;
+      return await walletSession.connect(requestAccess, { silent: !requestAccess });
+    }
+
+    function initWallet() {
+      walletSession = window.TempomemeWallet.createSession({
+        chain: TEMPO_CHAIN,
+        onConnect: async ({ address, provider: nextProvider, signer: nextSigner, requestAccess }) => {
+          provider = nextProvider;
+          signer = nextSigner;
+          userAddress = address;
+          applyWalletConnected(address, requestAccess);
+        },
+        onDisconnect: ({ reason }) => {
+          resetWalletUi(reason === "wrongChain");
+        },
+        onWrongChain: () => {
+          resetWalletUi(true);
+        },
+        onError: (message) => {
+          setResult(`Connection failed: ${message}`, true);
+        }
+      });
+    }
+
+    async function createLaunch() {
+      const name = document.getElementById("name").value.trim();
+      const symbol = document.getElementById("symbol").value.trim();
+      const description = document.getElementById("description").value.trim();
+      const image = document.getElementById("image").value.trim();
+      const twitter = document.getElementById("twitter").value.trim();
+      const website = document.getElementById("website").value.trim();
+      if (!name || !symbol) return setResult("Please enter a token name and symbol.", true);
+      if (!userAddress) return setResult("Please connect your wallet first.", true);
+      try {
+        const meta = JSON.stringify({ description, image, twitter, website });
+        const metaBytes = new TextEncoder().encode(meta).length;
+        if (metaBytes > MAX_IMAGE_META_BYTES + 8000) {
+          return setResult("Metadata is still too large. Use a smaller image or shorter text.", true);
+        }
+        setResult(`Creating ${name} (${symbol})...`);
+        const contract = new ethers.Contract(LAUNCH_CONTRACT, LAUNCH_ABI, signer);
+        let tx;
+        try {
+          tx = await contract.createToken(name, symbol, meta);
+        } catch (e) {
+          tx = await contract.createLaunch(name, symbol, meta);
+        }
+        setResult(`Transaction sent: ${tx.hash}`);
+        const receipt = await tx.wait();
+        const iface = new ethers.Interface(LAUNCH_ABI);
+        let tokenAddr = "";
+        for (const log2 of receipt.logs) {
+          try {
+            const parsed = iface.parseLog(log2);
+            if (parsed.name === "LaunchCreated") tokenAddr = parsed.args.token;
+          } catch (e) {}
+        }
+        if (tokenAddr) {
+          try {
+            localStorage.setItem(
+              `tempo_meta_${tokenAddr.toLowerCase()}`,
+              JSON.stringify({ description, image, twitter, website })
+            );
+          } catch (e) {}
+        }
+        setResult(`Launch created: ${tokenAddr || "Token address not found"}`);
+      } catch (e) {
+        setResult(`Creation failed: ${e.message}`, true);
+      }
+    }
+
+    function setResult(message, isError = false) {
+      const box = document.getElementById("resultBox");
+      box.textContent = message;
+      box.style.color = isError ? "#ffb0a9" : "#d9f5cb";
+      box.style.borderColor = isError ? "rgba(255,140,120,0.16)" : "rgba(141,255,85,0.18)";
+    }
+
+    window.addEventListener("load", () => {
+      initWallet();
+      autoConnect();
+    });
+  </script>
+</body>
+</html>

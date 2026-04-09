@@ -1,0 +1,24 @@
+{
+  "name": "SBTI WOC! - 握草人",
+  "description": "Authorized commemorative NFT for the SBTI result WOC!（握草人）.\n\n我们发现了一种神奇的生物——WOC!人。他们拥有两种完全独立的操作系统：一个叫“表面系统”，负责发出“我操”“牛逼”“啊？”等一系列大惊小怪的拟声词；另一个叫“后台系统”，负责冷静分析：嗯，果然不出我所料。WOC!人只会卧槽，不会多管闲事，因为他们深知，给傻逼讲道理，就像扶着烂泥上墙，不仅浪费体力，还弄自己一手屎。所以他们选择，握着一根智慧的大草，用一声饱含深情的“WOC！”来为这个疯狂的世界献上最高敬意。\n\nIntro: 卧槽，我怎么是这个人格？",
+  "image": "https://sbti.dog/sbti/image/WOC.png",
+  "external_url": "https://sbti.dog/sbti/index.html",
+  "attributes": [
+    {
+      "trait_type": "Collection",
+      "value": "SBTI Result NFT"
+    },
+    {
+      "trait_type": "Result Code",
+      "value": "WOC!"
+    },
+    {
+      "trait_type": "Result Name",
+      "value": "握草人"
+    },
+    {
+      "trait_type": "Token ID",
+      "value": 15
+    }
+  ]
+}

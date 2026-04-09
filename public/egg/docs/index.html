@@ -1,0 +1,338 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Egg Docs | Egg on Tempo</title>
+    <meta
+      name="description"
+      content="Documentation for Egg on Tempo: fixed supply logic, mint rules, burn-to-hatch conversion, trading, and future staking plans."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DotGothic16&family=M+PLUS+Rounded+1c:wght@400;500;700;800&family=Mochiy+Pop+One&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="icon" type="image/svg+xml" href="../assets/egg-mark.svg" />
+    <link rel="stylesheet" href="../styles.css" />
+  </head>
+  <body>
+    <main class="egg-page egg-docs">
+      <header class="site-header">
+        <a class="brand-link" href="../index.html" aria-label="Back to Egg home">
+          <img src="../assets/egg-mark.svg" alt="Egg logo" />
+          <div class="brand-copy">
+            <p class="brand-name">Egg Docs</p>
+            <p class="brand-sub">Protocol Mechanics</p>
+          </div>
+        </a>
+
+        <nav class="site-nav" aria-label="Documentation navigation">
+          <a href="../index.html">Home</a>
+          <a href="#overview">Overview</a>
+          <a href="#mint">Mint</a>
+          <a href="#burn">Burn</a>
+          <a href="#trade">Trade</a>
+          <a href="#faq">FAQ</a>
+        </nav>
+
+        <div class="header-actions">
+          <a class="button button-secondary" href="../index.html">Back to Site</a>
+          <a class="button button-primary" href="#overview">Start Reading</a>
+        </div>
+      </header>
+
+      <div class="docs-grid">
+        <aside class="docs-sidebar reveal">
+          <div class="docs-brand">
+            <img src="../assets/egg-mark.svg" alt="Egg logo" />
+            <div class="docs-brand-copy">
+              <p class="docs-brand-name">Egg</p>
+              <p class="docs-brand-sub">On Tempo</p>
+            </div>
+          </div>
+
+          <nav aria-label="Sections">
+            <a href="#overview">
+              <strong>Overview</strong>
+              <small>What Egg is</small>
+            </a>
+            <a href="#assets">
+              <strong>Asset Model</strong>
+              <small>How NFTs and $EGG relate</small>
+            </a>
+            <a href="#mint">
+              <strong>Mint</strong>
+              <small>0.3 pathUSD per Egg NFT</small>
+            </a>
+            <a href="#burn">
+              <strong>Burn to Hatch</strong>
+              <small>1 NFT -> 1 $EGG</small>
+            </a>
+            <a href="#trade">
+              <strong>Trade</strong>
+              <small>Market and price flow</small>
+            </a>
+            <a href="#supply">
+              <strong>Supply Logic</strong>
+              <small>Why the cap holds</small>
+            </a>
+            <a href="#stake">
+              <strong>Stake Soon</strong>
+              <small>What may come next</small>
+            </a>
+            <a href="#faq">
+              <strong>FAQ</strong>
+              <small>Common questions</small>
+            </a>
+          </nav>
+        </aside>
+
+        <div class="docs-main">
+          <section class="docs-hero reveal">
+            <p class="eyebrow">Egg Documentation</p>
+            <h1>Egg on Tempo, explained.</h1>
+            <p>
+              Egg uses one capped supply that can live in two forms: Egg NFTs and
+              <span class="inline-code">$EGG</span>. These docs explain minting, hatching,
+              trading, and the rules that keep the combined total fixed at
+              <strong>13,200 units</strong>.
+            </p>
+
+            <div class="docs-hero-actions">
+              <a class="button button-primary" href="../index.html#mint">Go to Mint</a>
+              <a class="button button-secondary" href="../index.html#trade">View Market</a>
+            </div>
+
+            <div class="docs-meta">
+              <article class="mini-card">
+                <span>Total Units</span>
+                <strong>13,200</strong>
+                <p>Protocol cap across NFTs and tokens combined.</p>
+              </article>
+              <article class="mini-card">
+                <span>Mint Price</span>
+                <strong>0.3 pathUSD</strong>
+                <p>Paid for every Egg NFT minted from the fixed pool.</p>
+              </article>
+              <article class="mini-card">
+                <span>Conversion</span>
+                <strong>1 : 1</strong>
+                <p>Burn one Egg NFT to hatch one unit of $EGG.</p>
+              </article>
+              <article class="mini-card">
+                <span>Burn Rule</span>
+                <strong>Final</strong>
+                <p>Once a burn is confirmed, the NFT does not come back.</p>
+              </article>
+            </div>
+          </section>
+
+          <section id="overview" class="docs-content reveal">
+            <h2>Overview</h2>
+            <p>
+              Egg combines collectible inventory and token liquidity inside one fixed supply.
+              Users mint Egg NFTs at a fixed price, then decide whether to keep them as
+              unhatched inventory or burn them to hatch liquid
+              <span class="inline-code">$EGG</span> into circulation.
+            </p>
+            <p>
+              The core idea is simple: Egg NFTs and <span class="inline-code">$EGG</span> are
+              two forms of the same capped supply. The ratio can change over time, but the
+              combined total does not.
+            </p>
+
+            <div class="formula-bar">
+              <span>Unhatched Egg NFTs</span>
+              <span>+</span>
+              <span>Circulating $EGG</span>
+              <span>=</span>
+              <span>13,200</span>
+            </div>
+            <div class="formula-note">The combined total remains fixed.</div>
+          </section>
+
+          <section id="assets" class="docs-content reveal">
+            <h2>Asset Model</h2>
+            <p>
+              Egg has two states for the same underlying unit:
+            </p>
+            <ul>
+              <li>An <strong>Egg NFT</strong> represents an unhatched unit still living on the NFT side.</li>
+              <li>A <strong>$EGG token</strong> represents a hatched unit now living on the liquid token side.</li>
+            </ul>
+            <p>
+              A unit cannot exist in both states at once. When an Egg NFT is burned, that
+              specific NFT-backed unit leaves the NFT side and appears as one unit of
+              <span class="inline-code">$EGG</span>.
+            </p>
+
+            <div class="docs-card-grid">
+              <article class="docs-callout">
+                <h3>Before hatch</h3>
+                <p>The user holds an Egg NFT. That unit is part of the unhatched inventory.</p>
+              </article>
+              <article class="docs-callout">
+                <h3>After hatch</h3>
+                <p>The NFT is destroyed and the user receives one unit of liquid token supply.</p>
+              </article>
+              <article class="docs-callout">
+                <h3>System result</h3>
+                <p>The total stays fixed while the ratio between the two forms changes.</p>
+              </article>
+            </div>
+          </section>
+
+          <section id="mint" class="docs-content reveal">
+            <h2>Mint</h2>
+            <p>
+              Minting is how supply first enters the NFT side. Each mint costs
+              <span class="inline-code">0.3 pathUSD</span> and creates exactly one Egg NFT.
+            </p>
+
+            <h3>Mint rules</h3>
+            <ul>
+              <li>Egg has a hard cap of 13,200 total units.</li>
+              <li>Each mint consumes one unit from the remaining unminted supply.</li>
+              <li>Minting gives an Egg NFT, not liquid $EGG.</li>
+              <li>Minted NFTs can later be burned to hatch tokens at a 1:1 rate.</li>
+            </ul>
+
+            <h3>What minting means</h3>
+            <p>
+              Minting gives an Egg NFT first. <span class="inline-code">$EGG</span> only
+              appears after a burn. The important things to check before minting are the
+              price, quantity, and remaining supply.
+            </p>
+          </section>
+
+          <section id="burn" class="docs-content reveal">
+            <h2>Burn to Hatch</h2>
+            <p>
+              Burning is the core mechanic of Egg. An Egg NFT can be destroyed in exchange
+              for <span class="inline-code">1 $EGG</span>. This action is intentionally
+              irreversible.
+            </p>
+
+            <h3>Burn rules</h3>
+            <ul>
+              <li>Burning one Egg NFT yields one unit of $EGG.</li>
+              <li>The NFT is removed from circulation permanently.</li>
+              <li>The hatched unit appears on the token side of the supply.</li>
+              <li>The burn cannot be reversed after confirmation.</li>
+            </ul>
+
+            <div class="docs-divider"></div>
+
+            <h3>Before you hatch</h3>
+            <p>
+              Burning is permanent. Once the transaction is confirmed, the NFT is gone and
+              the supply mix updates immediately. Check the selected NFTs and expected output
+              carefully before signing.
+            </p>
+          </section>
+
+          <section id="trade" class="docs-content reveal">
+            <h2>Trade</h2>
+            <p>
+              Trading exists for the hatched token supply. As more Eggs hatch, more
+              <span class="inline-code">$EGG</span> enters circulation and market depth can
+              grow.
+            </p>
+
+            <h3>What to watch</h3>
+            <ul>
+              <li>Current price and 24-hour change for $EGG.</li>
+              <li>Volume, liquidity, and recent trade flow.</li>
+              <li>Circulating supply of hatched $EGG.</li>
+              <li>How much supply is still unhatched on the NFT side.</li>
+            </ul>
+
+            <h3>How trading fits Egg</h3>
+            <p>
+              Trading only begins after supply hatches. That makes market activity part of
+              the same story as minting and burning, not a separate system.
+            </p>
+          </section>
+
+          <section id="supply" class="docs-content reveal">
+            <h2>Supply Logic</h2>
+            <p>
+              The key to Egg is that the combined total is fixed while the visible market
+              composition changes over time.
+            </p>
+
+            <h3>Example</h3>
+            <ul>
+              <li>If 13,200 Egg NFTs exist and none are burned, circulating $EGG is 0.</li>
+              <li>If 2,000 Egg NFTs are burned, 11,200 Egg NFTs remain and 2,000 $EGG circulate.</li>
+              <li>If 5,284 Egg NFTs are burned, 7,916 Egg NFTs remain and 5,284 $EGG circulate.</li>
+            </ul>
+
+            <p>
+              This makes it easy to see how much supply remains dormant, how much has
+              hatched, and how the market evolves as users make irreversible choices.
+            </p>
+          </section>
+
+          <section id="stake" class="docs-content reveal">
+            <h2>Stake Soon</h2>
+            <p>
+              Staking is not live yet. When it arrives, it can give hatched
+              <span class="inline-code">$EGG</span> longer-term utility beyond trading.
+            </p>
+
+            <div class="docs-card-grid">
+              <article class="docs-callout">
+                <h3>Future utility</h3>
+                <p>Staking can add longer-term reasons to hold hatched $EGG.</p>
+              </article>
+              <article class="docs-callout">
+                <h3>Participation rewards</h3>
+                <p>Rewards can reflect activity across minting, hatching, and trading.</p>
+              </article>
+              <article class="docs-callout">
+                <h3>Status</h3>
+                <p>Staking is still marked as coming soon until the live contracts are ready.</p>
+              </article>
+            </div>
+          </section>
+
+          <section id="faq" class="docs-content reveal">
+            <h2>FAQ</h2>
+
+            <h3>Is the total supply fixed?</h3>
+            <p>
+              Yes. The combined total of unhatched Egg NFTs and circulating $EGG remains
+              capped at 13,200 units.
+            </p>
+
+            <h3>What do users receive at mint?</h3>
+            <p>
+              Users receive an Egg NFT. They do not receive liquid $EGG at mint time.
+            </p>
+
+            <h3>What happens when a user burns an NFT?</h3>
+            <p>
+              The Egg NFT is destroyed and the user receives exactly one unit of $EGG.
+            </p>
+
+            <h3>Can the burn be reversed?</h3>
+            <p>
+              No. Burning is one-way by design.
+            </p>
+
+            <h3>Where will contract addresses be listed?</h3>
+            <p>
+              Once live, contract addresses can be published in the docs and on the site so
+              they are easy to verify.
+            </p>
+          </section>
+        </div>
+      </div>
+    </main>
+
+    <script src="../app.js" type="module"></script>
+  </body>
+</html>

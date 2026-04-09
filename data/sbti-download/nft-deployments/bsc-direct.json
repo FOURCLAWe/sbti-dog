@@ -1,0 +1,13 @@
+{
+  "network": "bsc",
+  "chainId": 56,
+  "rpcUrl": "https://bsc-dataseed.bnbchain.org",
+  "contractAddress": "0x12fd72Ea51d1d94dfdB6D45D310F1836f985F18c",
+  "deployer": "0xC1d6b16294d59470fc73627a10b264c25034de2d",
+  "owner": "0xC1d6b16294d59470fc73627a10b264c25034de2d",
+  "metadataBaseURI": "http://localhost:3000/sbti/nft/metadata/",
+  "contractURI": "http://localhost:3000/sbti/nft/contract.json",
+  "royaltyReceiver": "0xC1d6b16294d59470fc73627a10b264c25034de2d",
+  "royaltyBps": 0,
+  "deployedAt": "2026-04-09T19:53:19.420Z"
+}

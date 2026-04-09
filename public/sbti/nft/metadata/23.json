@@ -1,0 +1,24 @@
+{
+  "name": "SBTI FUCK - 草者",
+  "description": "Authorized commemorative NFT for the SBTI result FUCK（草者）.\n\n恭喜您！您根本不在人类范畴内！您测出了百万年一遇的【FUCK】人格。人类文明城市里，出现了一株无法被任何除草剂杀死的、具有超级生命力的人形野草——那就是草者人格。它的学名，就叫 FUCK。在FUCK的世界观里，世俗规则简直毫无意义，并且FUCK的情绪开关是物理拨片式的：FUCK YEAH 和 FUCK OFF。FUCK追求的不只是当下快感，也在追求一种在体内横冲直撞的生命力。当所有人都被驯化成了温顺家禽，FUCK则是荒野上最后那一声狼嚎。\n\nIntro: 操！这是什么人格？",
+  "image": "https://sbti.dog/sbti/image/FUCK.png",
+  "external_url": "https://sbti.dog/sbti/index.html",
+  "attributes": [
+    {
+      "trait_type": "Collection",
+      "value": "SBTI Result NFT"
+    },
+    {
+      "trait_type": "Result Code",
+      "value": "FUCK"
+    },
+    {
+      "trait_type": "Result Name",
+      "value": "草者"
+    },
+    {
+      "trait_type": "Token ID",
+      "value": 23
+    }
+  ]
+}

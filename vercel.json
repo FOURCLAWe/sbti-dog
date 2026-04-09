@@ -1,0 +1,95 @@
+{
+  "version": 2,
+  "builds": [
+    { "src": "public/**/*", "use": "@vercel/static" }
+  ],
+  "redirects": [
+    {
+      "source": "/",
+      "destination": "/sbti/",
+      "permanent": false
+    },
+    {
+      "source": "/sbti",
+      "destination": "/sbti/",
+      "permanent": false
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/sbti",
+      "destination": "/public/sbti/index.html"
+    },
+    {
+      "source": "/sbti/",
+      "destination": "/public/sbti/index.html"
+    },
+    {
+      "source": "/sbti/(.*)",
+      "destination": "/public/sbti/$1"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/public/$1"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/sbti/image/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    },
+    {
+      "source": "/sbti/nft/metadata/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=0, must-revalidate"
+        },
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        }
+      ]
+    },
+    {
+      "source": "/sbti/nft/contract.json",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=0, must-revalidate"
+        },
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        }
+      ]
+    },
+    {
+      "source": "/sbti/nft/results.json",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=0, must-revalidate"
+        },
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        }
+      ]
+    },
+    {
+      "source": "/sbti/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=0, must-revalidate"
+        }
+      ]
+    }
+  ]
+}

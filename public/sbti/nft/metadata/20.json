@@ -1,0 +1,24 @@
+{
+  "name": "SBTI MONK - 僧人",
+  "description": "Authorized commemorative NFT for the SBTI result MONK（僧人）.\n\n当别人在KTV里参悟爱与恨的纠缠，MONK人格选择在家中参悟一份大道。MONK已然看破红尘，不希望闲人来扰其清修、破其道行。MONK的个人空间，是他们的结界，是他们的须弥山，是他们的绝对领域，神圣不可侵犯。踏入者，会感受到一种来自灵魂深处的窒息感。MONK们不黏不缠，因为在他们的世界观里，万物皆有其独立轨道。行星与行星之间保持着亿万公里的距离，才构成和谐宇宙，人与人之间为什么不行？\n\nIntro: 没有那种世俗的欲望。",
+  "image": "https://sbti.dog/sbti/image/MONK.png",
+  "external_url": "https://sbti.dog/sbti/index.html",
+  "attributes": [
+    {
+      "trait_type": "Collection",
+      "value": "SBTI Result NFT"
+    },
+    {
+      "trait_type": "Result Code",
+      "value": "MONK"
+    },
+    {
+      "trait_type": "Result Name",
+      "value": "僧人"
+    },
+    {
+      "trait_type": "Token ID",
+      "value": 20
+    }
+  ]
+}

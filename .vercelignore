@@ -1,0 +1,10 @@
+.env
+.env.*
+.git
+.DS_Store
+data
+PROJECT_LESSONS.md
+README.md
+server.mjs
+Tempo_pump
+scripts

@@ -1,0 +1,10 @@
+{
+  "name": "tempomeme-quest",
+  "version": "1.0.0",
+  "description": "Tempomeme quest landing page and EVM wallet submission site",
+  "type": "module",
+  "main": "server.mjs",
+  "scripts": {
+    "start": "node server.mjs"
+  }
+}

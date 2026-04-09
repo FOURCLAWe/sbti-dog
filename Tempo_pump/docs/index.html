@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Docs - TempoBoard</title>
+  <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg?v=20260403logo2">
+  <link rel="apple-touch-icon" href="/assets/logo.svg?v=20260403logo2">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script>
+    (() => {
+      try {
+        localStorage.setItem("tempomeme-theme", "dark");
+      } catch (e) {}
+      document.documentElement.dataset.theme = "dark";
+      document.documentElement.style.colorScheme = "dark";
+    })();
+  </script>
+  <style>
+    :root {
+      --bg: #090a0d;
+      --bg-soft: #121418;
+      --panel: #111317;
+      --panel-2: #15181d;
+      --line: rgba(255,255,255,0.08);
+      --line-strong: rgba(255,255,255,0.14);
+      --text: #f5f7fb;
+      --muted: #9ca4b3;
+      --muted-2: #788193;
+      --gold: #e8bf52;
+      --gold-soft: rgba(232,191,82,0.12);
+      --green: #97ff5d;
+      --shadow: 0 24px 60px rgba(0,0,0,0.38);
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Manrope", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 0% 0%, rgba(151,255,93,0.08), transparent 20%),
+        radial-gradient(circle at 100% 0%, rgba(232,191,82,0.1), transparent 22%),
+        linear-gradient(180deg, #060708 0%, #0b0d10 50%, #090a0d 100%);
+      background-attachment: fixed;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    code {
+      padding: 2px 7px;
+      border-radius: 8px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.06);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size: 12px;
+      color: #f8e6a5;
+    }
+
+    .docs-app {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 220px;
+      min-height: 100vh;
+    }
+
+    .toc {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow: auto;
+      padding: 20px 18px;
+    }
+
+    .toc {
+      border-left: 1px solid var(--line);
+      background: rgba(10,11,13,0.5);
+      backdrop-filter: blur(16px);
+    }
+
+    .content {
+      min-width: 0;
+      padding: 28px 40px 40px;
+    }
+
+    .article {
+      width: min(860px, 100%);
+      margin: 0 auto;
+    }
+
+    .eyebrow {
+      margin: 0 0 10px;
+      color: var(--gold);
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+    }
+
+    .article h1 {
+      margin: 0;
+      font-family: "Space Grotesk", sans-serif;
+      font-size: clamp(38px, 5vw, 60px);
+      line-height: 0.96;
+      letter-spacing: -0.04em;
+    }
+
+    .lede {
+      margin: 18px 0 0;
+      color: var(--muted);
+      font-size: 18px;
+      line-height: 1.75;
+      max-width: 760px;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin: 26px 0 34px;
+    }
+
+    .summary-card {
+      padding: 18px;
+      border-radius: 12px;
+      background: linear-gradient(180deg, rgba(19,22,26,0.96), rgba(12,14,17,0.98));
+      border: 1px solid var(--line);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
+    }
+
+    .summary-label {
+      color: var(--muted-2);
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    .summary-value {
+      margin-top: 10px;
+      font-family: "Space Grotesk", sans-serif;
+      font-size: 22px;
+      font-weight: 700;
+      overflow-wrap: anywhere;
+    }
+
+    .doc-section {
+      padding: 28px 0;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      scroll-margin-top: 30px;
+    }
+
+    .doc-section:first-of-type {
+      border-top: none;
+      padding-top: 8px;
+    }
+
+    .doc-section h2 {
+      margin: 0 0 10px;
+      font-family: "Space Grotesk", sans-serif;
+      font-size: 30px;
+      letter-spacing: -0.03em;
+    }
+
+    .doc-text {
+      margin: 0;
+      color: var(--muted);
+      font-size: 16px;
+      line-height: 1.9;
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 18px;
+    }
+
+    .info-card {
+      padding: 18px;
+      border-radius: 12px;
+      background: linear-gradient(180deg, rgba(18,20,24,0.96), rgba(12,14,17,0.98));
+      border: 1px solid var(--line);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
+    }
+
+    .info-title {
+      margin: 0 0 8px;
+      color: var(--text);
+      font-size: 13px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .info-copy {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.8;
+    }
+
+    .formula-box {
+      margin-top: 18px;
+      padding: 18px 20px;
+      border-radius: 12px;
+      background: linear-gradient(180deg, rgba(18,20,24,0.98), rgba(10,12,15,1));
+      border: 1px solid rgba(232,191,82,0.16);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
+      overflow-x: auto;
+    }
+
+    .formula-label {
+      color: var(--gold);
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+    }
+
+    .formula-text {
+      margin-top: 12px;
+      color: #f6f2df;
+      font-size: 15px;
+      line-height: 1.8;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      white-space: pre-wrap;
+    }
+
+    .doc-list {
+      margin: 16px 0 0;
+      padding-left: 18px;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.9;
+    }
+
+    .doc-list li + li { margin-top: 6px; }
+
+    .toc-card {
+      padding: 18px 16px;
+      border-radius: 12px;
+      background: linear-gradient(180deg, rgba(17,19,23,0.96), rgba(12,14,17,0.98));
+      border: 1px solid var(--line);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
+    }
+
+    .toc-label {
+      margin-bottom: 12px;
+      color: var(--muted-2);
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+    }
+
+    .toc-link {
+      display: block;
+      padding: 10px 0;
+      color: #dce1ea;
+      font-size: 13px;
+      font-weight: 600;
+      border-top: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .toc-link:first-of-type { border-top: none; }
+
+    .toc-link:hover { color: var(--green); }
+
+    @media (max-width: 1180px) {
+      .docs-app {
+        grid-template-columns: minmax(0, 1fr);
+      }
+
+      .toc {
+        display: none;
+      }
+    }
+
+    @media (max-width: 900px) {
+      .content {
+        padding: 20px 16px 32px;
+      }
+
+      .summary-grid,
+      .info-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    html[data-theme="light"] body {
+      background:
+        radial-gradient(circle at 0% 0%, rgba(151,255,93,0.05), transparent 20%),
+        radial-gradient(circle at 100% 0%, rgba(232,191,82,0.08), transparent 22%),
+        linear-gradient(180deg, #f8f4ec 0%, #efe6d7 50%, #f1ebe0 100%);
+    }
+
+    html[data-theme="light"] .content,
+    html[data-theme="light"] .article {
+      color: #17120b;
+    }
+
+    html[data-theme="light"] .doc-section h2,
+    html[data-theme="light"] .article h1,
+    html[data-theme="light"] .summary-value,
+    html[data-theme="light"] .info-title,
+    html[data-theme="light"] .toc-link {
+      color: #17120b;
+    }
+
+    html[data-theme="light"] .lede,
+    html[data-theme="light"] .doc-text,
+    html[data-theme="light"] .info-copy,
+    html[data-theme="light"] .doc-list,
+    html[data-theme="light"] .toc-label {
+      color: #5f574b;
+    }
+
+    html[data-theme="light"] .summary-card,
+    html[data-theme="light"] .info-card,
+    html[data-theme="light"] .formula-box,
+    html[data-theme="light"] .toc-card {
+      background: linear-gradient(180deg, rgba(248,243,233,0.98), rgba(236,228,214,0.98));
+      border-color: rgba(65,52,23,0.1);
+      box-shadow: 0 16px 34px rgba(87,66,20,0.06), inset 0 1px 0 rgba(255,255,255,0.76);
+    }
+
+    html[data-theme="light"] code {
+      color: #8a5a0a;
+      background: rgba(232,191,82,0.1);
+      border-color: rgba(180,124,16,0.12);
+    }
+
+    html[data-theme="light"] .formula-text {
+      color: #2a2216;
+    }
+
+    html[data-theme="light"] .toc-link:hover {
+      color: #1e7b24;
+    }
+  </style>
+  <link rel="stylesheet" href="/assets/theme.css?v=20260404a">
+  <script src="/assets/theme.js?v=20260330d" defer></script>
+</head>
+<body>
+  <div class="docs-app">
+    <main class="content">
+      <article class="article">
+        <p class="eyebrow" id="overview">TempoBoard</p>
+        <h1>TempoBoard on Tempo</h1>
+        <p class="lede">TempoBoard is a pathUSD-native meme launchpad built on Tempo Mainnet. The product pairs Tempo's payments-first design with internal curve trading, a clear graduation threshold, and a defined post-curve liquidity path.</p>
+
+        <div class="summary-grid">
+          <div class="summary-card">
+            <div class="summary-label">Network</div>
+            <div class="summary-value">Tempo Mainnet</div>
+          </div>
+          <div class="summary-card">
+            <div class="summary-label">Chain ID</div>
+            <div class="summary-value">4217</div>
+          </div>
+          <div class="summary-card">
+            <div class="summary-label">Trading Tax</div>
+            <div class="summary-value">1%</div>
+          </div>
+        </div>
+
+        <section class="doc-section" id="chain">
+          <h2>1. Chain</h2>
+          <p class="doc-text">TempoBoard runs on Tempo Mainnet because the launch flow is expressed in stablecoin terms from start to finish. Token creation, price discovery, and graduation are all designed around a single chain and a single settlement asset.</p>
+
+          <div class="info-grid">
+            <div class="info-card">
+              <div class="info-title">Network Parameters</div>
+              <p class="info-copy">Network: <code>Tempo Mainnet</code><br>Chain ID: <code>4217</code><br>RPC: <code>https://rpc.tempo.xyz</code></p>
+            </div>
+            <div class="info-card">
+              <div class="info-title">Settlement Asset</div>
+              <p class="info-copy">All current platform trading is settled in pathUSD on Tempo, which keeps launch pricing, trade flow, and graduation accounting in stablecoin terms.<br>pathUSD: <code>0x20c0000000000000000000000000000000000000</code></p>
+            </div>
+          </div>
+
+          <ul class="doc-list">
+            <li>Users need an EVM wallet connected to Tempo Mainnet.</li>
+            <li>Token creation, buying, and selling all run on Tempo without switching to a separate execution environment.</li>
+            <li>The current launch flow uses pathUSD as the settlement token for the internal curve.</li>
+            <li>This makes the entire launch experience easier to reason about in USD terms instead of volatile gas-asset terms.</li>
+          </ul>
+        </section>
+
+        <section class="doc-section" id="curve">
+          <h2>2. Price Curve and External Migration</h2>
+          <p class="doc-text">TempoBoard uses a quadratic internal curve for price discovery. Trading stays inside the platform until 80% of supply is sold, and only then does the project graduate toward external liquidity deployment.</p>
+
+          <div class="info-grid">
+            <div class="info-card">
+              <div class="info-title">Primary Launch Contract</div>
+              <p class="info-copy"><code>0x5866914946e4B7c7B2C789cc5EE259b73CBa2274</code></p>
+            </div>
+            <div class="info-card">
+              <div class="info-title">Internal Sale Cap</div>
+              <p class="info-copy"><code>800,000,000</code> tokens<br>This represents <code>80%</code> of the total supply.</p>
+            </div>
+          </div>
+
+          <div class="formula-box">
+            <div class="formula-label">Curve Formula</div>
+            <div class="formula-text">price(sold) = 0.000003 + 0.000062 * (sold / 800,000,000)^2</div>
+          </div>
+
+          <div class="formula-box">
+            <div class="formula-label">Detailed Calculation</div>
+            <div class="formula-text">Let:
+saleCap = 800,000,000
+r = sold / saleCap
+
+Then:
+price(sold) = 0.000003 + 0.000062 * r^2
+
+Buy side:
+buyFee = pathUsdIn * 1%
+netPathUsd = pathUsdIn - buyFee
+tokensOut = netPathUsd / price(sold)
+
+Sell side:
+grossPathUsdBack = tokensIn * price(sold)
+sellFee = grossPathUsdBack * 1%
+pathUsdOut = grossPathUsdBack - sellFee
+
+Migration condition:
+migrate when sold >= 800,000,000</div>
+          </div>
+
+          <ul class="doc-list">
+            <li>The curve starts near <code>0.00000300 pathUSD</code>.</li>
+            <li>Because the pricing model is quadratic, the price accelerates more aggressively later in the sale than at the beginning.</li>
+            <li>The simplified ratio form is <code>r = sold / 800,000,000</code>, so all price movement is driven by sold supply progress on the internal curve.</li>
+            <li>For buys, the 1% fee is removed first, then the remaining pathUSD is converted at the current curve price.</li>
+            <li>For sells, the token amount is first converted back into gross pathUSD at the current curve price, then the 1% fee is deducted.</li>
+            <li>External migration is triggered only after <code>800,000,000</code> tokens are sold on the internal curve.</li>
+            <li>On a no-sell path, completely filling the curve is about <code>19,124.58 pathUSD</code> gross user spend.</li>
+            <li>After the current <code>1%</code> trading fee, the contract retains about <code>18,933.33 pathUSD</code> net.</li>
+            <li>At graduation, the remaining <code>20%</code> of token supply and <code>18,933.33 pathUSD</code> are intended to be added as liquidity on <code>Uniswap V2</code>.</li>
+          </ul>
+        </section>
+
+        <section class="doc-section" id="fees">
+          <h2>3. Fee Policy</h2>
+          <p class="doc-text">TempoBoard does not use an official platform token in the current fee model. The protocol applies a <code>1%</code> trading tax and routes that fee into token buybacks, partner distribution, and staking rewards.</p>
+
+          <div class="info-grid">
+            <div class="info-card">
+              <div class="info-title">Buyback + Burn</div>
+              <p class="info-copy"><code>50%</code> of the <code>1%</code> trading tax is used to buy back and burn the best-performing token from the past <code>24h</code>.</p>
+            </div>
+            <div class="info-card">
+              <div class="info-title">Partner Allocation</div>
+              <p class="info-copy"><code>20%</code> of the <code>1%</code> trading tax is used to buy back the best-performing token from the past <code>24h</code> for partner distribution.</p>
+            </div>
+          </div>
+
+          <div class="info-grid">
+            <div class="info-card">
+              <div class="info-title">Staking Allocation</div>
+              <p class="info-copy"><code>30%</code> of the <code>1%</code> trading tax is allocated to staking rewards and distributed every <code>24h</code>.</p>
+            </div>
+            <div class="info-card">
+              <div class="info-title">Reward Formula</div>
+              <p class="info-copy"><code>reward(i, e) = stakingPool(e) * stake(i, e) / totalStaked(e)</code></p>
+            </div>
+          </div>
+
+          <div class="formula-box">
+            <div class="formula-label">24h Staking Reward Formula</div>
+            <div class="formula-text">For each reward epoch e:
+taxPool(e) = totalTradingVolume(e) * 1%
+stakingPool(e) = taxPool(e) * 30%
+
+For staker i:
+reward(i, e) = stakingPool(e) * stake(i, e) / totalStaked(e)</div>
+          </div>
+
+          <ul class="doc-list">
+            <li><code>50%</code> of fee value is used to buy back and burn the strongest token on the board over the past <code>24 hours</code>.</li>
+            <li><code>20%</code> of fee value is used to buy back the strongest token on the board over the past <code>24 hours</code> for partner distribution.</li>
+            <li><code>30%</code> of the fee pool is distributed to stakers every <code>24 hours</code>, proportional to stake share.</li>
+          </ul>
+        </section>
+      </article>
+    </main>
+
+    <aside class="toc">
+      <div class="toc-card">
+        <div class="toc-label">On this page</div>
+        <a href="#overview" class="toc-link">TempoBoard on Tempo</a>
+        <a href="#chain" class="toc-link">1. Chain</a>
+        <a href="#curve" class="toc-link">2. Curve & Migration</a>
+        <a href="#fees" class="toc-link">3. Fee Policy</a>
+      </div>
+    </aside>
+  </div>
+</body>
+</html>

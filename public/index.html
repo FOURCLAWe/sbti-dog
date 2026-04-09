@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tempo Projects</title>
+    <meta
+      name="description"
+      content="Choose between the Egg protocol site and the legacy Tempomeme Quest page."
+    />
+    <style>
+      :root {
+        --bg: #070605;
+        --surface: rgba(255, 255, 255, 0.04);
+        --line: rgba(255, 255, 255, 0.08);
+        --text: #f7f1e8;
+        --muted: #bdb3a4;
+        --egg: #f7be43;
+        --tempo: #a4ff63;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        padding: 24px;
+        color: var(--text);
+        font-family: "Manrope", "Segoe UI", sans-serif;
+        background:
+          radial-gradient(circle at 18% 16%, rgba(164, 255, 99, 0.1), transparent 18%),
+          radial-gradient(circle at 82% 12%, rgba(247, 190, 67, 0.12), transparent 18%),
+          linear-gradient(180deg, #050403 0%, #0a0806 100%);
+      }
+
+      main {
+        width: min(1100px, 100%);
+      }
+
+      .hero {
+        margin-bottom: 22px;
+      }
+
+      .hero p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 14px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .hero h1 {
+        margin: 12px 0 0;
+        font-size: clamp(40px, 7vw, 76px);
+        line-height: 0.95;
+        letter-spacing: -0.06em;
+      }
+
+      .hero strong {
+        color: var(--egg);
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 18px;
+      }
+
+      .card {
+        padding: 26px;
+        border: 1px solid var(--line);
+        border-radius: 28px;
+        background: var(--surface);
+        backdrop-filter: blur(12px);
+      }
+
+      .card span {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        color: var(--muted);
+        font-size: 12px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+      }
+
+      .dot {
+        width: 9px;
+        height: 9px;
+        border-radius: 999px;
+      }
+
+      .dot-egg {
+        background: var(--egg);
+        box-shadow: 0 0 18px rgba(247, 190, 67, 0.55);
+      }
+
+      .dot-quest {
+        background: var(--tempo);
+        box-shadow: 0 0 18px rgba(164, 255, 99, 0.55);
+      }
+
+      .card h2 {
+        margin: 16px 0 0;
+        font-size: 32px;
+        line-height: 1;
+        letter-spacing: -0.05em;
+      }
+
+      .card p {
+        margin: 14px 0 0;
+        color: var(--muted);
+        font-size: 16px;
+        line-height: 1.65;
+      }
+
+      .actions {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-top: 22px;
+      }
+
+      .button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 46px;
+        padding: 0 18px;
+        border-radius: 999px;
+        border: 1px solid transparent;
+        color: var(--text);
+        text-decoration: none;
+        font-weight: 700;
+      }
+
+      .button-egg {
+        color: #1f1407;
+        background: linear-gradient(135deg, #fff0d8, #f7be43, #ff9d2e);
+      }
+
+      .button-quest {
+        background: rgba(164, 255, 99, 0.08);
+        border-color: rgba(164, 255, 99, 0.24);
+      }
+
+      @media (max-width: 760px) {
+        .grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <section class="hero">
+        <p>Site Launcher</p>
+        <h1>Choose a site. Keep <strong>Egg</strong> and the legacy page separate.</h1>
+      </section>
+
+      <section class="grid">
+        <article class="card">
+          <span><i class="dot dot-egg"></i> Egg Protocol</span>
+          <h2>Egg</h2>
+          <p>
+            The new 404 coin protocol site with Mint, Burn to Hatch, Trade, and Docs in a
+            dedicated product flow.
+          </p>
+          <div class="actions">
+            <a class="button button-egg" href="/egg/index.html">Open Egg</a>
+            <a class="button button-quest" href="/egg/docs/index.html">Open Docs</a>
+          </div>
+        </article>
+
+        <article class="card">
+          <span><i class="dot dot-quest"></i> Legacy Page</span>
+          <h2>Tempomeme Quest</h2>
+          <p>
+            The original wallet submission quest page now lives under its own directory and
+            no longer overlaps with Egg.
+          </p>
+          <div class="actions">
+            <a class="button button-quest" href="/quest/index.html">Open Quest</a>
+          </div>
+        </article>
+
+        <article class="card">
+          <span><i class="dot dot-egg"></i> Viral Quiz</span>
+          <h2>SBTI Test</h2>
+          <p>
+            The authorized SBTI quiz with the original 30-question flow, hidden result
+            logic, and built-in result artwork now lives directly inside this site.
+          </p>
+          <div class="actions">
+            <a class="button button-egg" href="/sbti/index.html">Open SBTI Test</a>
+          </div>
+        </article>
+      </section>
+    </main>
+  </body>
+</html>

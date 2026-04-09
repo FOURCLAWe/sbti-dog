@@ -1,0 +1,464 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Egg | 404 Coin Protocol on Tempo</title>
+    <meta
+      name="description"
+      content="Egg is a 404 coin protocol on Tempo: mint 13,200 Egg NFTs at 0.3 pathUSD, burn to hatch 1:1 into $EGG, and trade the fixed supply."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DotGothic16&family=M+PLUS+Rounded+1c:wght@400;500;700;800&family=Mochiy+Pop+One&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="icon" type="image/svg+xml" href="./assets/egg-mark.svg" />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="egg-page">
+      <header class="site-header">
+        <a class="brand-link" href="./index.html" aria-label="Egg home">
+          <img src="./assets/egg-mark.svg" alt="Egg logo" />
+          <div class="brand-copy">
+            <p class="brand-name">Egg</p>
+            <p class="brand-sub">Tempo 404 Coin Protocol</p>
+          </div>
+        </a>
+
+        <nav class="site-nav" aria-label="Primary">
+          <a href="#protocol">Protocol</a>
+          <a href="#mint">Mint</a>
+          <a href="#hatch">Burn to Hatch</a>
+          <a href="#trade">Trade</a>
+          <a href="#stake" class="is-soon">Stake Soon</a>
+          <a href="./docs/index.html">Docs</a>
+        </nav>
+
+        <div class="header-actions">
+          <a class="button button-primary" href="./account/index.html">Account</a>
+        </div>
+      </header>
+
+      <section class="section-shell hero-shell reveal">
+        <div class="hero-copy">
+          <p class="eyebrow">Tempo Network / Fixed Supply Protocol</p>
+          <h1><span>13,200 Eggs</span> waiting to hatch.</h1>
+          <p class="lead">
+            Mint at <strong>0.3 pathUSD</strong>. Burn <strong>1 Egg NFT</strong> to hatch
+            <strong>1 $EGG</strong>. Total system supply stays fixed at <strong>13,200</strong>.
+          </p>
+
+          <div class="hero-actions">
+            <a class="button button-primary" href="#mint">Mint Egg</a>
+            <a class="button button-secondary" href="#hatch">Burn to Hatch</a>
+          </div>
+
+          <div class="hero-grid-stats">
+            <article class="metric-card">
+              <span>Total Fixed Units</span>
+              <strong>13,200</strong>
+              <p>Fixed supply.</p>
+            </article>
+
+            <article class="metric-card">
+              <span>Mint Price</span>
+              <strong>0.3 pathUSD</strong>
+              <p>Per Egg NFT.</p>
+            </article>
+
+            <article class="metric-card">
+              <span>Conversion Rule</span>
+              <strong>1 NFT = 1 $EGG</strong>
+              <p>Final burn.</p>
+            </article>
+          </div>
+        </div>
+
+        <div class="hero-stage">
+          <div class="orbital-panel">
+            <div class="panel-topline">
+              <span>Incubator</span>
+              <span class="status-dot" aria-hidden="true"></span>
+            </div>
+
+            <div class="orbital-tags" aria-hidden="true">
+              <div class="orbit-pill">Mint on Tempo</div>
+              <div class="orbit-pill">Burn is irreversible</div>
+              <div class="orbit-pill">404 supply loop</div>
+            </div>
+
+            <div class="egg-core">
+              <div>
+                <strong>Egg</strong>
+                <small>Protocol Core</small>
+              </div>
+            </div>
+
+            <div class="panel-footerline">
+              <span>Mint -> Hatch -> Trade</span>
+              <span>Unhatched + Circulating = 13,200</span>
+            </div>
+          </div>
+
+          <div class="supply-panel">
+            <div class="mini-card">
+              <span>Supply Split</span>
+              <strong>7,916 Unhatched</strong>
+              <p>Still in NFT form.</p>
+            </div>
+
+            <div class="supply-track" aria-label="Current circulating supply ratio">
+              <span style="width: 40%"></span>
+            </div>
+
+            <div class="supply-grid">
+              <article class="mini-card">
+                <span>Circulating $EGG</span>
+                <strong>5,284</strong>
+                <p>Now tradable.</p>
+              </article>
+
+              <article class="mini-card">
+                <span>Burn Rule</span>
+                <strong>Irreversible</strong>
+                <p>No rollback.</p>
+              </article>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="protocol" class="section-shell content-section reveal">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Protocol Loop</p>
+            <h2>How it works.</h2>
+          </div>
+          <p class="section-kicker">
+            Three actions. One fixed supply.
+          </p>
+        </div>
+
+        <div class="protocol-grid">
+          <article class="protocol-card">
+            <div class="protocol-index">01</div>
+            <h3>Mint Egg NFTs</h3>
+            <p>
+              Pay <strong>0.3 pathUSD</strong> to mint one Egg NFT.
+            </p>
+          </article>
+
+          <article class="protocol-card">
+            <div class="protocol-index">02</div>
+            <h3>Burn to Hatch</h3>
+            <p>
+              Burn one NFT and receive exactly <strong>1 $EGG</strong>.
+            </p>
+          </article>
+
+          <article class="protocol-card">
+            <div class="protocol-index">03</div>
+            <h3>Trade $EGG</h3>
+            <p>
+              Trade the hatched token supply as it enters circulation.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section id="mint" class="section-shell content-section reveal">
+        <div class="feature-layout">
+          <div class="feature-copy">
+            <div>
+              <p class="eyebrow">Mint</p>
+              <h3>Mint Egg NFTs.</h3>
+              <p class="body">
+                Fixed price. Fixed supply.
+              </p>
+            </div>
+
+            <div>
+              <div class="feature-note">Unhatched until burned</div>
+            </div>
+          </div>
+
+          <div class="feature-panel">
+            <div class="panel-header">
+              <div>
+                <h4>Mint Egg</h4>
+                <p>Mint directly on Tempo.</p>
+              </div>
+              <div class="value-tag">0.3 pathUSD each</div>
+            </div>
+
+            <div class="progress-group">
+              <div class="progress-meta">
+                <span>Minted</span>
+                <strong>5,284 / 13,200</strong>
+              </div>
+              <div class="supply-track" aria-hidden="true">
+                <span style="width: 40%"></span>
+              </div>
+              <div class="progress-meta">
+                <span>Remaining</span>
+                <strong>7,916 NFTs</strong>
+              </div>
+            </div>
+
+            <div class="detail-grid">
+              <article class="detail-card">
+                <span>Receive</span>
+                <strong>Egg NFT</strong>
+              </article>
+
+              <article class="detail-card">
+                <span>Chain</span>
+                <strong>Tempo</strong>
+              </article>
+            </div>
+
+            <div class="quantity-box">
+              <label class="quantity-label" for="mint-quantity">Mint quantity</label>
+              <div class="quantity-controls">
+                <button type="button" data-qty-control="mint" data-direction="-1" aria-label="Decrease mint quantity">-</button>
+                <div class="quantity-display" id="mint-quantity">1</div>
+                <button type="button" data-qty-control="mint" data-direction="1" aria-label="Increase mint quantity">+</button>
+              </div>
+            </div>
+
+            <div class="summary-grid">
+              <article class="summary-card">
+                <span>Total Cost</span>
+                <strong id="mint-total">0.3 pathUSD</strong>
+              </article>
+
+              <article class="summary-card">
+                <span>You Receive</span>
+                <strong id="mint-receive">1 Egg NFT</strong>
+              </article>
+            </div>
+
+            <div class="hero-actions">
+              <a class="button button-primary button-block" href="#trade">Connect wallet to mint</a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="hatch" class="section-shell content-section reveal">
+        <div class="feature-layout hatch-shell">
+          <div class="feature-copy">
+            <div>
+              <p class="eyebrow">Burn to Hatch</p>
+              <h3>Burn to Hatch.</h3>
+              <p class="body">
+                Select NFTs. Hatch tokens.
+              </p>
+              <div class="burn-warning">Irreversible action / 1 Egg NFT -> 1 $EGG</div>
+            </div>
+
+            <div class="feature-note">NFT down. Token float up.</div>
+          </div>
+
+          <div class="feature-panel burn-stage">
+            <div class="panel-header">
+              <div>
+                <h4>Hatch Terminal</h4>
+                <p>Check the output before confirming.</p>
+              </div>
+              <div class="value-tag">Final once confirmed</div>
+            </div>
+
+            <div class="burn-tokens">
+              <section class="token-stack" aria-label="Selected Egg NFTs">
+                <span class="quantity-label">Selected NFTs</span>
+                <ul>
+                  <li><strong>#0188</strong><span>Ready</span></li>
+                  <li><strong>#0934</strong><span>Ready</span></li>
+                  <li><strong>#4412</strong><span>Ready</span></li>
+                </ul>
+              </section>
+
+              <div class="burn-arrow" aria-hidden="true">-></div>
+
+              <section class="token-output" aria-label="Hatched token output">
+                <span class="quantity-label">Token output</span>
+                <strong id="hatch-output">3 $EGG</strong>
+                <p>1 NFT = 1 $EGG</p>
+              </section>
+            </div>
+
+            <div class="quantity-box">
+              <label class="quantity-label" for="hatch-quantity">NFTs to hatch</label>
+              <div class="quantity-controls">
+                <button type="button" data-qty-control="hatch" data-direction="-1" aria-label="Decrease hatch quantity">-</button>
+                <div class="quantity-display" id="hatch-quantity">3</div>
+                <button type="button" data-qty-control="hatch" data-direction="1" aria-label="Increase hatch quantity">+</button>
+              </div>
+            </div>
+
+            <a class="button button-danger button-block" href="#trade">Burn NFTs and hatch $EGG</a>
+          </div>
+        </div>
+      </section>
+
+      <section id="trade" class="section-shell content-section reveal">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Market</p>
+            <h2>Trade $EGG.</h2>
+          </div>
+          <p class="section-kicker">
+            Track price, liquidity, and recent flow.
+          </p>
+        </div>
+
+        <div class="trade-layout">
+          <article class="chart-card">
+            <div class="panel-header">
+              <div>
+                <h4>$EGG / pathUSD</h4>
+                <p>Live price and market activity.</p>
+              </div>
+              <div class="value-tag">Live market</div>
+            </div>
+
+            <div class="chart-price">
+              <strong id="chart-price">$0.248</strong>
+              <span id="chart-change">+12.4% / 24h</span>
+            </div>
+
+            <svg id="price-chart" viewBox="0 0 960 360" role="img" aria-label="Egg token price chart">
+              <defs>
+                <linearGradient id="chart-line" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stop-color="#a4ff63"></stop>
+                  <stop offset="55%" stop-color="#f7be43"></stop>
+                  <stop offset="100%" stop-color="#ff8755"></stop>
+                </linearGradient>
+                <linearGradient id="chart-fill" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#f7be43" stop-opacity="0.32"></stop>
+                  <stop offset="100%" stop-color="#f7be43" stop-opacity="0"></stop>
+                </linearGradient>
+              </defs>
+              <path id="chart-fill-path" fill="url(#chart-fill)" opacity="1"></path>
+              <path
+                id="chart-line-path"
+                fill="none"
+                stroke="url(#chart-line)"
+                stroke-width="6"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              ></path>
+            </svg>
+
+            <div class="trade-stats">
+              <article class="trade-stat">
+                <span>24H Volume</span>
+                <strong>$412K</strong>
+              </article>
+              <article class="trade-stat">
+                <span>Liquidity</span>
+                <strong>$1.86M</strong>
+              </article>
+              <article class="trade-stat">
+                <span>Circulating</span>
+                <strong>5,284 $EGG</strong>
+              </article>
+            </div>
+          </article>
+
+          <aside class="terminal-card">
+            <div class="panel-header">
+              <div>
+                <h4>Trade Panel</h4>
+                <p>Buy or sell $EGG.</p>
+              </div>
+            </div>
+
+            <div class="trade-toggle" role="tablist" aria-label="Trade side">
+              <button class="is-active" type="button" data-trade-side="buy">Buy</button>
+              <button type="button" data-trade-side="sell">Sell</button>
+            </div>
+
+            <div class="terminal-row">
+              <label for="trade-size">Order size</label>
+              <div class="terminal-input" id="trade-size">
+                <strong id="trade-size-value">120</strong>
+                <span id="trade-size-unit">pathUSD</span>
+              </div>
+            </div>
+
+            <div class="quantity-box">
+              <label class="quantity-label" for="trade-quantity">Adjust order</label>
+              <div class="quantity-controls">
+                <button type="button" data-qty-control="trade" data-direction="-1" aria-label="Decrease trade amount">-</button>
+                <div class="quantity-display" id="trade-quantity">120</div>
+                <button type="button" data-qty-control="trade" data-direction="1" aria-label="Increase trade amount">+</button>
+              </div>
+            </div>
+
+            <div class="summary-grid">
+              <article class="summary-card">
+                <span id="trade-summary-label">Estimated Receive</span>
+                <strong id="trade-output">483.87 $EGG</strong>
+              </article>
+              <article class="summary-card">
+                <span>Fee</span>
+                <strong>0.30% fee</strong>
+              </article>
+            </div>
+
+            <a class="button button-primary button-block" href="./docs/index.html#trade">Read trade details</a>
+
+            <div class="trade-feed">
+              <span>Recent flow</span>
+              <ul>
+                <li><strong>Buy 220 $EGG</strong><em>+4.2%</em></li>
+                <li><strong>Burn 8 NFTs</strong><em>Hatched</em></li>
+                <li><strong>Buy 1,140 $EGG</strong><em>+1.8%</em></li>
+              </ul>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <section id="stake" class="section-shell content-section reveal">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Stake Soon</p>
+            <h2>Stake is next.</h2>
+          </div>
+          <p class="section-kicker">
+            Staking details will be shared when live.
+          </p>
+        </div>
+
+        <div class="stake-grid">
+          <article class="roadmap-card">
+            <span class="soon-tag">Soon</span>
+            <h3>Locked yield lanes</h3>
+            <p>Lock $EGG for future rewards.</p>
+          </article>
+
+          <article class="roadmap-card">
+            <span class="soon-tag">Soon</span>
+            <h3>Egg holder boosts</h3>
+            <p>Extra perks for Egg NFT holders.</p>
+          </article>
+
+          <article class="roadmap-card">
+            <span class="soon-tag">Soon</span>
+            <h3>Protocol reputation</h3>
+            <p>Participation-based rewards.</p>
+          </article>
+        </div>
+      </section>
+
+    </main>
+
+    <script src="./app.js" type="module"></script>
+  </body>
+</html>

@@ -1,0 +1,24 @@
+{
+  "name": "SBTI IMSB - 傻者",
+  "description": "Authorized commemorative NFT for the SBTI result IMSB（傻者）.\n\n恭喜您！您根本不在人类范畴内！您测出了百万年一遇的【IMSB】人格。IMSB人格的大脑里住着两个不死不休的究极战士：一个叫“我他妈冲了！”，另一个叫“我是个傻逼！”。当IMSB面对一个有好感的人时，前者会说：冲啊！去要微信！去约饭！爱要大声说出来！后者接着说：人家凭什么看得上你？你去了就是自取其辱！最终结果：盯着对方背影直到消失，然后掏出手机搜索“如何克服社交恐惧症”。IMSB不是真的傻，只是您的内心戏，可能比漫威宇宙所有电影加起来都长。\n\nIntro: 认真的么？我真的是傻逼么？",
+  "image": "https://sbti.dog/sbti/image/IMSB.png",
+  "external_url": "https://sbti.dog/sbti/index.html",
+  "attributes": [
+    {
+      "trait_type": "Collection",
+      "value": "SBTI Result NFT"
+    },
+    {
+      "trait_type": "Result Code",
+      "value": "IMSB"
+    },
+    {
+      "trait_type": "Result Name",
+      "value": "傻者"
+    },
+    {
+      "trait_type": "Token ID",
+      "value": 21
+    }
+  ]
+}

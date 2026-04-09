@@ -1,0 +1,24 @@
+{
+  "name": "SBTI DEAD - 死者",
+  "description": "Authorized commemorative NFT for the SBTI result DEAD（死者）.\n\n恭喜您，您测出了全中国最为罕见的人格，只是“死者”这个名字实在有点晦气，所以也可以叫：Don't Expect Any Drives。死者已经看透了那些无意义的哲学思考，因此显得对一切“失去”了兴趣。死者们看世界的眼神，就像一位顶级玩家通关了所有主线、支线、隐藏任务，删档重开了999次之后，终于发现：这游戏压根就没意思。死者是超越了欲望和目标的终极贤者。他们的存在，就是对这个喧嚣世界最沉默也最彻底的抗议。\n\nIntro: 我，还活着吗？",
+  "image": "https://sbti.dog/sbti/image/DEAD.png",
+  "external_url": "https://sbti.dog/sbti/index.html",
+  "attributes": [
+    {
+      "trait_type": "Collection",
+      "value": "SBTI Result NFT"
+    },
+    {
+      "trait_type": "Result Code",
+      "value": "DEAD"
+    },
+    {
+      "trait_type": "Result Name",
+      "value": "死者"
+    },
+    {
+      "trait_type": "Token ID",
+      "value": 24
+    }
+  ]
+}

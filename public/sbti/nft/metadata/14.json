@@ -1,0 +1,24 @@
+{
+  "name": "SBTI JOKE-R - 小丑",
+  "description": "Authorized commemorative NFT for the SBTI result JOKE-R（小丑）.\n\n请注意，JOKE-R人格不是一个“人”，更像一个把笑话穿在身上的小丑。你打开一层，是个笑话；再打开一层，是个段子；你一层层打开，直到最后，你发现最里面……是空的，只剩下一点微弱的回声在说：哈，没想到吧。JOKE-R是社交场合的气氛组组长兼唯一指定火力输出。有他们在，场子就不会冷。所有人前仰后合地笑着，而笑得最开心的，往往也是他们自己——用最大的笑声，盖住心碎的声音。\n\nIntro: 原来我们都是小丑。",
+  "image": "https://sbti.dog/sbti/image/JOKE-R.jpg",
+  "external_url": "https://sbti.dog/sbti/index.html",
+  "attributes": [
+    {
+      "trait_type": "Collection",
+      "value": "SBTI Result NFT"
+    },
+    {
+      "trait_type": "Result Code",
+      "value": "JOKE-R"
+    },
+    {
+      "trait_type": "Result Name",
+      "value": "小丑"
+    },
+    {
+      "trait_type": "Token ID",
+      "value": 14
+    }
+  ]
+}

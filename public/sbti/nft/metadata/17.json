@@ -1,0 +1,24 @@
+{
+  "name": "SBTI SHIT - 愤世者",
+  "description": "Authorized commemorative NFT for the SBTI result SHIT（愤世者）.\n\n恭喜您，SHIT人格是宇宙中已知的唯一一种稀有人格。所谓狗屎，并不是在抱怨，而是在进行一种神秘仪式。SHIT的行为模式是一场惊天动地的悖论戏剧。嘴上：这个项目简直是屎。手上：默默打开 Excel，开始建构函数模型和甘特图。嘴上：这帮同事都是 shit。手上：在同事搞砸之后，一边烦着，一边熬夜把烂摊子收拾得明明白白。嘴上：这个世界就是一坨 shit，赶紧毁灭吧。手上：第二天早上七点准时起床，挤上 shit 一样的地铁，去干那份 shit 一样的工作。别怕，那不是世界末日的警报，那是他马上要开始拯救世界的冲锋号。\n\nIntro: 这个世界，构石一坨。",
+  "image": "https://sbti.dog/sbti/image/SHIT.png",
+  "external_url": "https://sbti.dog/sbti/index.html",
+  "attributes": [
+    {
+      "trait_type": "Collection",
+      "value": "SBTI Result NFT"
+    },
+    {
+      "trait_type": "Result Code",
+      "value": "SHIT"
+    },
+    {
+      "trait_type": "Result Name",
+      "value": "愤世者"
+    },
+    {
+      "trait_type": "Token ID",
+      "value": 17
+    }
+  ]
+}

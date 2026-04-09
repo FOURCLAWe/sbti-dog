@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tokens - TempoBoard</title>
+  <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg?v=20260403logo2">
+  <link rel="apple-touch-icon" href="/assets/logo.svg?v=20260403logo2">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.7.0/ethers.umd.min.js"></script>
+  <script>
+    (() => {
+      try {
+        localStorage.setItem("tempomeme-theme", "dark");
+      } catch (e) {}
+      document.documentElement.dataset.theme = "dark";
+      document.documentElement.style.colorScheme = "dark";
+    })();
+  </script>
+  <style>
+    :root {
+      --bg: #050505;
+      --bg-soft: #0d0f0d;
+      --panel: rgba(22,24,21,0.88);
+      --panel-2: rgba(31,34,30,0.88);
+      --panel-3: rgba(18,19,18,0.94);
+      --line: rgba(255,255,255,0.08);
+      --line-strong: rgba(232,191,82,0.22);
+      --text: #f4f3ee;
+      --muted: #9aa194;
+      --green: #97ff5d;
+      --green-soft: rgba(151,255,93,0.12);
+      --green-line: rgba(151,255,93,0.22);
+      --gold: #e8bf52;
+      --gold-soft: rgba(232,191,82,0.12);
+      --gold-line: rgba(232,191,82,0.22);
+      --shadow: 0 24px 60px rgba(0,0,0,0.36);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Manrope", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(151,255,93,0.08), transparent 18%),
+        radial-gradient(circle at 82% 8%, rgba(232,191,82,0.13), transparent 20%),
+        linear-gradient(180deg, #040504 0%, #090a09 48%, #050505 100%);
+      background-attachment: fixed;
+    }
+    body::before,
+    body::after {
+      content: "";
+      position: fixed;
+      pointer-events: none;
+      z-index: 0;
+      border-radius: 999px;
+      filter: blur(90px);
+      opacity: 0.38;
+    }
+    body::before {
+      top: -80px;
+      right: -50px;
+      width: 320px;
+      height: 320px;
+      background: rgba(232,191,82,0.1);
+    }
+    body::after {
+      left: -90px;
+      bottom: 80px;
+      width: 280px;
+      height: 280px;
+      background: rgba(151,255,93,0.08);
+    }
+    h1, h2, h3 { font-family: "Space Grotesk", sans-serif; letter-spacing: -0.03em; }
+    @keyframes riseIn {
+      from { opacity: 0; transform: translateY(18px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .app { position: relative; z-index: 1; display: grid; grid-template-columns: 208px minmax(0, 1fr); min-height: 100vh; }
+    .sidebar {
+      position: sticky; top: 0; height: 100vh; padding: 18px 14px; background: linear-gradient(180deg, rgba(10,11,10,0.92), rgba(7,8,7,0.98));
+      border-right: 1px solid rgba(255,255,255,0.06); display: flex; flex-direction: column; gap: 16px;
+      box-shadow: inset -1px 0 0 rgba(232,191,82,0.06);
+    }
+    .brand {
+      display: flex; align-items: center; gap: 10px; padding: 10px 10px 16px; font-family: "Space Grotesk", sans-serif;
+      font-size: 22px; font-weight: 700; min-width: 0;
+    }
+    .brand-mark {
+      width: 38px; height: 38px; border-radius: 10px; display: inline-flex; align-items: center; justify-content: center;
+      min-width: 38px; flex: 0 0 38px; line-height: 0;
+      background: #050505; color: #071005; overflow: hidden; padding: 0; border: 1px solid rgba(232,191,82,0.18); box-shadow: 0 14px 30px rgba(232,191,82,0.16);
+    }
+    .brand-mark img,
+    .brand-mark svg { width: 100%; height: 100%; display: block; object-fit: cover; }
+    .nav { display: grid; gap: 6px; }
+    .nav-item {
+      display: flex; align-items: center; gap: 12px; min-height: 48px; padding: 0 14px; border-radius: 10px;
+      color: #d9dfd5; border: 1px solid transparent;
+    }
+    .nav-item.active { background: linear-gradient(90deg, rgba(232,191,82,0.14), rgba(151,255,93,0.08)); color: var(--text); border-color: rgba(232,191,82,0.18); }
+    .nav-item:hover { background: rgba(255,255,255,0.04); transform: translateX(4px); border-color: rgba(255,255,255,0.05); }
+    .nav-item-disabled {
+      position: relative;
+      opacity: 0.82;
+      cursor: default;
+    }
+    .nav-item-disabled:hover {
+      background: rgba(255,255,255,0.025);
+      border-color: rgba(255,255,255,0.04);
+      transform: none;
+    }
+    .nav-icon {
+      width: 16px;
+      flex: 0 0 16px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      font-size: 14px;
+      line-height: 1;
+    }
+
+    .nav-icon svg {
+      width: 16px;
+      height: 16px;
+      display: block;
+    }
+    .nav-label { font-size: 15px; font-weight: 600; }
+    .soon-badge {
+      margin-left: auto;
+      font-size: 11px;
+      font-weight: 700;
+      color: rgba(217, 223, 213, 0.58);
+      letter-spacing: 0.02em;
+      opacity: 0;
+      transform: translateY(2px);
+      transition: opacity 140ms ease, transform 140ms ease;
+      pointer-events: none;
+    }
+    .nav-item-disabled:hover .soon-badge {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .sidebar-foot {
+      margin-top: auto; padding: 14px; border-radius: 12px; background: linear-gradient(180deg, rgba(24,26,23,0.9), rgba(14,15,14,0.98)); border: 1px solid rgba(255,255,255,0.07); box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
+    }
+    .wallet-btn {
+      width: 100%; min-height: 46px; border: none; border-radius: 10px; background: linear-gradient(135deg, #f1ca64, #d7a528);
+      color: #151106; font-size: 14px; font-weight: 900; cursor: pointer; transition: transform 180ms ease, filter 180ms ease, box-shadow 180ms ease; box-shadow: 0 16px 28px rgba(232,191,82,0.2);
+    }
+    .network-badge {
+      display: none; margin-top: 10px; min-height: 34px; align-items: center; justify-content: center; border-radius: 10px;
+      background: rgba(151,255,93,0.1); border: 1px solid rgba(151,255,93,0.18); color: #d7ffc2; font-size: 12px; font-weight: 700;
+    }
+    .network-badge.show { display: flex; }
+    .main { min-width: 0; }
+    .ticker-bar {
+      position: sticky; top: 0; z-index: 12; min-height: 42px; display: flex; align-items: center; overflow: hidden;
+      background: rgba(7,8,7,0.92); border-bottom: 1px solid var(--line); box-shadow: 0 12px 24px rgba(0,0,0,0.18);
+    }
+    #tickerTrack { display: flex; align-items: center; gap: 12px; min-width: max-content; padding: 0 14px; white-space: nowrap; }
+    .ticker-chip {
+      display: inline-flex; align-items: center; min-height: 24px; padding: 0 9px; border-radius: 10px; background: linear-gradient(180deg, rgba(28,30,28,0.95), rgba(18,19,18,0.98));
+      border: 1px solid rgba(255,255,255,0.07); color: #edf2e9; font-size: 11px; font-weight: 700; box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
+    }
+    .ticker-chip.buy { color: #dfffd0; border-color: rgba(151,255,93,0.18); background: linear-gradient(180deg, rgba(24,32,22,0.95), rgba(16,20,16,0.98)); }
+    .ticker-chip.sell { color: #f3e6b8; border-color: rgba(232,191,82,0.18); background: linear-gradient(180deg, rgba(34,28,18,0.94), rgba(19,17,13,0.98)); }
+    .topbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 16px 20px 0; }
+    .pill {
+      min-height: 42px; padding: 0 16px; border-radius: 10px; display: inline-flex; align-items: center; background: linear-gradient(180deg, rgba(30,33,29,0.95), rgba(18,20,18,0.98));
+      border: 1px solid rgba(255,255,255,0.07); color: var(--text); font-size: 13px; font-weight: 700; transition: transform 180ms ease, border-color 180ms ease, background 180ms ease; box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
+    }
+    .pill-button {
+      appearance: none;
+      -webkit-appearance: none;
+      font-family: inherit;
+      cursor: pointer;
+    }
+    .page { padding: 18px 20px 28px; }
+    .panel {
+      position: relative; overflow: hidden; background: linear-gradient(180deg, rgba(22,24,21,0.92), rgba(12,13,12,0.98)); border: 1px solid rgba(255,255,255,0.07); border-radius: 16px; box-shadow: var(--shadow); animation: riseIn 420ms ease both;
+    }
+    .panel::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+      pointer-events: none;
+    }
+    .token-panel { padding: 22px; }
+    .section-head {
+      display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 14px;
+    }
+    .section-title { font-size: 34px; font-weight: 700; }
+    .section-copy { color: var(--muted); font-size: 13px; line-height: 1.7; }
+    .toolbar {
+      display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; margin-bottom: 16px;
+    }
+    .toolbar-left, .toolbar-right { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .search-wrap {
+      display: flex; align-items: center; gap: 10px; width: min(560px, 100%); min-height: 50px; padding: 0 14px 0 16px;
+      border-radius: 12px; border: 1px solid #252b35; background: linear-gradient(180deg, rgba(31,34,39,0.98), rgba(24,27,31,0.98));
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.02);
+      transition: border-color 180ms ease, box-shadow 180ms ease, background 180ms ease;
+    }
+    .search-inline-icon {
+      color: #eef3fb; font-size: 17px; line-height: 1; opacity: 0.92;
+    }
+    .search-input {
+      flex: 1; min-width: 0; min-height: 48px; border: none; background: transparent; color: var(--text); padding: 0;
+      font-size: 15px; outline: none;
+    }
+    .search-input::placeholder { color: #98a2b3; }
+    .sort-btn {
+      min-height: 46px; padding: 0 16px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.07); background: linear-gradient(180deg, rgba(28,30,28,0.96), rgba(17,18,17,0.98));
+      color: var(--text); font-size: 14px; font-weight: 800; cursor: pointer; transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+    }
+    .search-wrap:focus-within {
+      border-color: rgba(141,243,177,0.22);
+      background: linear-gradient(180deg, rgba(34,37,43,0.98), rgba(25,28,33,0.98));
+      box-shadow:
+        0 0 0 4px rgba(141,243,177,0.08),
+        0 18px 34px rgba(0,0,0,0.22);
+    }
+    .token-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+    .token-card {
+      display: block; padding: 14px; border-radius: 12px; background: linear-gradient(180deg, rgba(17,19,17,0.96), rgba(10,11,10,0.98)); border: 1px solid rgba(255,255,255,0.07);
+      transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.02);
+    }
+    .token-card:hover { transform: translateY(-4px); border-color: rgba(232,191,82,0.16); box-shadow: 0 26px 40px rgba(0,0,0,0.34); }
+    .token-body { display: grid; grid-template-columns: 1fr; gap: 10px; }
+    .token-media {
+      width: 100%; height: 148px; border-radius: 12px; overflow: hidden; display: flex; align-items: center; justify-content: center;
+      background: radial-gradient(circle at top, rgba(232,191,82,0.12), transparent 45%), linear-gradient(135deg, #191a17, #0d0f0d); border: 1px solid rgba(255,255,255,0.07); color: var(--gold); font-size: 28px; font-weight: 900;
+    }
+    .token-media img { transition: transform 240ms ease, filter 240ms ease; }
+    .token-card:hover .token-media img { transform: scale(1.04); filter: saturate(1.06); }
+    .token-title-row { display: flex; justify-content: space-between; gap: 8px; align-items: flex-start; }
+    .token-title { font-size: 18px; font-weight: 800; line-height: 1.2; }
+    .token-sub { margin-top: 3px; color: var(--muted); font-size: 12px; font-weight: 700; }
+    .rank-pill {
+      display: inline-flex; align-items: center; min-height: 24px; padding: 0 8px; border-radius: 10px; background: var(--gold-soft);
+      border: 1px solid var(--gold-line); color: var(--gold); font-size: 12px; font-weight: 800; white-space: nowrap;
+    }
+    .token-meta-list { display: grid; gap: 6px; margin-top: 8px; }
+    .metric-row {
+      display: flex; justify-content: space-between; gap: 8px; min-height: 34px; padding: 0 10px; align-items: center; border-radius: 8px;
+      background: var(--panel-3); color: var(--muted); font-size: 13px; border: 1px solid rgba(255,255,255,0.05);
+    }
+    .metric-row span:last-child { color: var(--text); font-weight: 700; }
+    .token-progress { margin-top: 10px; }
+    .progress-track {
+      height: 10px; border-radius: 999px; background: #0a0b0a; overflow: hidden; border: 1px solid rgba(255,255,255,0.05);
+    }
+    .progress-fill { height: 100%; border-radius: 999px; background: linear-gradient(90deg, #d6a22a, #96ff61); transition: width 0.45s ease; }
+    .token-progress-meta {
+      display: flex; justify-content: space-between; gap: 8px; margin-top: 6px; color: var(--green); font-size: 11px; font-weight: 800;
+    }
+    .empty-state {
+      min-height: 220px; border-radius: 12px; border: 1px dashed rgba(255,255,255,0.1); background: linear-gradient(180deg, rgba(16,18,16,0.94), rgba(10,11,10,0.98)); display: flex; align-items: center;
+      justify-content: center; color: var(--muted); font-size: 14px;
+    }
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; }
+    .wallet-btn:hover, .sort-btn:hover, .pill:hover { transform: translateY(-2px); border-color: rgba(232,191,82,0.16); }
+    .wallet-btn:hover { filter: brightness(1.03); box-shadow: 0 18px 32px rgba(232,191,82,0.18); }
+    .search-input:focus { box-shadow: none; }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation: none !important;
+        transition: none !important;
+      }
+    }
+    @media (max-width: 1100px) {
+      .app { grid-template-columns: 1fr; }
+      .sidebar { position: static; height: auto; border-right: none; border-bottom: 1px solid var(--line); }
+    }
+    @media (max-width: 760px) {
+      .page, .topbar { padding-left: 14px; padding-right: 14px; }
+      .toolbar { align-items: stretch; }
+      .toolbar-left, .toolbar-right { width: 100%; }
+      .search-wrap { width: 100%; }
+      .token-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .token-media { height: 150px; }
+    }
+    @media (max-width: 560px) {
+      .token-grid { grid-template-columns: 1fr; }
+      .token-media { height: 180px; }
+    }
+  </style>
+  <link rel="stylesheet" href="/assets/theme.css?v=20260404a">
+  <script src="/assets/theme.js?v=20260330d" defer></script>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">
+        <span class="brand-mark" aria-label="TempoBoard logo">
+          <img src="/assets/logo.svg?v=20260403logo2" alt="TempoBoard logo">
+        </span>
+        <span>TempoBoard</span>
+      </div>
+
+      <nav class="nav">
+        <a href="/" class="nav-item">
+          <span class="nav-icon">⌂</span>
+          <span class="nav-label">Home</span>
+        </a>
+        <a href="/create" class="nav-item">
+          <span class="nav-icon">＋</span>
+          <span class="nav-label">Create Token</span>
+        </a>
+        <a href="/tokens" class="nav-item active">
+          <span class="nav-icon">▦</span>
+          <span class="nav-label">Tokens</span>
+        </a>
+        <a href="/docs" class="nav-item">
+          <span class="nav-icon">◫</span>
+          <span class="nav-label">Docs</span>
+        </a>
+        <div class="nav-item nav-item-disabled" aria-disabled="true">
+          <span class="nav-icon">◌</span>
+          <span class="nav-label">Stake</span>
+          <span class="soon-badge">soon</span>
+        </div>
+        <a href="https://x.com/tempoboard?s=21" target="_blank" rel="noreferrer" class="nav-item">
+          <span class="nav-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M22 5.924a8.828 8.828 0 0 1-2.357.646 4.078 4.078 0 0 0 1.804-2.254 8.138 8.138 0 0 1-2.606.995A4.084 4.084 0 0 0 11.86 8.1a11.59 11.59 0 0 1-8.42-4.27 4.087 4.087 0 0 0 1.263 5.453A4.03 4.03 0 0 1 2.85 8.77v.052a4.09 4.09 0 0 0 3.276 4.006 4.112 4.112 0 0 1-1.844.07 4.089 4.089 0 0 0 3.815 2.837A8.195 8.195 0 0 1 2 17.433 11.548 11.548 0 0 0 8.26 19.27c7.547 0 11.674-6.252 11.674-11.674 0-.178-.004-.355-.012-.53A8.263 8.263 0 0 0 22 5.924Z" fill="#1D9BF0"/>
+            </svg>
+          </span>
+          <span class="nav-label">Twitter</span>
+        </a>
+      </nav>
+    </aside>
+
+    <main class="main">
+      <div class="ticker-bar">
+        <div id="tickerTrack">
+          <span id="tickerContent" class="ticker-chip">Loading live trades...</span>
+          <span id="tickerContent2" aria-hidden="true"></span>
+        </div>
+      </div>
+
+      <div class="topbar">
+        <div class="search-wrap search-wrap-wide top-search">
+          <span class="search-inline-icon">⌕</span>
+          <input id="marketSearch" class="search-input" placeholder="Search for coins..." oninput="filterTokenList()" onkeydown="if(event.key==='Enter'){filterTokenList()}">
+        </div>
+        <div class="topbar-right">
+          <button onclick="window.location.href='/create'" class="pill pill-button">Create</button>
+          <button type="button" onclick="connectWallet()" class="pill pill-button" id="walletPreview">Connect Wallet</button>
+        </div>
+      </div>
+
+      <div class="page">
+        <section class="panel token-panel">
+          <div class="section-head">
+            <button onclick="loadTokenList()" class="sort-btn">Refresh</button>
+          </div>
+
+          <div class="filter-row">
+            <div class="chip-row">
+              <button class="pill pill-button filter-chip is-active" id="sortLatestBtn" onclick="setSort('latest')">Latest</button>
+              <button class="pill pill-button filter-chip" id="sortMarketBtn" onclick="setSort('marketcap')">Market Cap</button>
+            </div>
+          </div>
+
+          <div id="tokenList" class="token-grid">
+            <div class="empty-state">No tokens yet.</div>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <script src="/assets/wallet.js?v=20260322b"></script>
+  <script>
+    let provider, signer, userAddress;
+    let allCards = [];
+    let currentSort = "latest";
+    let walletSession;
+    const blockTimestampCache = new Map();
+    const LAUNCH_CONTRACT = "0x5866914946e4B7c7B2C789cc5EE259b73CBa2274";
+    const HIDDEN_TOKENS = new Set([
+      "0xba439c26d31930cfd5a9b344f5a1c582dc9f422b",
+      "0x1c9d8d0ceaea2c71de15aee11b6314741ef5e92c",
+      "0x892dc4fd65b96bc3fcc3bce2df2a480b9303227c"
+    ]);
+    const TEMPO_CHAIN = {
+      chainId: "0x1079",
+      chainName: "Tempo Mainnet",
+      nativeCurrency: { name: "USD", symbol: "USD", decimals: 18 },
+      rpcUrls: ["https://rpc.tempo.xyz"],
+      blockExplorerUrls: ["https://explore.mainnet.tempo.xyz"]
+    };
+    const LAUNCH_ABI = [
+      "function getLaunchCount() view returns (uint256)",
+      "function allLaunches(uint256) view returns (address)",
+      "function launches(address) view returns (address creator, uint256 raised, uint256 sold, bool graduated)",
+      "function getPrice(address tokenAddr) view returns (uint256)",
+      "event LaunchCreated(address indexed token, address indexed creator, string name, string symbol, string meta)",
+      "event TokenBought(address indexed token, address indexed buyer, uint256 usdcIn, uint256 tokensOut)",
+      "event TokenSold(address indexed token, address indexed seller, uint256 tokensIn, uint256 usdcOut)"
+    ];
+
+    function isHiddenToken(tokenAddr) {
+      return !!tokenAddr && HIDDEN_TOKENS.has(tokenAddr.toLowerCase());
+    }
+
+    async function getBlockTimestamp(provider, blockNumber) {
+      if (!blockTimestampCache.has(blockNumber)) {
+        const block = await provider.getBlock(blockNumber);
+        blockTimestampCache.set(blockNumber, Number(block?.timestamp || 0));
+      }
+      return blockTimestampCache.get(blockNumber);
+    }
+
+    function formatRelativeTime(timestamp) {
+      if (!timestamp) return "-";
+      const diff = Math.max(0, Math.floor(Date.now() / 1000) - Number(timestamp));
+      if (diff < 60) return "Just now";
+      if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
+      if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
+      if (diff < 604800) return `${Math.floor(diff / 86400)}d ago`;
+      return `${Math.floor(diff / 604800)}w ago`;
+    }
+
+    function applyWalletConnected(address) {
+      const short = window.TempomemeWallet.formatAddress(address);
+      const connectBtn = document.getElementById("connectBtn");
+      if (connectBtn) connectBtn.textContent = short;
+      document.getElementById("walletPreview").textContent = short;
+      const networkBadge = document.getElementById("networkBadge");
+      if (networkBadge) {
+        networkBadge.textContent = "Tempo Mainnet";
+        networkBadge.classList.add("show");
+      }
+    }
+
+    function resetWalletUi(showWrongNetwork = false) {
+      provider = null;
+      signer = null;
+      userAddress = null;
+      const connectBtn = document.getElementById("connectBtn");
+      if (connectBtn) connectBtn.textContent = "Connect Wallet";
+      document.getElementById("walletPreview").textContent = "Connect Wallet";
+      const networkBadge = document.getElementById("networkBadge");
+      if (networkBadge) {
+        if (showWrongNetwork) {
+          networkBadge.textContent = "Switch to Tempo Mainnet";
+          networkBadge.classList.add("show");
+        } else {
+          networkBadge.textContent = "Tempo Mainnet";
+          networkBadge.classList.remove("show");
+        }
+      }
+    }
+
+    async function autoConnect() {
+      if (!walletSession) return;
+      await walletSession.init();
+    }
+
+    async function connectWallet(requestAccess = true) {
+      if (!walletSession) return false;
+      return await walletSession.connect(requestAccess, { silent: !requestAccess });
+    }
+
+    function initWallet() {
+      walletSession = window.TempomemeWallet.createSession({
+        chain: TEMPO_CHAIN,
+        onConnect: async ({ address, provider: nextProvider, signer: nextSigner }) => {
+          provider = nextProvider;
+          signer = nextSigner;
+          userAddress = address;
+          applyWalletConnected(address);
+        },
+        onDisconnect: ({ reason }) => {
+          resetWalletUi(reason === "wrongChain");
+        },
+        onWrongChain: () => {
+          resetWalletUi(true);
+        },
+        onError: (message, error) => {
+          console.error("wallet error", error || message);
+        }
+      });
+    }
+
+    function setSort(type) {
+      currentSort = type;
+      document.getElementById("sortLatestBtn").classList.toggle("is-active", type === "latest");
+      document.getElementById("sortMarketBtn").classList.toggle("is-active", type === "marketcap");
+      filterTokenList();
+    }
+
+    function sortCards(cards) {
+      const cloned = [...cards];
+      if (currentSort === "marketcap") cloned.sort((a, b) => b.marketCapValue - a.marketCapValue);
+      else cloned.sort((a, b) => b.createdBlock - a.createdBlock);
+      return cloned;
+    }
+
+    function renderTokenList(cards) {
+      const tokenListEl = document.getElementById("tokenList");
+      if (!cards.length) {
+        tokenListEl.innerHTML = "<div class='empty-state'>No matching tokens found.</div>";
+        return;
+      }
+      tokenListEl.innerHTML = cards.map((c) => `
+        <a href="/token?token=${c.tokenAddr}" class="token-card">
+          <div class="token-body">
+            <div class="token-media">
+              ${c.meta && c.meta.image
+                ? `<img src="${c.meta.image}" class="w-full h-full object-cover" onerror="this.parentElement.innerHTML='${c.symbol.slice(0,2).toUpperCase()}'">`
+                : c.symbol.slice(0,2).toUpperCase()}
+            </div>
+            <div>
+              <div class="token-title-row">
+                <div>
+                  <div class="token-title">${c.name}</div>
+                  <div class="token-sub">${c.symbol}</div>
+                </div>
+                <div class="rank-pill">${c.marketCapLabel}</div>
+              </div>
+              <div class="token-meta-list">
+                <div class="metric-row"><span>Creator</span><span class="mono">${c.creatorShort}</span></div>
+                <div class="metric-row"><span>Created</span><span>${formatRelativeTime(c.createdAt)}</span></div>
+                <div class="metric-row"><span>Price</span><span>${c.priceFormatted} pathUSD</span></div>
+              </div>
+              <div class="token-progress">
+                <div class="progress-track"><div class="progress-fill" style="width:${c.progress}%"></div></div>
+                <div class="token-progress-meta">
+                  <span>${c.progress}%</span>
+                  <span>Curve Progress</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </a>
+      `).join("");
+    }
+
+    function filterTokenList() {
+      const q = (document.getElementById("marketSearch").value || "").trim().toLowerCase();
+      let cards = [...allCards];
+      if (q) {
+        cards = cards.filter((c) =>
+          c.name.toLowerCase().includes(q) ||
+          c.symbol.toLowerCase().includes(q) ||
+          c.tokenAddr.toLowerCase().includes(q)
+        );
+      }
+      renderTokenList(sortCards(cards));
+    }
+
+    async function loadTokenList() {
+      try {
+        const p = new ethers.JsonRpcProvider("https://rpc.tempo.xyz");
+        const launch = new ethers.Contract(LAUNCH_CONTRACT, LAUNCH_ABI, p);
+        const count = Number(await launch.getLaunchCount());
+        const tokenListEl = document.getElementById("tokenList");
+        if (count === 0) {
+          tokenListEl.innerHTML = "<div class='empty-state'>No tokens yet.</div>";
+          return;
+        }
+        tokenListEl.innerHTML = "<div class='empty-state'>Loading on-chain data...</div>";
+        const cards = [];
+        for (let i = 0; i < count; i++) {
+          try {
+            const tokenAddr = await launch.allLaunches(i);
+            if (isHiddenToken(tokenAddr)) continue;
+            const token = new ethers.Contract(tokenAddr, [
+              "function name() view returns (string)",
+              "function symbol() view returns (string)",
+              "function totalSupply() view returns (uint256)"
+            ], p);
+            const [name, symbol, info, price, totalSupply] = await Promise.all([
+              token.name(),
+              token.symbol(),
+              launch.launches(tokenAddr),
+              launch.getPrice(tokenAddr),
+              token.totalSupply()
+            ]);
+            const launchRecord = await findLaunchMeta(launch, p, tokenAddr);
+            const localMeta = getLocalMeta(tokenAddr);
+            const meta = launchRecord?.meta || localMeta || {};
+            const raised = Number(ethers.formatUnits(info[1], 6));
+            const sold = Number(ethers.formatUnits(info[2], 18));
+            const priceValue = Number(ethers.formatUnits(price, 18));
+            const supplyValue = Number(ethers.formatUnits(totalSupply, 18));
+            const marketCapValue = priceValue * supplyValue;
+            cards.push({
+              tokenAddr,
+              name,
+              symbol,
+              raised,
+              priceFormatted: priceValue.toFixed(8),
+              progress: Math.min((sold / 800000000) * 100, 100).toFixed(1),
+              creatorShort: info[0].slice(0, 4) + "..." + info[0].slice(-6),
+              marketCapValue,
+              marketCapLabel: "$" + marketCapValue.toLocaleString(undefined, { maximumFractionDigits: 0 }),
+              createdBlock: launchRecord?.blockNumber ?? i + 1,
+              createdAt: launchRecord?.timestamp ?? null,
+              meta
+            });
+          } catch (e) {
+            console.error(e);
+          }
+        }
+        allCards = cards;
+        filterTokenList();
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    async function loadTicker() {
+      try {
+        const p = new ethers.JsonRpcProvider("https://rpc.tempo.xyz");
+        const launch = new ethers.Contract(LAUNCH_CONTRACT, LAUNCH_ABI, p);
+        const latestBlock = await p.getBlockNumber();
+        const fromBlock = Math.max(0, latestBlock - 5000);
+        const [buyEvents, sellEvents] = await Promise.all([
+          launch.queryFilter(launch.filters.TokenBought(), fromBlock, latestBlock),
+          launch.queryFilter(launch.filters.TokenSold(), fromBlock, latestBlock)
+        ]);
+        const allEvents = [...buyEvents, ...sellEvents]
+          .filter((ev) => !isHiddenToken(ev.args?.[0]))
+          .sort((a, b) => b.blockNumber - a.blockNumber)
+          .slice(0, 8);
+
+        const ticker1 = document.getElementById("tickerContent");
+        const ticker2 = document.getElementById("tickerContent2");
+        const track = document.getElementById("tickerTrack");
+
+        if (!allEvents.length) {
+          ticker1.innerHTML = '<span class="ticker-chip">No live trades yet</span>';
+          ticker2.innerHTML = "";
+          track.style.animation = "none";
+          return;
+        }
+
+        const symbolCache = {};
+        for (const ev of allEvents) {
+          const tokenAddr = ev.args[0];
+          if (!symbolCache[tokenAddr]) {
+            try {
+              const token = new ethers.Contract(tokenAddr, ["function symbol() view returns (string)"], p);
+              symbolCache[tokenAddr] = await token.symbol();
+            } catch (e) {
+              symbolCache[tokenAddr] = tokenAddr.slice(0, 6);
+            }
+          }
+        }
+
+        function formatTickerAmount(value) {
+          if (value >= 1000000) return `${(value / 1000000).toFixed(2).replace(/\.?0+$/, "")}M`;
+          if (value >= 1000) return `${(value / 1000).toFixed(2).replace(/\.?0+$/, "")}K`;
+          if (value >= 1) return value.toFixed(2).replace(/\.?0+$/, "");
+          return value.toFixed(4).replace(/\.?0+$/, "");
+        }
+
+        const items = allEvents.map((ev) => {
+          const isBuy = ev.fragment.name === "TokenBought";
+          const wallet = ev.args[1].slice(0, 6) + "..." + ev.args[1].slice(-3);
+          const usdcValue = isBuy
+            ? Number(ethers.formatUnits(ev.args[2], 6))
+            : Number(ethers.formatUnits(ev.args[3], 6));
+          const symbol = symbolCache[ev.args[0]] || "TOKEN";
+          return `<span class="ticker-chip ${isBuy ? "buy" : "sell"}">${wallet} ${isBuy ? "bought" : "sold"} ${formatTickerAmount(usdcValue)} pathUSD ${symbol}</span>`;
+        });
+
+        const html = items.join("");
+        ticker1.innerHTML = html;
+        ticker2.innerHTML = html;
+        const width = ticker1.scrollWidth;
+        track.style.animation = width > window.innerWidth ? `ticker ${Math.max(36, width / 45)}s linear infinite` : "none";
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    window.addEventListener("load", () => {
+      initWallet();
+      autoConnect();
+      loadTicker();
+      loadTokenList();
+      setInterval(loadTicker, 30000);
+    });
+
+    function getLocalMeta(tokenAddr) {
+      try {
+        const raw = localStorage.getItem(`tempo_meta_${tokenAddr.toLowerCase()}`);
+        return raw ? JSON.parse(raw) : null;
+      } catch (e) {
+        return null;
+      }
+    }
+
+    async function findLaunchMeta(launch, provider, tokenAddr) {
+      try {
+        const latestBlock = await provider.getBlockNumber();
+        const chunkSize = 100000;
+        const filter = launch.filters.LaunchCreated(tokenAddr);
+        for (let toBlock = latestBlock; toBlock >= 0; toBlock -= chunkSize) {
+          const fromBlock = Math.max(0, toBlock - chunkSize + 1);
+          const events = await launch.queryFilter(filter, fromBlock, toBlock);
+          if (events.length > 0) {
+            const launchEvent = events[events.length - 1];
+            const metaText = launchEvent.args.meta;
+            let meta = null;
+            try {
+              meta = metaText ? JSON.parse(metaText) : null;
+            } catch (e) {
+              meta = null;
+            }
+            return {
+              meta,
+              blockNumber: launchEvent.blockNumber,
+              timestamp: await getBlockTimestamp(provider, launchEvent.blockNumber)
+            };
+          }
+          if (fromBlock === 0) break;
+        }
+      } catch (e) {
+        console.error("findLaunchMeta error", e);
+      }
+      return null;
+    }
+
+  </script>
+</body>
+</html>

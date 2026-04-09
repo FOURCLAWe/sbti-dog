@@ -1,0 +1,9 @@
+<svg width="1500" height="500" viewBox="0 0 1500 500" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1500" height="500" fill="#F6F2EA"/>
+  <path
+    d="M296 82C242 82 198 144 198 238C198 336 248 392 296 392C344 392 394 336 394 238C394 144 350 82 296 82Z"
+    fill="#D8A23A"
+  />
+  <text x="546" y="286" fill="#231D1B" font-family="Avenir Next, SF Pro Display, Segoe UI, Arial, sans-serif" font-size="136" font-weight="800" letter-spacing="-6">13,200</text>
+  <text x="1078" y="286" fill="#D8A23A" font-family="Avenir Next, SF Pro Display, Segoe UI, Arial, sans-serif" font-size="136" font-weight="800" letter-spacing="-6">Egg</text>
+</svg>

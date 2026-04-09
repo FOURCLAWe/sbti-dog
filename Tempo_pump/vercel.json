@@ -1,0 +1,21 @@
+{
+  "version": 2,
+  "builds": [
+    { "src": "**/*.html", "use": "@vercel/static" },
+    { "src": "assets/**", "use": "@vercel/static" }
+  ],
+  "rewrites": [
+    { "source": "/docs", "destination": "/docs/index.html" },
+    { "source": "/token", "destination": "/token.html" },
+    { "source": "/tokens", "destination": "/tokens.html" },
+    { "source": "/create", "destination": "/create.html" }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "Cache-Control", "value": "no-cache, no-store, must-revalidate" }
+      ]
+    }
+  ]
+}
