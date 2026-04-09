@@ -180,7 +180,6 @@
 
     setText(releaseRuleEl, "每小时释放 20% 的可分配 BNB");
     setText(automationModeEl, "Automation / 任何人可触发");
-    setText(countdownHintEl, "每个自然小时都会重新开始倒计时。");
     renderHistory([]);
     startCountdown(() => countdownTarget);
 
@@ -273,10 +272,6 @@
           ? `当前批次正在链上记账中，已锁定 ${formatBnb(totalReservedForClaims)} 待领取 BNB。`
           : `当前已预留 ${formatBnb(totalReservedForClaims)} 给已生成的分红批次，持有人可在链上 claim。`
       );
-      setText(
-        countdownHintEl,
-        Number(nextSettlementAt) > 0 ? `链上登记的下次结算时间：${formatDate(nextSettlementAt)}` : "每个自然小时都会重新开始倒计时。"
-      );
       renderHistory(historyItems);
     } catch (error) {
       setText(vaultAddressEl, shortAddress(config.vaultAddress));
@@ -287,7 +282,6 @@
       setText(holderCountEl, "读取失败");
       setText(batchProgressEl, "读取失败");
       setText(statusNoteEl, `链上状态暂时读取失败：${error.message || String(error)}`);
-      setText(countdownHintEl, "倒计时仍按自然整点运行，链上状态稍后会自动重读。");
     }
   }
 
