@@ -19,13 +19,78 @@
   let currentResult = null;
   let mintInFlight = false;
 
+  function getWalletProvider() {
+    const candidates = [];
+
+    if (window.ethereum) {
+      if (Array.isArray(window.ethereum.providers)) {
+        candidates.push(...window.ethereum.providers);
+      }
+      candidates.push(window.ethereum);
+    }
+
+    if (window.BinanceChain) {
+      candidates.push(window.BinanceChain);
+    }
+
+    if (window.okxwallet) {
+      candidates.push(window.okxwallet);
+    }
+
+    if (window.coinbaseWalletExtension) {
+      candidates.push(window.coinbaseWalletExtension);
+    }
+
+    const uniqueCandidates = [...new Set(candidates)].filter(
+      (provider) => provider && typeof provider.request === "function"
+    );
+
+    if (!uniqueCandidates.length) {
+      return null;
+    }
+
+    return (
+      uniqueCandidates.find(
+        (provider) =>
+          provider.isMetaMask ||
+          provider.isOkxWallet ||
+          provider.isCoinbaseWallet ||
+          provider.isBinance ||
+          provider.isBinanceChain
+      ) || uniqueCandidates[0]
+    );
+  }
+
   function hasWallet() {
-    return typeof window.ethereum !== "undefined" && typeof window.ethers !== "undefined";
+    return Boolean(getWalletProvider()) && typeof window.ethers !== "undefined";
   }
 
   function setStatus(message, type) {
     mintStatus.textContent = message;
     mintStatus.className = type ? `mint-status ${type}` : "mint-status";
+  }
+
+  function formatWalletHint() {
+    return "当前浏览器没有检测到可用的 EVM 钱包。请在 MetaMask、OKX 或 Binance Wallet 的内置浏览器中打开，或在桌面浏览器安装钱包扩展。";
+  }
+
+  function getErrorMessage(error) {
+    if (!error) return "未知错误";
+
+    if (typeof error === "string") {
+      return error;
+    }
+
+    if (typeof error === "object") {
+      if ("shortMessage" in error && error.shortMessage) {
+        return error.shortMessage;
+      }
+      if ("message" in error && error.message) {
+        return error.message;
+      }
+    }
+
+    return String(error);
   }
 
   function getCurrentResultCode() {
@@ -59,17 +124,22 @@
   }
 
   async function ensureBscNetwork() {
-    const currentChainId = await window.ethereum.request({ method: "eth_chainId" });
+    const walletProvider = getWalletProvider();
+    if (!walletProvider) {
+      throw new Error(formatWalletHint());
+    }
+
+    const currentChainId = await walletProvider.request({ method: "eth_chainId" });
     if (currentChainId === config.chainIdHex) return;
 
     try {
-      await window.ethereum.request({
+      await walletProvider.request({
         method: "wallet_switchEthereumChain",
         params: [{ chainId: config.chainIdHex }]
       });
     } catch (error) {
       if (error && error.code === 4902) {
-        await window.ethereum.request({
+        await walletProvider.request({
           method: "wallet_addEthereumChain",
           params: [
             {
@@ -90,26 +160,54 @@
 
   async function connectWallet() {
     if (!hasWallet()) {
-      setStatus("没有检测到 EVM 钱包。请先安装 MetaMask 或其它兼容钱包。", "error");
-      return;
+      setStatus(formatWalletHint(), "error");
+      return false;
     }
 
-    const [account] = await window.ethereum.request({ method: "eth_requestAccounts" });
-    currentAccount = account || "";
-    connectWalletBtn.textContent = currentAccount
-      ? `${currentAccount.slice(0, 6)}...${currentAccount.slice(-4)}`
-      : "连接钱包";
-    await updateMintState();
+    const walletProvider = getWalletProvider();
+    setStatus("正在请求钱包授权...");
+
+    try {
+      const [account] = await walletProvider.request({ method: "eth_requestAccounts" });
+      currentAccount = account || "";
+      connectWalletBtn.textContent = currentAccount
+        ? `${currentAccount.slice(0, 6)}...${currentAccount.slice(-4)}`
+        : "连接钱包";
+
+      if (!currentAccount) {
+        setStatus("钱包已连接，但没有返回可用地址。", "error");
+        return false;
+      }
+
+      await updateMintState();
+      return true;
+    } catch (error) {
+      setStatus(`连接钱包失败：${getErrorMessage(error)}`, "error");
+      return false;
+    }
   }
 
   async function updateMintState() {
-    if (!currentResult || !currentAccount || !config.contractAddress || !hasWallet()) {
+    if (!currentResult || !config.contractAddress) {
       mintNftBtn.disabled = true;
       return;
     }
 
+    if (!hasWallet()) {
+      mintNftBtn.disabled = true;
+      setStatus(formatWalletHint(), "error");
+      return;
+    }
+
+    if (!currentAccount) {
+      mintNftBtn.disabled = true;
+      setStatus("检测到钱包后，先点“连接钱包”，再 mint 当前结果。");
+      return;
+    }
+
     try {
-      const provider = new window.ethers.BrowserProvider(window.ethereum);
+      const walletProvider = getWalletProvider();
+      const provider = new window.ethers.BrowserProvider(walletProvider);
       const contract = new window.ethers.Contract(config.contractAddress, abi, provider);
       const minted = await contract.hasMinted(currentAccount, currentResult.tokenId);
       const balance = await contract.balanceOf(currentAccount, currentResult.tokenId);
@@ -126,7 +224,7 @@
       }
     } catch (error) {
       mintNftBtn.disabled = true;
-      setStatus(`读取 mint 状态失败：${error.message || String(error)}`, "error");
+      setStatus(`读取 mint 状态失败：${getErrorMessage(error)}`, "error");
     }
   }
 
@@ -146,10 +244,15 @@
       mintNftBtn.disabled = true;
       setStatus("正在连接 BSC 并发起 mint...");
 
-      await connectWallet();
+      const connected = await connectWallet();
+      if (!connected) {
+        return;
+      }
+
       await ensureBscNetwork();
 
-      const provider = new window.ethers.BrowserProvider(window.ethereum);
+      const walletProvider = getWalletProvider();
+      const provider = new window.ethers.BrowserProvider(walletProvider);
       const signer = await provider.getSigner();
       const contract = new window.ethers.Contract(config.contractAddress, abi, signer);
 
@@ -161,11 +264,7 @@
       setStatus("Mint 成功，这枚结果 NFT 已经进你的钱包了。", "success");
       await updateMintState();
     } catch (error) {
-      const message =
-        error && typeof error === "object" && "shortMessage" in error
-          ? error.shortMessage
-          : error.message || String(error);
-      setStatus(`Mint 失败：${message}`, "error");
+      setStatus(`Mint 失败：${getErrorMessage(error)}`, "error");
       mintNftBtn.disabled = false;
     } finally {
       mintInFlight = false;
@@ -191,8 +290,9 @@
     mintNftBtn.addEventListener("click", mintCurrentResult);
   }
 
-  if (hasWallet()) {
-    window.ethereum.on("accountsChanged", (accounts) => {
+  const walletProvider = getWalletProvider();
+  if (walletProvider && typeof walletProvider.on === "function") {
+    walletProvider.on("accountsChanged", (accounts) => {
       currentAccount = accounts[0] || "";
       connectWalletBtn.textContent = currentAccount
         ? `${currentAccount.slice(0, 6)}...${currentAccount.slice(-4)}`
@@ -200,7 +300,7 @@
       updateMintState();
     });
 
-    window.ethereum.on("chainChanged", () => {
+    walletProvider.on("chainChanged", () => {
       updateMintState();
     });
   }
