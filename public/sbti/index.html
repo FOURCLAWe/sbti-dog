@@ -483,7 +483,7 @@
 
     .intro-bottom-grid {
       display: grid;
-      grid-template-columns: minmax(0, 1.12fr) minmax(0, 0.88fr);
+      grid-template-columns: 1fr;
       gap: 18px;
       margin-top: 18px;
       position: relative;
@@ -521,87 +521,26 @@
       max-width: 700px;
     }
 
-    .tokenomics-rows {
-      display: grid;
-      gap: 12px;
-      margin-top: 18px;
-    }
-
-    .tokenomics-row {
-      display: grid;
-      grid-template-columns: 120px 1fr 96px;
-      align-items: center;
-      gap: 14px;
-      padding: 14px;
-      border-radius: 18px;
-      background: rgba(255, 255, 255, 0.78);
-      border: 1px solid rgba(54, 83, 59, 0.08);
-    }
-
-    .tokenomics-label {
-      font-size: 12px;
-      font-weight: 800;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--accent-strong);
-    }
-
-    .tokenomics-bar {
-      position: relative;
-      height: 12px;
-      border-radius: 999px;
-      background: #e4ece0;
-      overflow: hidden;
-    }
-
-    .tokenomics-fill {
-      position: absolute;
-      inset: 0 auto 0 0;
-      border-radius: inherit;
-      background: linear-gradient(90deg, var(--accent-bright), #7ecb6b 60%, var(--accent-strong));
-    }
-
-    .tokenomics-value {
-      font-family: "SFMono-Regular", "Menlo", "Monaco", monospace;
-      font-size: 15px;
-      font-weight: 800;
-      color: var(--text);
-      text-align: right;
-    }
-
-    .tokenomics-note {
-      display: grid;
-      gap: 10px;
-      margin-top: 18px;
-    }
-
-    .tokenomics-note p {
-      padding: 12px 14px;
-      border-radius: 16px;
-      background: rgba(255, 255, 255, 0.72);
-      border: 1px solid rgba(54, 83, 59, 0.06);
-      color: var(--muted);
-      font-size: 13px;
-      line-height: 1.75;
-    }
-
     .artifact-grid {
       display: grid;
+      grid-template-columns: minmax(0, 1.12fr) minmax(320px, 0.88fr);
       gap: 14px;
       margin-top: 18px;
+      align-items: stretch;
     }
 
     .artifact-card {
       border-radius: 18px;
-      padding: 16px;
+      padding: 20px;
       background: linear-gradient(180deg, #1e2f26, #14201a);
       color: #f4f8f0;
       border: 1px solid rgba(200, 255, 113, 0.12);
+      min-height: 100%;
     }
 
     .artifact-card strong {
       display: block;
-      font-size: 28px;
+      font-size: 32px;
       line-height: 1;
       letter-spacing: -0.03em;
       color: var(--accent-bright);
@@ -618,7 +557,7 @@
 
     .artifact-grid-secondary {
       display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 12px;
     }
 
@@ -1344,9 +1283,9 @@
       .intro-grid,
       .intro-bottom-grid,
       .result-top { grid-template-columns: 1fr; }
+      .artifact-grid { grid-template-columns: 1fr; }
       .intro-stats,
       .mint-perks { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-      .tokenomics-row { grid-template-columns: 1fr; }
     }
 
 @media (max-width: 860px) {
@@ -1465,35 +1404,9 @@
 
         <div class="intro-bottom-grid">
           <section class="intro-panel">
-            <div class="panel-kicker">Hourly Tax Flow</div>
-            <h3>这不是一张静态测试海报，而是一张挂钩代币税收节奏的链上卡片。</h3>
-            <p class="panel-sub">人格测试负责把用户映射进收藏品集合；Flap 上的 <strong>$SBTI</strong> 负责产生链上税收；NFT 则作为记录你席位的分红凭证。税池不会一小时内一次性放完，而是每个整点先释放 20%，剩余部分逐小时递延，直到拨付完为止。</p>
-            <div class="tokenomics-rows">
-              <div class="tokenomics-row">
-                <div class="tokenomics-label">Buy / Sell Tax</div>
-                <div class="tokenomics-bar"><div class="tokenomics-fill" style="width: 100%"></div></div>
-                <div class="tokenomics-value">3.00%</div>
-              </div>
-              <div class="tokenomics-row">
-                <div class="tokenomics-label">Holder Pool</div>
-                <div class="tokenomics-bar"><div class="tokenomics-fill" style="width: 20%"></div></div>
-                <div class="tokenomics-value">20%</div>
-              </div>
-              <div class="tokenomics-row">
-                <div class="tokenomics-label">Settlement</div>
-                <div class="tokenomics-bar"><div class="tokenomics-fill" style="width: 60%"></div></div>
-                <div class="tokenomics-value">每整点</div>
-              </div>
-            </div>
-            <div class="tokenomics-note">
-              <p>用户完成测试后，会得到 27 种人格之一，并获得对应的 NFT mint 资格。</p>
-              <p>$SBTI 税收先进入指定合约，再按自然小时逐批释放；每次只拨付 20%，剩余部分继续滚入后续小时，让整套玩法更像一张“有现金流叙事”的人格凭证。</p>
-            </div>
-          </section>
-
-          <section class="intro-panel">
             <div class="panel-kicker">Holder Artifact</div>
-            <h3>每张人格 NFT 都该看起来像一张有用途的座位卡。</h3>
+            <h3>每张人格 NFT 都对应一个链上席位，而不只是测试截图。</h3>
+            <p class="panel-sub">测试结果决定你的卡面身份；连接钱包并 mint 后，这张人格卡会作为链上记录。满足 NFT 与 $SBTI 持仓门槛后，就会进入分红规则范围。</p>
             <div class="artifact-grid">
               <div class="artifact-card">
                 <strong>SBTI NFT</strong>
@@ -1507,6 +1420,10 @@
                 <div class="artifact-tile">
                   <strong>1 / type</strong>
                   <span>每个钱包对每个结果最多 mint 一次，避免同人格无限堆叠。</span>
+                </div>
+                <div class="artifact-tile">
+                  <strong>10K+</strong>
+                  <span>同一钱包持有大于 10,000 $SBTI，才计入分红规则范围。</span>
                 </div>
               </div>
             </div>
