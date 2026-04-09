@@ -121,7 +121,20 @@
     if (!historyListEl) return;
 
     clearHistory();
-    setText(historyMetaEl, historyItems.length > 0 ? `${historyItems.length} 条` : "");
+    if (historyMetaEl) {
+      historyMetaEl.hidden = historyItems.length === 0;
+      setText(historyMetaEl, historyItems.length > 0 ? `${historyItems.length} 条` : "");
+    }
+
+    if (historyItems.length === 0) {
+      const empty = document.createElement("div");
+      empty.className = "engine-history-empty";
+      const title = document.createElement("strong");
+      title.textContent = "分红暂未开启";
+      empty.append(title);
+      historyListEl.append(empty);
+      return;
+    }
 
     historyItems.forEach((item) => {
       const card = document.createElement("div");
