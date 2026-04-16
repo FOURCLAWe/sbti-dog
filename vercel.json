@@ -13,6 +13,11 @@
       "source": "/sbti",
       "destination": "/sbti/",
       "permanent": false
+    },
+    {
+      "source": "/sbti/airdrop",
+      "destination": "/sbti/airdrop/",
+      "permanent": false
     }
   ],
   "rewrites": [

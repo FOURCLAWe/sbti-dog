@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SBTI Holder Airdrop</title>
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+  <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192x192.png" />
+  <style>
+    :root {
+      --bg: #f0f6ef;
+      --panel: #ffffff;
+      --text: #18211d;
+      --muted: #5f6d62;
+      --line: #d5e0d2;
+      --soft: #edf5e7;
+      --accent: #85ad6d;
+      --accent-strong: #36533b;
+      --accent-bright: #c8ff71;
+      --shadow: 0 24px 70px rgba(41, 69, 46, 0.10);
+      --radius: 26px;
+      --danger: #a34848;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      min-height: 100vh;
+      font-family: "Avenir Next", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      background:
+        radial-gradient(circle at 10% 15%, rgba(200, 255, 113, 0.18), transparent 18%),
+        radial-gradient(circle at 88% 12%, rgba(54, 83, 59, 0.12), transparent 22%),
+        radial-gradient(circle at 50% 100%, rgba(225, 236, 223, 0.92), transparent 42%),
+        linear-gradient(180deg, #f1f6ef 0%, #f8fbf7 52%, #eef3ee 100%);
+      color: var(--text);
+    }
+
+    .shell {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 30px 18px 64px;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.92);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      padding: 34px;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      right: -70px;
+      top: -70px;
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      background: linear-gradient(180deg, rgba(200, 255, 113, 0.20), rgba(200, 255, 113, 0.01));
+      pointer-events: none;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.76);
+      color: var(--accent-strong);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .eyebrow-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent-bright);
+      box-shadow: 0 0 0 4px rgba(200, 255, 113, 0.14);
+    }
+
+    h1, h2, h3, p { margin: 0; }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(320px, 0.95fr);
+      gap: 18px;
+      align-items: stretch;
+      margin-top: 18px;
+    }
+
+    .hero-copy h1 {
+      margin-top: 14px;
+      font-size: clamp(34px, 5vw, 60px);
+      line-height: 0.98;
+      letter-spacing: -0.05em;
+      max-width: 680px;
+    }
+
+    .hero-copy p {
+      margin-top: 16px;
+      max-width: 720px;
+      color: var(--muted);
+      font-size: 16px;
+      line-height: 1.85;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 24px;
+    }
+
+    .hero-highlight {
+      display: grid;
+      gap: 14px;
+      height: 100%;
+    }
+
+    .highlight-card {
+      border-radius: 24px;
+      padding: 22px;
+      background: linear-gradient(180deg, #203128 0%, #13201a 100%);
+      border: 1px solid rgba(200, 255, 113, 0.14);
+      color: #f3f7ef;
+      box-shadow: 0 20px 50px rgba(21, 39, 29, 0.24);
+    }
+
+    .highlight-card strong {
+      display: block;
+      font-family: "SFMono-Regular", "Menlo", "Monaco", monospace;
+      font-size: clamp(36px, 5vw, 56px);
+      line-height: 1;
+      letter-spacing: -0.04em;
+      color: var(--accent-bright);
+    }
+
+    .highlight-card span {
+      display: block;
+      margin-top: 10px;
+      color: rgba(244, 248, 240, 0.8);
+      font-size: 14px;
+      line-height: 1.75;
+    }
+
+    .rule-card {
+      padding: 18px;
+      border-radius: 22px;
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, #fbfefb, #f2f7ee);
+    }
+
+    .rule-card h3 {
+      font-size: 14px;
+      color: var(--accent-strong);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .rule-list {
+      margin: 14px 0 0;
+      padding: 0;
+      list-style: none;
+      display: grid;
+      gap: 10px;
+    }
+
+    .rule-list li {
+      display: grid;
+      grid-template-columns: 26px 1fr;
+      gap: 10px;
+      align-items: start;
+      color: var(--text);
+      font-size: 14px;
+      line-height: 1.75;
+    }
+
+    .rule-list strong {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 26px;
+      height: 26px;
+      border-radius: 999px;
+      background: var(--soft);
+      border: 1px solid var(--line);
+      color: var(--accent-strong);
+      font-size: 12px;
+      font-family: "SFMono-Regular", "Menlo", "Monaco", monospace;
+    }
+
+    .btn-primary,
+    .btn-secondary,
+    .btn-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 54px;
+      padding: 0 20px;
+      border-radius: 14px;
+      border: 1px solid transparent;
+      text-decoration: none;
+      font: inherit;
+      font-weight: 800;
+      cursor: pointer;
+      transition: transform .16s ease, opacity .16s ease, box-shadow .16s ease;
+    }
+
+    .btn-primary {
+      background: var(--accent-strong);
+      color: #fff;
+      box-shadow: 0 12px 30px rgba(77, 106, 83, 0.18);
+    }
+
+    .btn-secondary {
+      background: #fff;
+      color: var(--accent-strong);
+      border-color: var(--line);
+    }
+
+    .btn-link {
+      background: linear-gradient(180deg, var(--accent-bright), #b8ef66);
+      color: #132019;
+      box-shadow: 0 16px 28px rgba(120, 171, 72, 0.16);
+    }
+
+    .btn-primary:hover,
+    .btn-secondary:hover,
+    .btn-link:hover {
+      transform: translateY(-1px);
+    }
+
+    .btn-primary:disabled,
+    .btn-secondary:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .section {
+      margin-top: 18px;
+      padding: 22px;
+    }
+
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .section-head h2 {
+      font-size: 28px;
+      line-height: 1.1;
+      letter-spacing: -0.03em;
+    }
+
+    .section-head p {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.8;
+      max-width: 720px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 34px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: var(--soft);
+      border: 1px solid var(--line);
+      color: var(--accent-strong);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .info-card {
+      border-radius: 18px;
+      padding: 16px;
+      border: 1px solid rgba(54, 83, 59, 0.08);
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(240, 246, 236, 0.9));
+    }
+
+    .info-card strong {
+      display: block;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent-strong);
+    }
+
+    .info-card span {
+      display: block;
+      margin-top: 10px;
+      font-size: 15px;
+      line-height: 1.55;
+      color: var(--text);
+      word-break: break-word;
+    }
+
+    .claim-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(300px, 0.9fr);
+      gap: 18px;
+      margin-top: 18px;
+      align-items: stretch;
+    }
+
+    .claim-card,
+    .stats-card {
+      border-radius: 22px;
+      padding: 20px;
+      border: 1px solid rgba(54, 83, 59, 0.08);
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(243, 248, 240, 0.92));
+    }
+
+    .claim-card h3,
+    .stats-card h3 {
+      font-size: 18px;
+      line-height: 1.25;
+    }
+
+    .claim-card p,
+    .stats-card p {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.8;
+    }
+
+    .claim-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .status {
+      min-height: 24px;
+      margin-top: 14px;
+      font-size: 13px;
+      line-height: 1.75;
+      color: var(--muted);
+    }
+
+    .status.success {
+      color: var(--accent-strong);
+      font-weight: 700;
+    }
+
+    .status.error {
+      color: var(--danger);
+      font-weight: 700;
+    }
+
+    .stats-list {
+      margin-top: 16px;
+      display: grid;
+      gap: 10px;
+    }
+
+    .stat-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 14px;
+      padding: 12px 14px;
+      border-radius: 16px;
+      border: 1px solid rgba(54, 83, 59, 0.08);
+      background: rgba(255, 255, 255, 0.82);
+      flex-wrap: wrap;
+    }
+
+    .stat-row strong {
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--accent-strong);
+    }
+
+    .stat-row span {
+      color: var(--text);
+      font-size: 14px;
+      line-height: 1.6;
+      text-align: right;
+      word-break: break-word;
+    }
+
+    .footer-note {
+      margin-top: 18px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.8;
+    }
+
+    @media (max-width: 900px) {
+      .hero-grid,
+      .claim-grid,
+      .info-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .shell {
+        padding: 14px 12px 42px;
+      }
+
+      .hero,
+      .section {
+        padding: 18px 16px;
+      }
+
+      .hero-copy h1 {
+        font-size: 34px;
+      }
+
+      .hero-actions,
+      .claim-actions {
+        flex-direction: column;
+      }
+
+      .btn-primary,
+      .btn-secondary,
+      .btn-link {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <section class="hero card">
+      <div class="eyebrow">
+        <span class="eyebrow-dot"></span>
+        SBTI HOLDER AIRDROP
+      </div>
+      <div class="hero-grid">
+        <div class="hero-copy">
+          <h1>持有任意 SBTI NFT，就能领取一份 200K $SBTI 空投。</h1>
+          <p>这页会连接你的钱包，检查你是否持有任意一张 SBTI 人格 NFT。通过校验后，每个钱包可以领取一次固定额度的空投代币。</p>
+          <div class="hero-actions">
+            <a href="/sbti/" class="btn-secondary">返回测试首页</a>
+            <a href="https://flap.sh/bnb/xxx" target="_blank" rel="noreferrer" class="btn-link">Flap 购买 $SBTI</a>
+          </div>
+        </div>
+        <div class="hero-highlight">
+          <div class="highlight-card">
+            <strong id="airdropHeroAmount">200,000</strong>
+            <span id="airdropHeroSymbol">$SBTI / 每个合格钱包可领取一次。资格只认链上 SBTI NFT 持仓，不认站内截图。</span>
+          </div>
+          <div class="rule-card">
+            <h3>领取规则</h3>
+            <ul class="rule-list">
+              <li><strong>1</strong><span>连接 BNB Smart Chain 钱包。</span></li>
+              <li><strong>2</strong><span>当前钱包至少持有一张 SBTI NFT。</span></li>
+              <li><strong>3</strong><span>每个钱包只能领取一次，成功后空投直接发到当前地址。</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section card">
+      <div class="section-head">
+        <div>
+          <h2>领取面板</h2>
+          <p>先连接钱包，页面会读取你的 NFT 持仓、当前领取状态和空投合约余额。合约地址未配置前，这里会保持为待开启状态。</p>
+        </div>
+        <div class="badge">BSC</div>
+      </div>
+
+      <div class="info-grid">
+        <div class="info-card">
+          <strong>当前钱包</strong>
+          <span id="airdropWalletMeta">尚未连接</span>
+        </div>
+        <div class="info-card">
+          <strong>NFT 持仓</strong>
+          <span id="airdropNftBalance">未检测</span>
+        </div>
+        <div class="info-card">
+          <strong>领取资格</strong>
+          <span id="airdropEligibility">待连接</span>
+        </div>
+        <div class="info-card">
+          <strong>领取状态</strong>
+          <span id="airdropClaimState">待连接</span>
+        </div>
+      </div>
+
+      <div class="claim-grid">
+        <div class="claim-card">
+          <h3>连接钱包并领取</h3>
+          <p id="airdropClaimMeta">连接钱包后，这里会显示你是否持有任意 SBTI NFT，以及当前地址是否还能领取这份空投。</p>
+          <div class="claim-actions">
+            <button id="connectAirdropWalletBtn" type="button" class="btn-secondary">连接钱包</button>
+            <button id="claimAirdropBtn" type="button" class="btn-primary" disabled>领取 200K $SBTI</button>
+          </div>
+          <div id="airdropStatus" class="status"></div>
+          <div class="footer-note">如果钱包不在 BSC 主网，页面会要求先切链。空投合约上线后，点击领取会发起真实链上交易。</div>
+        </div>
+
+        <div class="stats-card">
+          <h3>链上信息</h3>
+          <p>这部分会展示空投合约、SBTI 代币和 NFT 合约的当前配置，方便用户确认领取逻辑是按链上地址执行的。</p>
+          <div class="stats-list">
+            <div class="stat-row">
+              <strong>空投合约</strong>
+              <span id="airdropContractMeta">待配置</span>
+            </div>
+            <div class="stat-row">
+              <strong>SBTI 代币</strong>
+              <span id="airdropTokenMeta">待配置</span>
+            </div>
+            <div class="stat-row">
+              <strong>SBTI NFT</strong>
+              <span id="airdropNftMeta">待配置</span>
+            </div>
+            <div class="stat-row">
+              <strong>单次额度</strong>
+              <span id="airdropClaimAmountMeta">200,000 SBTI</span>
+            </div>
+            <div class="stat-row">
+              <strong>合约余额</strong>
+              <span id="airdropContractBalance">待配置</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/ethers@6.13.4/dist/ethers.umd.min.js"></script>
+  <script src="../airdrop-config.js"></script>
+  <script src="../airdrop.js"></script>
+</body>
+</html>
